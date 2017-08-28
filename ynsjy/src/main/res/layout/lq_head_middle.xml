@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            style="@style/textTheme"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_bg"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="按林权主体类型"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ff747474" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/textView_m1"
+                style="@style/textTheme_100"
+                android:text="总计"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView_m2"
+                style="@style/textTheme_100"
+                android:text="国家"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView_m3"
+                style="@style/textTheme_100"
+                android:text="集体"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView_m4"
+                style="@style/textTheme_100"
+                android:text="民营"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView_m5"
+                style="@style/textTheme_100"
+                android:text="其他"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            style="@style/textTheme"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_bg"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="按使用权类型"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ff747474" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/textView_m6"
+                style="@style/textTheme_100"
+                android:text="总计"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView_m7"
+                style="@style/textTheme_100"
+                android:text="国有山"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView_m8"
+                style="@style/textTheme_100"
+                android:text="集体山"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/text_bg"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="民营"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#ff747474" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/textView_m9"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_bg"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="小计"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#ff747474" />
+
+                    <TextView
+                        android:id="@+id/textView_m10"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_bg"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="自留山"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#ff747474" />
+
+                    <TextView
+                        android:id="@+id/textView_m11"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_bg"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="责任山"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#ff747474" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView_m12"
+                style="@style/textTheme_100"
+                android:text="承包山"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView_m13"
+                style="@style/textTheme_100"
+                android:text="其他"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,1 @@
+include ':proj4android', ':SwipeMenuListView', ':ynsjy', ':versionupdata', ':baselibrary', ':photopicker'
