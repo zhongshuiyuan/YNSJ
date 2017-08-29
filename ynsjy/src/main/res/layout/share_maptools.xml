@@ -6,7 +6,6 @@
     android:orientation="vertical" >
     
     <ImageButton
-        android:id="@+id/callout_mappoint"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
@@ -14,7 +13,6 @@
         android:src="@drawable/share_map_tools_xbdh" />
 
     <ImageButton
-        android:id="@+id/share_navigation"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
@@ -23,7 +21,6 @@
         android:src="@drawable/share_map_tools_navigation" />
 
     <ImageButton
-        android:id="@+id/share_isearch"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
@@ -32,7 +29,6 @@
         android:src="@drawable/share_map_tools_isearch" />
 
     <ImageButton
-        android:id="@+id/share_ceju"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
@@ -40,7 +36,6 @@
         android:src="@drawable/share_map_tools_distance" />
 
     <ImageButton
-        android:id="@+id/share_cemian"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
@@ -48,7 +43,6 @@
         android:src="@drawable/share_map_tools_areas" />
 
     <ImageButton
-        android:id="@+id/share_clean"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
@@ -56,7 +50,6 @@
         android:src="@drawable/share_map_tools_clean" />
 
     <ImageButton
-        android:id="@+id/share_mylocation"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"

@@ -26,7 +26,6 @@ import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.adapter.EdFeatureResultAdapter;
 import com.titan.ynsjy.entity.MyFeture;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
@@ -312,8 +311,8 @@ public class PointEditActivity extends BaseEditActivity {
 		dialog.setContentView(R.layout.dialog_yd_list);
 		ListView yd_lstview = (ListView) dialog.findViewById(R.id.yd_data_listview);
 
-		EdFeatureResultAdapter adapter = new EdFeatureResultAdapter(mContext, xblist, "小班列表");
-		yd_lstview.setAdapter(adapter);
+//		EdFeatureResultAdapter adapter = new EdFeatureResultAdapter(mContext, xblist, "小班列表");
+//		yd_lstview.setAdapter(adapter);
 
 		yd_lstview.setOnItemClickListener(new OnItemClickListener() {
 

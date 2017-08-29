@@ -25,6 +25,7 @@ import com.esri.core.renderer.SimpleRenderer;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
@@ -36,7 +37,6 @@ import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.SytemUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.Util;
-import com.titan.baselibrary.util.ProgressDialogUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;

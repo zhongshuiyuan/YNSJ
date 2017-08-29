@@ -96,7 +96,6 @@
         android:orientation="horizontal" >
 
         <RadioButton
-            android:id="@+id/layer_render_sure"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -134,7 +133,6 @@
             android:background="@color/white" />
 
         <RadioButton
-            android:id="@+id/layer_render_cancle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

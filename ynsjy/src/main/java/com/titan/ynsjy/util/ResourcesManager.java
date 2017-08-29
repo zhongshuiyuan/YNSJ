@@ -84,7 +84,7 @@ public class ResourcesManager implements Serializable {
 
 	/** 获取基础地图的本地路径 */
 	public String getTitlePath() {
-		String name = otitan_map + "/title.tpk";
+		String name = otitan_map + "/title_fxh.tpk";
 		return getFilePath(name);
 	}
 
@@ -265,7 +265,7 @@ public class ResourcesManager implements Serializable {
 	/** 获取贵阳市影像图 */
 	public String getArcGISLocalImageLayerPath() {
 		String arcGISLocalTiledLayerPath = "";
-		String str = otitan_map + "/image.tpk";
+		String str = otitan_map + "/image_fxh.tpk";
 		arcGISLocalTiledLayerPath = getFilePath(str);
 		return arcGISLocalTiledLayerPath;
 	}

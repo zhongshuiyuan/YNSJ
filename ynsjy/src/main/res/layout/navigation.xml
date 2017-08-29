@@ -70,7 +70,6 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/navigation_sure"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_view_rounded_blue"

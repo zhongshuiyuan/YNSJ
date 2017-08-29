@@ -41,6 +41,7 @@ import com.titan.ynsjy.listviewinedittxt.Line;
 import com.titan.ynsjy.listviewinedittxt.LineAdapter;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ToastUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -348,7 +349,7 @@ public class XbEditActivity extends BaseEditActivity {
 		}
 	}
 
-	/**获取必填必填字段*/
+	/**获取必填字段*/
 	public void getMustField(){
 		preferences = getSharedPreferences(pname+"mustfield", MODE_PRIVATE);
 		List<Row> list = BussUtil.getConfigXml(mContext, pname, "mustfield");

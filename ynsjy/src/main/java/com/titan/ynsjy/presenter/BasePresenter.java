@@ -46,7 +46,6 @@ import com.esri.core.table.TableException;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.activity.StartActivity;
 import com.titan.ynsjy.adapter.AttributeAdapter;
 import com.titan.ynsjy.adapter.FeatureResultAdapter;
 import com.titan.ynsjy.adapter.SearchXdmAdapter;
@@ -671,23 +670,23 @@ public class BasePresenter {
         });
     }
 
-    /**
-     * 加载数据所属数据
-     */
-    public void uploadsjssData() {
-
-        if (MyApplication.getInstance().hasNetWork() && StartActivity.bsuserbase != null) {
-            Webservice web = new Webservice(baseActivity);
-            String result = web.getSjssData(StartActivity.bsuserbase.getDATASHARE().trim());
-            if (result.equals(Webservice.netException)) {
-                //ToastUtil.setToast(mContext, Webservice.netException);
-            } else if (result.equals("无数据")) {
-                //ToastUtil.setToast(mContext, "无数据");
-            } else {
-                baseActivity.sjssLlist = BussUtil.getSjssData(result);
-            }
-        }
-    }
+//    /**
+//     * 加载数据所属数据
+//     */
+//    public void uploadsjssData() {
+//
+//        if (MyApplication.getInstance().hasNetWork() && StartActivity.bsuserbase != null) {
+//            Webservice web = new Webservice(baseActivity);
+//            String result = web.getSjssData(StartActivity.bsuserbase.getDATASHARE().trim());
+//            if (result.equals(Webservice.netException)) {
+//                //ToastUtil.setToast(mContext, Webservice.netException);
+//            } else if (result.equals("无数据")) {
+//                //ToastUtil.setToast(mContext, "无数据");
+//            } else {
+//                baseActivity.sjssLlist = BussUtil.getSjssData(result);
+//            }
+//        }
+//    }
 
     /**
      * 加载驯养繁殖基地基地性质数据

@@ -94,7 +94,6 @@
         </RadioButton>
 
         <RadioButton
-            android:id="@+id/savebutton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

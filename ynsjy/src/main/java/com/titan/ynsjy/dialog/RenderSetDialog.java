@@ -2,6 +2,7 @@ package com.titan.ynsjy.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
@@ -18,9 +19,12 @@ import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.renderer.Renderer;
 import com.esri.core.renderer.SimpleRenderer;
+import com.esri.core.renderer.UniqueValue;
+import com.esri.core.renderer.UniqueValueRenderer;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.titan.baselibrary.listener.CancleListener;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.TcRenderAdapter;
@@ -30,7 +34,6 @@ import com.titan.ynsjy.presenter.LayerControlPresenter;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.Util;
-import com.titan.baselibrary.listener.CancleListener;
 
 import java.io.File;
 import java.util.List;
@@ -46,6 +49,14 @@ public class RenderSetDialog extends Dialog {
     private Context mContext;
     private ILayerView iLayerView;
     private LayerControlPresenter layerControlPresenter;
+    UniqueValueRenderer uvrenderer;
+    UniqueValue uv1, uv2, uv3, uv4, uv5;
+    SimpleFillSymbol defaultsymbol;
+
+    String[] uniqueAttribute1 = new String[1];
+    String[] uniqueAttribute2 = new String[1];
+    String[] uniqueAttribute3 = new String[1];
+    String[] uniqueAttribute4 = new String[1];
 
 
     public RenderSetDialog(@NonNull Context context, @StyleRes int themeResId,ILayerView layerView,LayerControlPresenter layerControlPresenter) {
@@ -270,6 +281,52 @@ public class RenderSetDialog extends Dialog {
         BussUtil.setDialogParams(mContext, dialog, 0.8, 0.8);
     }
 
+
+    private UniqueValueRenderer initUniqueValue(){
+        uvrenderer = new UniqueValueRenderer();
+        uvrenderer.setField1("LUCODE");
+        uv1 = new UniqueValue();
+        uv2 = new UniqueValue();
+        uv3 = new UniqueValue();
+        uv4 = new UniqueValue();
+        uv5 = new UniqueValue();
+
+        uniqueAttribute1[0] = "01";
+        uv1.setDescription("01");
+        uv1.setValue(uniqueAttribute1);
+
+        uniqueAttribute2[0] = "02";
+        uv2.setDescription("02");
+        uv2.setValue(uniqueAttribute2);
+
+        uniqueAttribute3[0] = "03";
+        uv3.setDescription("03");
+        uv3.setValue(uniqueAttribute3);
+
+        uniqueAttribute4[0] = "04";
+        uv4.setDescription("04");
+        uv4.setValue(uniqueAttribute4);
+
+        final SimpleFillSymbol symbol1 = new SimpleFillSymbol(Color.BLUE);
+        final SimpleFillSymbol symbol2 = new SimpleFillSymbol(Color.CYAN);
+        final SimpleFillSymbol symbol3 = new SimpleFillSymbol(Color.GRAY);
+        final SimpleFillSymbol symbol4 = new SimpleFillSymbol(Color.MAGENTA);
+
+        defaultsymbol = new SimpleFillSymbol(Color.YELLOW);
+
+        uv1.setSymbol(symbol1);
+        uv2.setSymbol(symbol2);
+        uv3.setSymbol(symbol3);
+        uv4.setSymbol(symbol4);
+
+        uvrenderer.setDefaultSymbol(defaultsymbol);
+        uvrenderer.addUniqueValue(uv1);
+        uvrenderer.addUniqueValue(uv2);
+        uvrenderer.addUniqueValue(uv3);
+        uvrenderer.addUniqueValue(uv4);
+
+        return uvrenderer;
+    }
     /**
      * 展示图层渲染设置
      */
@@ -362,7 +419,8 @@ public class RenderSetDialog extends Dialog {
             @Override
             public void onClick(View arg0) {
                 int txt = seekBar.getProgress();
-                setLayerRenderer(txt, outlinewidth, myLayer);
+                //setLayerRenderer(txt, outlinewidth, myLayer);
+                myLayer.setRenderer(initUniqueValue());
                 dialog.dismiss();
             }
         });

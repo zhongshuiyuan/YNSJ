@@ -42,7 +42,6 @@
         android:visibility="gone" >
 
         <TextView
-            android:id="@+id/callout_mylocation_qiehuan"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/background_view_rec_graw"

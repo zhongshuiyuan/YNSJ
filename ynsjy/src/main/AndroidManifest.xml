@@ -54,7 +54,6 @@
         <activity
             android:name=".activity.YzlActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/app_name"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,31 +61,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.YHSWActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_yhsw"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.SwdyxActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_swdyx"
-            android:screenOrientation="landscape" />
-        <!-- 二调 -->
-        <activity
-            android:name=".activity.ErDiaoActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_erdiao" />
-        <!-- 二调小班编辑 -->
-        <activity
-            android:name=".activity.ED_XBEditActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_erdiao"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".activity.SlzylxqcActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_slzylxqc" />
 
         <service
             android:name="com.baidu.location.f"
@@ -99,23 +73,7 @@
         </service>
 
         <activity
-            android:name=".activity.StartActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_yzl" />
-        <activity
-            android:name=".supertreeview.GsmmEditActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation" />
-        <activity
-            android:name=".supertreeview.GsmmAddActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation" />
-        <activity
             android:name=".supertreeview.Image2Activity"
-            android:configChanges="screenSize|keyboardHidden|orientation" />
-        <activity
-            android:name=".activity.SlzylxqcYdyzActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation" />
-        <activity
-            android:name=".activity.GsmmActivity"
             android:configChanges="screenSize|keyboardHidden|orientation" />
         <activity
             android:name=".edite.activity.XbEditActivity"
@@ -126,14 +84,6 @@
             android:name=".edite.activity.ImageActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:label="@string/title_activity_image" />
-        <activity
-            android:name=".activity.XczfActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_xczf" />
-        <activity
-            android:name=".activity.SdzyActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_sdzy" />
         <activity
             android:name=".edite.activity.YzlYddActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
@@ -146,9 +96,6 @@
             android:name=".edite.activity.LineEditActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:label="@string/title_activity_line_edit" />
-        <activity
-            android:name=".activity.ED_YmdcActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation" />
         <activity
             android:name=".statistics.LDStatisticsActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"

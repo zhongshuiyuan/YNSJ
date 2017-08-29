@@ -5,13 +5,19 @@
     android:background="@android:color/transparent">
 
     <ImageView
-        android:id="@+id/topview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/share_top"
         android:contentDescription="@null" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="25sp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="5dp"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

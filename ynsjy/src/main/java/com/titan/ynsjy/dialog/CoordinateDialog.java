@@ -147,7 +147,7 @@ public class CoordinateDialog extends Dialog {
                     y = Double.valueOf(edit_wd.getText().toString().trim());
 
                     // 判断经纬度是否在中国境内
-                    if (x > 135 || x < 74 || y > 54 || y < 3) {
+                    if (y > 135 || y < 74 || x > 54 || x < 3) {
                         ToastUtil.setToast(mContext, "坐标范围不在中国内,请重新输入");
                         return;
                     }

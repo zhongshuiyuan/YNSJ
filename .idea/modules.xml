@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SwipeMenuListView/SwipeMenuListView.iml" filepath="$PROJECT_DIR$/SwipeMenuListView/SwipeMenuListView.iml" />
       <module fileurl="file://$PROJECT_DIR$/YNSJY.iml" filepath="$PROJECT_DIR$/YNSJY.iml" />
       <module fileurl="file://$PROJECT_DIR$/baselibrary/baselibrary.iml" filepath="$PROJECT_DIR$/baselibrary/baselibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/photopicker/photopicker.iml" filepath="$PROJECT_DIR$/photopicker/photopicker.iml" />

@@ -940,11 +940,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 /* 保存GPS坐标数据 */
                 basePresenter.addGuijiPoint(currentPoint);
 
-            } else if (params[0].equals("sjss")) {
-
-                basePresenter.uploadsjssData();
-
-            } else if (params[0].equals("xzqy")) {
+            }  else if (params[0].equals("xzqy")) {
 
                 basePresenter.uploadxzqyData();
 
@@ -1031,7 +1027,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             Point point = getGPSpoint(location);
             //投影坐标
             Point point_ty = (Point) GeometryEngine.project(point,SpatialReference.create(4326), spatialReference);
-            currentPoint = point;
+            currentPoint = point_bd;
             currentLon = currentPoint.getX();
             currentLat = currentPoint.getY();
             altitude = currentPoint.getZ();
