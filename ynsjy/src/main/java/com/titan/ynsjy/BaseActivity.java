@@ -382,7 +382,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         //featureLayer = null;
 
         isHaveSBH();
-
+        //检查版本更新
 //        if(MyApplication.getInstance().hasNetWork()){
 //            new Thread(new Runnable() {
 //                @Override
@@ -2714,7 +2714,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      * 小班数据查询
      */
     public void getFeatureInfo(final Geometry geometry, FeatureLayer layer) {
-
         QueryParameters queryParams = new QueryParameters();
         queryParams.setOutFields(new String[]{"*"});
         queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
@@ -3161,7 +3160,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         queryParams.setGeometry(geometry);
         queryParams.setReturnGeometry(true);
         queryParams.setWhere("1=1");
-        queryParams.setOutSpatialReference(spatialReference);
+        layer.getLayer().setSelectionColor(layer.getSelectColor());
+        queryParams.setOutSpatialReference(tiledLayer.getSpatialReference());
         layer.getLayer().selectFeatures(queryParams, SelectionMode.NEW,
                 new CallbackListener<FeatureResult>() {
 
@@ -3626,7 +3626,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
     @Override
     public Envelope getCurrentEnvelope() {
-        Polygon polygon = mapView.getExtent();
+        Polygon polygon = tiledLayer.getExtent();
         Envelope envelope = new Envelope();
         polygon.queryEnvelope(envelope);
         return envelope;

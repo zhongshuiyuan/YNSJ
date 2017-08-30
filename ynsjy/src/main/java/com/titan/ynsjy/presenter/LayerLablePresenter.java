@@ -36,7 +36,7 @@ public class LayerLablePresenter {
     public ILayerView iLayerView;
     public MyLayer myLayer;
     private long[] arrays;
-    private HashMap<Field,Boolean> checkboxs = new HashMap<>();
+    private HashMap<Field,Boolean> checkboxMap = new HashMap<>();
 
     public LayerLablePresenter(Context context, ILayerView layerView){
         this.mContext = context;
@@ -56,9 +56,12 @@ public class LayerLablePresenter {
         ListView listView =(ListView) lableView.findViewById(R.id.field_list);
         List<Field> fields = myLayer.getLayer().getFeatureTable().getFields();
         for(Field f:fields){
-            checkboxs.put(f,false);
+            if (f.getAlias().equals("OBJECTID_1") || f.getAlias().equals("OBJECTID") || f.getAlias().equals("Shape_Leng")){
+                continue;
+            }
+            checkboxMap.put(f,false);
         }
-        LayerLableAdapter lableAdapter = new LayerLableAdapter(mContext,fields,this,checkboxs);
+        LayerLableAdapter lableAdapter = new LayerLableAdapter(mContext,this,checkboxMap);
         listView.setAdapter(lableAdapter);
         BaseUtil.setHeight(lableAdapter,listView);
 
@@ -68,7 +71,7 @@ public class LayerLablePresenter {
     public void queryFeatures(final MyLayer myLayer,final boolean isChecked,final List<Field> fields,final int position){
         QueryParameters q = new QueryParameters();
         q.setWhere("1=1");
-        q.setInSpatialReference(iLayerView.getSpatialReference());
+        q.setInSpatialReference(iLayerView.getBaseTitleLayer().getSpatialReference());
         q.setReturnGeometry(true);
         q.setGeometry(iLayerView.getCurrentEnvelope());
         myLayer.getLayer().setSelectionColor(0);
@@ -100,15 +103,19 @@ public class LayerLablePresenter {
         for(long id : arrays){
             GeodatabaseFeature feature = (GeodatabaseFeature) myLayer.getLayer().getFeature(id);
             Object obj = feature.getAttributeValue(fields.get(position));
+            String text;
             if(obj != null){
-                TextSymbol textSymbol = new TextSymbol(20,obj.toString(), Color.BLUE);
-                //解决中文乱码
-                textSymbol.setFontFamily("DroidSansFallback.ttf");
-                Envelope env = new Envelope();
-                feature.getGeometry().queryEnvelope(env);
-                Graphic graphic = new Graphic(env.getCenter(),textSymbol);
-                iLayerView.getGraphicLayer().addGraphic(graphic);
+                text = obj.toString();
+            }else {
+                text = "空";
             }
+            TextSymbol textSymbol = new TextSymbol(20,text, Color.BLUE);
+            //解决中文乱码
+            textSymbol.setFontFamily("DroidSansFallback.ttf");
+            Envelope env = new Envelope();
+            feature.getGeometry().queryEnvelope(env);
+            Graphic graphic = new Graphic(env.getCenter(),textSymbol);
+            iLayerView.getGraphicLayer().addGraphic(graphic);
         }
     }
 }

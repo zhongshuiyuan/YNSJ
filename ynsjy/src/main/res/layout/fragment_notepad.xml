@@ -159,7 +159,8 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/background_view_rounded"
             android:textSize="@dimen/larger_txtsize20"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone"/>
     </RelativeLayout>
 
     <View

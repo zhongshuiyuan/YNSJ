@@ -455,6 +455,7 @@ public class LayerControlPresenter {
                 myLayer.setPath(path);
                 myLayer.setFlag(flag);
                 myLayer.setLname(layer.getName());
+                myLayer.setSelectColor(layer.getSelectionColor());
                 myLayer.setRenderer(renderer);
                 myLayer.setLayer(layer);
                 myLayer.setTable(gdbFeatureTable);

@@ -120,15 +120,15 @@ public class XbEditActivity extends BaseEditActivity {
 		cpoyZhaop();
 		//new MyAsyncTask().execute("getImagePath");
 
-		if(currentxbh.equals("")){
-			ToastUtil.setToast(mContext, "小班唯一号为空,请输入小班唯一号");
-		}
+//		if(currentxbh.equals("")){
+//			ToastUtil.setToast(mContext, "小班唯一号为空,请输入小班唯一号");
+//		}
 
 		getYdLayer();
 
 		if(pname.contains("营造林")){
 			tvyddcb = (TextView) findViewById(R.id.tvyddcb);
-			tvyddcb.setVisibility(View.VISIBLE);
+			//tvyddcb.setVisibility(View.VISIBLE);
 			tvyddcb.setOnClickListener(new MyListener());
 		}
 

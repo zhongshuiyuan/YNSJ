@@ -53,6 +53,8 @@ public class MyLayer implements Serializable{
 	private boolean flag;
 	/**geodatabase数据图层名称*/
 	private String lname;
+	/**geodatabase数据图层选中时高亮颜色*/
+	private int selectColor;
 	/**geodatabase数据图层renderer*/
 	private Renderer renderer;
 	/** FeatureLayer*/
@@ -79,4 +81,11 @@ public class MyLayer implements Serializable{
 		this.renderer = renderer;
 	}
 
+	public int getSelectColor() {
+		return selectColor;
+	}
+
+	public void setSelectColor(int selectColor) {
+		this.selectColor = selectColor;
+	}
 }

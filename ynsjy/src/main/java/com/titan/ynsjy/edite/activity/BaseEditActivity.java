@@ -138,6 +138,9 @@ public abstract class BaseEditActivity extends Activity {
         String xianD = "",xiangD= "";
         for (int i = 0; i < LINE_NUM; i++) {
             Field field = fieldList.get(i);
+            if (field.getAlias().equals("OBJECTID_1")|| field.getAlias().equals("OBJECTID")||field.getAlias().equals("Shape_Leng")){
+                continue;
+            }
             Line line = new Line();
             line.setNum(i);
             line.setTview(field.getAlias());

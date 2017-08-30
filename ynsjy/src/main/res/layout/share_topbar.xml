@@ -42,7 +42,8 @@
             android:layout_gravity="bottom"
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
-            android:src="@drawable/xiaobanlist_btn" />
+            android:src="@drawable/xiaobanlist_btn"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/share_dmgl"

@@ -26,15 +26,22 @@ public class LayerLableAdapter extends BaseAdapter {
     private Context mContext;
     private List<Field> fields = new ArrayList<>();
     private LayerLablePresenter lablePresenter;
-    private HashMap<Field,Boolean> checkboxs = new HashMap<>();
+    private HashMap<Field,Boolean> checkboxMap = new HashMap<>();
 
-    public LayerLableAdapter(Context context, List<Field> fields, LayerLablePresenter lablePresenter,HashMap<Field,Boolean> checkboxs){
+    public LayerLableAdapter(Context context,LayerLablePresenter lablePresenter,HashMap<Field,Boolean> checkboxMap){
         this.mContext = context;
-        this.fields = fields;
         this.lablePresenter = lablePresenter;
-        this.checkboxs = checkboxs;
+        this.checkboxMap = checkboxMap;
+        this.fields = getFields();
     }
 
+    private List<Field> getFields(){
+        List<Field> list = new ArrayList<>();
+        for (Field f : checkboxMap.keySet()) {
+            list.add(f);
+        }
+        return list;
+    }
     @Override
     public int getCount() {
         return fields.size();
@@ -64,17 +71,17 @@ public class LayerLableAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.attrField.setChecked(checkboxs.get(fields.get(position)));
+        viewHolder.attrField.setChecked(checkboxMap.get(fields.get(position)));
         viewHolder.attrField.setText(fields.get(position).getAlias());
         viewHolder.attrField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                boolean isChecked = checkboxs.get(fields.get(position));
+                boolean isChecked = checkboxMap.get(fields.get(position));
                 for (Field f : fields) {
-                    checkboxs.put(f, false);
+                    checkboxMap.put(f, false);
                 }
-                checkboxs.put(fields.get(position), !isChecked);
+                checkboxMap.put(fields.get(position), !isChecked);
                 notifyDataSetChanged();
                 if(!isChecked){
                     lablePresenter.queryFeatures(lablePresenter.myLayer,isChecked,fields,position);
