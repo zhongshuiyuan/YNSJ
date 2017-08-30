@@ -12,12 +12,12 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.titan.baselibrary.listener.CancleListener;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.color.ColorPickerView;
+import com.titan.ynsjy.color.ColorPickView;
 import com.titan.ynsjy.color.SansumColorSelecter;
 import com.titan.ynsjy.entity.MyLayer;
-import com.titan.baselibrary.listener.CancleListener;
 
 /**
  * Created by li on 2017/6/1.
@@ -31,6 +31,7 @@ public class ColorDialog extends Dialog {
     private TextView view;
     private SeekBar seekBar;
     private MyLayer myLayer;
+    private String field;//字段名
 
     public ColorDialog(@NonNull Context context) {
         super(context);
@@ -38,13 +39,14 @@ public class ColorDialog extends Dialog {
     }
 
     public ColorDialog(@NonNull Context context, @StyleRes int themeResId, final int type, final TextView view,
-                       final SeekBar seekBar, final MyLayer myLayer) {
+                       final SeekBar seekBar, final MyLayer myLayer,String field) {
         super(context, themeResId);
         this.mContext = context;
         this.type = type;
         this.view = view;
         this.seekBar = seekBar;
         this.myLayer = myLayer;
+        this.field = field;
     }
 
     protected ColorDialog(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
@@ -70,6 +72,8 @@ public class ColorDialog extends Dialog {
                     MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tianchongse", color).apply();
                 } else if (type == 1) {
                     MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "bianjiese", color).apply();
+                }else if (type==2){
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName()+ field + "tianchongse", color).apply();
                 }
                 view.setBackground(mContext.getResources().getDrawable(R.drawable.touming));
                 seekBar.setProgress(100);
@@ -78,18 +82,18 @@ public class ColorDialog extends Dialog {
             }
         });
 
-        ColorPickerView colorPickerView = (ColorPickerView) findViewById(R.id.color_picker);
-        colorPickerView.setOnColorChangeListenrer(new ColorPickerView.OnColorChangedListener() {
-
+        ColorPickView colorPickerView = (ColorPickView) findViewById(R.id.fill_colro_pick);
+        colorPickerView.setOnColorChangedListener(new ColorPickView.OnColorChangedListener() {
             @Override
-            public void colorChanged(int color) {
+            public void onColorChange(int color) {
                 if (type == 0) {
                     MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tianchongse", color).apply();
                 } else if (type == 1) {
                     MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "bianjiese", color).apply();
+                }else if (type==2){
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName()+ field + "tianchongse", color).apply();
                 }
                 view.setBackgroundColor(color);
-                dismiss();
             }
         });
 
@@ -102,6 +106,8 @@ public class ColorDialog extends Dialog {
                     MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tianchongse", color).apply();
                 } else if (type == 1) {
                     MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "bianjiese", color).apply();
+                }else if (type==2){
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName()+ field + "tianchongse", color).apply();
                 }
                 view.setBackgroundColor(color);
                 dismiss();

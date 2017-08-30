@@ -96,7 +96,7 @@ public class ColorPickerView extends View {
 		int b = ave(Color.blue(c0), Color.blue(c1), p);
 
 		selectColor = Color.argb(a, r, g, b);
-		// mSelecter.changeLastColor(selectColor);
+		//mSelecter.changeLastColor(selectColor);
 		return selectColor;
 	}
 
@@ -125,13 +125,13 @@ public class ColorPickerView extends View {
 			mBitmapX = displayW - mBitmap.getWidth() / 2;
 		}
 		if (mBitmapX - mBitmap.getWidth() / 2 < 0) {
-			mBitmapX = 0 + mBitmap.getWidth() / 2;
+			mBitmapX = mBitmap.getWidth() / 2;
 		}
 		if (mBitmapY + mBitmap.getHeight() / 2 > displayH) {
 			mBitmapY = displayH - mBitmap.getHeight() / 2;
 		}
 		if (mBitmapY - mBitmap.getHeight() / 2 < 0) {
-			mBitmapY = 0 + mBitmap.getHeight() / 2;
+			mBitmapY = mBitmap.getHeight() / 2;
 		}
 		canvas.drawRect(0, 0, displayW, displayH, mPaint);
 		canvas.drawBitmap(mBitmap, mBitmapX - mBitmap.getWidth() / 2, mBitmapY

@@ -10,7 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.esri.core.internal.tasks.ags.v;
+import com.titan.baselibrary.listener.CancleListener;
 import com.titan.baselibrary.util.DialogParamsUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
@@ -18,9 +18,6 @@ import com.titan.ynsjy.R;
 import com.titan.ynsjy.mview.IBaseView;
 import com.titan.ynsjy.presenter.GpsCollectPresenter;
 import com.titan.ynsjy.util.BussUtil;
-import com.titan.ynsjy.util.ToastUtil;
-import com.titan.baselibrary.listener.CancleListener;
-import com.titan.versionupdata.VersionUpdata;
 
 /**
  * Created by li on 2017/5/31.
@@ -66,13 +63,13 @@ public class SettingDialog extends Dialog {
             }
         });
 
-        TextView version = (TextView) findViewById(R.id.version_check);
-        double vv = new VersionUpdata((BaseActivity)mContext).getCurentVersion();
-        version.setText("版本更新   "+vv);
-        version.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
+//        TextView version = (TextView) findViewById(R.id.version_check);
+//        double vv = new VersionUpdata((BaseActivity)mContext).getCurentVersion();
+//        version.setText("版本更新   "+vv);
+//        version.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View arg0) {
 //                new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -87,25 +84,25 @@ public class SettingDialog extends Dialog {
 //                    }
 //                }).start();
 
-                if(MyApplication.getInstance().hasNetWork()){
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String updateurl = mContext.getResources().getString(R.string.apk_updata);
-                            boolean flag = new VersionUpdata(mContext).checkVersion(updateurl);
-                            if(!flag){
-                                mContext.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ToastUtil.setToast(mContext, "已是最新版本");
-                                    }
-                                });
-                            }
-                        }
-                    }).start();
-                }
-            }
-        });
+//                if(MyApplication.getInstance().hasNetWork()){
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            String updateurl = mContext.getResources().getString(R.string.apk_updata);
+//                            boolean flag = new VersionUpdata(mContext).checkVersion(updateurl);
+//                            if(!flag){
+//                                mContext.runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        ToastUtil.setToast(mContext, "已是最新版本");
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    }).start();
+//                }
+//            }
+//        });
 
         final CheckBox gpsCjlx = (CheckBox) findViewById(R.id.lxcj);
         if(gpsCaijiInclude.getVisibility() == View.VISIBLE){

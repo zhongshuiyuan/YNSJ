@@ -132,14 +132,16 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
 			//groupHolder.imageview_1 = (ImageView) convertView.findViewById(R.id.id_group_img);
 			groupHolder.cText = (TextView) convertView.findViewById(R.id.id_group_txt);
-			groupHolder.imageview_2 = (Button) convertView.findViewById(R.id.layer_render);
+			groupHolder.img_simple = (Button) convertView.findViewById(R.id.layer_render_simple);
+			groupHolder.img_unique = (Button) convertView.findViewById(R.id.layer_render_unique);
 			convertView.setTag(groupHolder);
 		} else {
 			groupHolder = (GroupViewHolder) convertView.getTag();
 		}
 
 		groupHolder.cText.setText(groups.get(groupPosition).getName());
-		groupHolder.imageview_2.setVisibility(View.GONE);
+		groupHolder.img_simple.setVisibility(View.GONE);
+		groupHolder.img_unique.setVisibility(View.GONE);
 		return convertView;
 
 	}
@@ -161,9 +163,9 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 	}
 
 	static class GroupViewHolder {
-		//ImageView imageview_1;
 		TextView cText;
-		Button imageview_2;
+		Button img_simple;
+		Button img_unique;
 	}
 	
 	class MyCbCheckedChangeListener implements OnCheckedChangeListener{

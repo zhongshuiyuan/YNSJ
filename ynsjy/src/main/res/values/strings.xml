@@ -13,6 +13,7 @@
     <string name="online_image">http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer</string>
     <!--在线 注记-->
 
+    <string name="test">测试</string>
     <!--用户信息-->
     <string name="choose_title">用户信息</string>
     <string name="choose_name">用户名:</string>
@@ -36,7 +37,8 @@
     <string name="lat">纬度：</string>
     <string name="xian_80_x">X:</string>
     <string name="xian_80_y">Y:</string>
-    <string name="randersetting">渲染</string>
+    <string name="simple_randersetting">简单渲染</string>
+    <string name="unique_randersetting">唯一值渲染</string>
     <string name="img_select">影像图层选择</string>
     <string name="data_download">数据下载</string>
     <string name="data_upserver">数据上传</string>
@@ -44,7 +46,7 @@
     <string name="search_endtime">结束时间</string>
     <string name="shoudongdingwei">手动定位</string>
     <!-- FeatureLayer图层渲染设置 -->
-    <string name="toumingdu">透明度:</string>
+    <string name="transparency">透明度:</string>
     <string name="currentvalue">当前值:</string>
     <string name="reset">重置</string>
     <string name="yulan">填充色</string>
@@ -62,7 +64,8 @@
     <string name="huifang"> 回 放 </string>
     <string name="sys_setting">系统配置</string>
     <string name="sys_tmd">透明度设置</string>
-    <string name="sys_color">颜色及边界设置</string>
+    <string name="sys_simple_title">颜色及边界设置</string>
+    <string name="sys_unique_title">颜色设置</string>
     <string name="versioncheck">版本更新</string>
     <string name="xbatrbutinfo">小班属性信息</string>
     <string name="lishijilu">历史记录</string>

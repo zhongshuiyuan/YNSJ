@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:colorpicker="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:weightSum="1">
 
     <TextView
         android:id="@+id/nocolor"
@@ -166,11 +169,21 @@
             android:src="@drawable/color_button_bg" />
     </GridLayout>
 
-    <com.titan.ynsjy.color.ColorPickerView
-        android:id="@+id/color_picker"
+    <com.titan.ynsjy.color.ColorPickView
+        android:id="@+id/fill_colro_pick"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/tw_wifioffload_buttonbarbutton_selector_disabled_holo_light" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        colorpicker:center_color="#000000"
+        colorpicker:center_radius="10dp"
+        colorpicker:circle_radius="120dp"
+        android:layout_weight="3.58" />
+    <!--<com.titan.ynsjy.color.ColorPickerView-->
+        <!--android:id="@+id/color_picker"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="gone"-->
+        <!--android:background="@drawable/tw_wifioffload_buttonbarbutton_selector_disabled_holo_light" />-->
 
 
 </LinearLayout>

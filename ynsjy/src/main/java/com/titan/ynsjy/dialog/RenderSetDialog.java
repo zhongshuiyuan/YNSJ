@@ -28,6 +28,7 @@ import com.titan.baselibrary.listener.CancleListener;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.TcRenderAdapter;
+import com.titan.ynsjy.adapter.UniqueFieldAdapter;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.mview.ILayerView;
 import com.titan.ynsjy.presenter.LayerControlPresenter;
@@ -36,6 +37,7 @@ import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.Util;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,15 +51,10 @@ public class RenderSetDialog extends Dialog {
     private Context mContext;
     private ILayerView iLayerView;
     private LayerControlPresenter layerControlPresenter;
-    UniqueValueRenderer uvrenderer;
-    UniqueValue uv1, uv2, uv3, uv4, uv5;
-    SimpleFillSymbol defaultsymbol;
-
-    String[] uniqueAttribute1 = new String[1];
-    String[] uniqueAttribute2 = new String[1];
-    String[] uniqueAttribute3 = new String[1];
-    String[] uniqueAttribute4 = new String[1];
-
+    //简单渲染
+    private static final int RENDER_TYPE_SIMPLE=0;
+    //唯一值渲染
+    private static final int RENDER_TYPE_UNIQUE=1;
 
     public RenderSetDialog(@NonNull Context context, @StyleRes int themeResId,ILayerView layerView,LayerControlPresenter layerControlPresenter) {
         super(context, themeResId);
@@ -282,55 +279,50 @@ public class RenderSetDialog extends Dialog {
     }
 
 
-    private UniqueValueRenderer initUniqueValue(){
-        uvrenderer = new UniqueValueRenderer();
+    /**
+     * @param myLayer 图层
+     * @param fieldMap 类型字段集合
+     * @param seekValue 透明度
+     * @return 唯一值渲染器
+     */
+    private UniqueValueRenderer initUniqueValue(MyLayer myLayer,Map<String,String> fieldMap,int seekValue){
+        //初始化参数
+        UniqueValueRenderer uvrenderer = new UniqueValueRenderer();
         uvrenderer.setField1("LUCODE");
-        uv1 = new UniqueValue();
-        uv2 = new UniqueValue();
-        uv3 = new UniqueValue();
-        uv4 = new UniqueValue();
-        uv5 = new UniqueValue();
-
-        uniqueAttribute1[0] = "01";
-        uv1.setDescription("01");
-        uv1.setValue(uniqueAttribute1);
-
-        uniqueAttribute2[0] = "02";
-        uv2.setDescription("02");
-        uv2.setValue(uniqueAttribute2);
-
-        uniqueAttribute3[0] = "03";
-        uv3.setDescription("03");
-        uv3.setValue(uniqueAttribute3);
-
-        uniqueAttribute4[0] = "04";
-        uv4.setDescription("04");
-        uv4.setValue(uniqueAttribute4);
-
-        final SimpleFillSymbol symbol1 = new SimpleFillSymbol(Color.BLUE);
-        final SimpleFillSymbol symbol2 = new SimpleFillSymbol(Color.CYAN);
-        final SimpleFillSymbol symbol3 = new SimpleFillSymbol(Color.GRAY);
-        final SimpleFillSymbol symbol4 = new SimpleFillSymbol(Color.MAGENTA);
-
-        defaultsymbol = new SimpleFillSymbol(Color.YELLOW);
-
-        uv1.setSymbol(symbol1);
-        uv2.setSymbol(symbol2);
-        uv3.setSymbol(symbol3);
-        uv4.setSymbol(symbol4);
-
+        UniqueValue[] uvs = new UniqueValue[fieldMap.size()];
+        String[][] uniqueAttributes = new String[fieldMap.size()][1];
+        SimpleFillSymbol[] symbols = new SimpleFillSymbol[fieldMap.size()];
+        //设置默认颜色
+        SimpleFillSymbol defaultsymbol = new SimpleFillSymbol(Color.YELLOW);
         uvrenderer.setDefaultSymbol(defaultsymbol);
-        uvrenderer.addUniqueValue(uv1);
-        uvrenderer.addUniqueValue(uv2);
-        uvrenderer.addUniqueValue(uv3);
-        uvrenderer.addUniqueValue(uv4);
 
+        int i =0;
+        for (String field:fieldMap.keySet()) {
+            uvs[i] = new UniqueValue();
+            uniqueAttributes[i] = new String[1];
+
+            uniqueAttributes[i][0] = fieldMap.get(field);
+            uvs[i].setDescription(fieldMap.get(field));
+            uvs[i].setValue(uniqueAttributes[i]);
+
+            int tcs = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + field + "tianchongse", R.color.nocolor);
+            int tcolor = Util.getColor(tcs, seekValue);
+            symbols[i] = new SimpleFillSymbol(tcolor);
+
+            uvs[i].setSymbol(symbols[i]);
+
+            uvrenderer.addUniqueValue(uvs[i]);
+
+            i++;
+        }
         return uvrenderer;
     }
     /**
      * 展示图层渲染设置
      */
-    public void showLayerRender(final MyLayer myLayer) {
+    public void showLayerRender(final MyLayer myLayer, final int renderType) {
+        EditText outlinewidth = null;
+        Map<String,String> fieldMap = null;
         final Dialog dialog = new Dialog(mContext, R.style.Dialog);
         // 展示图层透明度和图层颜色设置的dialog
         dialog.setContentView(R.layout.dialog_color_show);
@@ -361,30 +353,47 @@ public class RenderSetDialog extends Dialog {
                 textView.setText(arg0.getProgress() + "");
             }
         });
-        //填充色设置
-        final TextView tianchongse = (TextView) dialog.findViewById(R.id.tianchongse);
-        tianchongse.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tianchongse", R.color.nocolor));
-        tianchongse.setOnClickListener(new View.OnClickListener() {
+        if (renderType==RENDER_TYPE_SIMPLE){
+            View simpleView = dialog.findViewById(R.id.simple_render_color_set);
+            simpleView.setVisibility(View.VISIBLE);
+            //填充色设置
+            final TextView tianchongse = (TextView) simpleView.findViewById(R.id.tianchongse);
+            tianchongse.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tianchongse", R.color.nocolor));
+            tianchongse.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
-                ColorDialog colorDialog = new ColorDialog(mContext,R.style.Dialog,0, tianchongse, seekBar, myLayer);
-                BussUtil.setDialogParam(mContext, colorDialog, 0.35, 0.35, 0.6, 0.6);
-            }
-        });
-        //边界的设置
-        final EditText outlinewidth = (EditText) dialog.findViewById(R.id.outlinewidth);
-        outlinewidth.setText(MyApplication.sharedPreferences.getFloat(myLayer.getLayer().getName() + "owidth", 0) + "");
-        final TextView bianjiese = (TextView) dialog.findViewById(R.id.bianjiese);
-        bianjiese.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "bianjiese", R.color.nocolor));
-        bianjiese.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    ColorDialog colorDialog = new ColorDialog(mContext,R.style.Dialog,0, tianchongse, seekBar, myLayer,null);
+                    BussUtil.setDialogParam(mContext, colorDialog, 0.35, 0.4, 0.6, 0.7);
+                }
+            });
+            //边界的设置
+            outlinewidth = (EditText) simpleView.findViewById(R.id.outlinewidth);
+            outlinewidth.setText(MyApplication.sharedPreferences.getFloat(myLayer.getLayer().getName() + "owidth", 0) + "");
+            final TextView bianjiese = (TextView) simpleView.findViewById(R.id.bianjiese);
+            bianjiese.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "bianjiese", R.color.nocolor));
+            bianjiese.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
-                ColorDialog colorDialog = new ColorDialog(mContext,R.style.Dialog,1, bianjiese, seekBar, myLayer);
-                BussUtil.setDialogParam(mContext, colorDialog, 0.35, 0.35, 0.6, 0.6);
-            }
-        });
+                @Override
+                public void onClick(View arg0) {
+                    ColorDialog colorDialog = new ColorDialog(mContext,R.style.Dialog,1, bianjiese, seekBar, myLayer,null);
+                    BussUtil.setDialogParam(mContext, colorDialog, 0.35, 0.35, 0.6, 0.6);
+                }
+            });
+        }
+        if (renderType==RENDER_TYPE_UNIQUE){
+            ListView fieldList = (ListView) dialog.findViewById(R.id.unique_field_list);
+            fieldList.setVisibility(View.VISIBLE);
+            fieldMap = new HashMap<>();
+            fieldMap.put("房屋建筑","05");
+            fieldMap.put("林地","03");
+            fieldMap.put("耕地","01");
+            fieldMap.put("草地","04");
+            fieldMap.put("水域","10");
+            fieldMap.put("其他","100");
+            UniqueFieldAdapter adapter = new UniqueFieldAdapter(mContext,fieldMap,seekBar,myLayer);
+            fieldList.setAdapter(adapter);
+        }
 
         //重置按钮
         Button button = (Button) dialog.findViewById(R.id.symbo_reset);
@@ -414,13 +423,18 @@ public class RenderSetDialog extends Dialog {
         });
         //确定按钮
         RadioButton radioSure = (RadioButton) dialog.findViewById(R.id.layer_render_btn_sure);
+        final EditText finalOutlinewidth = outlinewidth;
+        final Map<String, String> finalFieldMap = fieldMap;
         radioSure.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 int txt = seekBar.getProgress();
-                //setLayerRenderer(txt, outlinewidth, myLayer);
-                myLayer.setRenderer(initUniqueValue());
+                if (renderType==RENDER_TYPE_SIMPLE) {
+                    setLayerSimpleRenderer(txt, finalOutlinewidth, myLayer);
+                }else if (renderType==RENDER_TYPE_UNIQUE){
+                    setLayerUniqueRender(myLayer,finalFieldMap,txt);
+                }
                 dialog.dismiss();
             }
         });
@@ -431,11 +445,15 @@ public class RenderSetDialog extends Dialog {
         BussUtil.setDialogParam(mContext, dialog, 0.75, 0.7, 0.5, 0.5);
     }
 
-    private void setLayerRenderer(int seekValue, EditText outlinewidth, MyLayer myLayer) {
-        int txt = seekValue;
+    //图层唯一值渲染
+    private void setLayerUniqueRender(MyLayer myLayer,Map<String,String> fieldMap,int seekValue){
+        myLayer.getLayer().setRenderer(initUniqueValue(myLayer,fieldMap,seekValue));
+    }
+    //图层简单渲染
+    private void setLayerSimpleRenderer(int seekValue, EditText outlinewidth, MyLayer myLayer) {
         //SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(sharedPreferences.getInt("color", Color.GREEN));
         int tcs = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tianchongse", R.color.nocolor);
-        int tcolor = Util.getColor(tcs, txt);//3158064  959459376
+        int tcolor = Util.getColor(tcs, seekValue);//3158064  959459376
         SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(tcolor);
         Object obj = outlinewidth.getText();
         float owidth = 0;

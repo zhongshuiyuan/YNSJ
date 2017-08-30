@@ -57,7 +57,7 @@ public class MyApplication extends Application {
 		 * 发布新版本时需要修改以及bugly isbug需要改成false等部分
 		 * 腾讯bugly 在android 4.4版本上有bug 启动报错
 		 */
-		CrashReport.initCrashReport(getApplicationContext(), "91c502125b", true);
+		CrashReport.initCrashReport(getApplicationContext(), "8885f21b4f", true);
 		instance = this;
 		/** 注册网络监听 */
 		//initNetworkReceiver();

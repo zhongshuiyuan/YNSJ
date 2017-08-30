@@ -24,9 +24,8 @@
         android:paddingLeft="7dp"
         android:textColor="@color/balck"
         android:textSize="16sp" />
-
     <Button
-        android:id="@+id/layer_render"
+        android:id="@+id/layer_render_unique"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:background="@drawable/background_view_rounded"
@@ -34,7 +33,19 @@
         android:gravity="center"
         android:padding="8dp"
         android:textSize="20sp"
-        android:text="@string/randersetting"
+        android:text="@string/unique_randersetting"
+        android:textColor="@color/blue" />
+
+    <Button
+        android:id="@+id/layer_render_simple"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:background="@drawable/background_view_rounded"
+        android:focusable="false"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textSize="20sp"
+        android:text="@string/simple_randersetting"
         android:textColor="@color/blue" />
 
 </LinearLayout>

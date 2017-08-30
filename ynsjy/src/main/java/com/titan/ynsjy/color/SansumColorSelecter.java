@@ -11,13 +11,15 @@ import android.widget.RelativeLayout;
 
 import com.titan.ynsjy.R;
 
+import static com.tencent.bugly.crashreport.crash.c.i;
+
 public class SansumColorSelecter extends RelativeLayout implements OnTouchListener {
 
 	private static final int TOTAL_COLOR = 16;
 	private ImageButton[] mAllColor = new ImageButton[TOTAL_COLOR];
 	private ColorSelecterLinstener mListener;
 	private boolean mIsDIYColor = false;
-	private ColorPickerView mColorPView;
+	private ColorPickView mColorPView;
 
 	private int[] mColorIcon = { R.id.color_1, R.id.color_2, R.id.color_3,
 			R.id.color_4, R.id.color_5, R.id.color_6, R.id.color_7,
@@ -45,8 +47,9 @@ public class SansumColorSelecter extends RelativeLayout implements OnTouchListen
 			mAllColor[i].setTag(i);
 			mAllColor[i].setOnTouchListener(this);
 		}
-		mColorPView = (ColorPickerView) findViewById(R.id.color_picker);
-		// mColorPView.setColorSelecter(this);
+		//mColorPView = (ColorPickerView) findViewById(R.id.color_picker);
+		mColorPView = (ColorPickView) findViewById(R.id.fill_colro_pick);
+		//mColorPView.setColorSelecter(this);
 	}
 
 //	public void setSelectColorButton(int color) {

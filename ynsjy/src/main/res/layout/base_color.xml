@@ -21,7 +21,7 @@
         android:layout_alignParentBottom="true"
         android:padding="10dp"
         android:text="@string/sure"
-        android:visibility="gone"
+        android:visibility="visible"
         android:textColor="#ffffff"
         android:textSize="@dimen/larger_txtsize20" />
 

@@ -45,7 +45,7 @@
             android:layout_margin="3dp"
             android:background="@drawable/background_view_rec_graw"
             android:gravity="center"
-            android:text="@string/toumingdu"
+            android:text="@string/transparency"
             android:textColor="@color/blue"
             android:textSize="@dimen/larger_txtsize20" />
 

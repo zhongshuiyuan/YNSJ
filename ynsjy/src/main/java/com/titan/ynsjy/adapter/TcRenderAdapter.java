@@ -49,26 +49,34 @@ public class TcRenderAdapter extends BaseAdapter {
 		if (null == convertView) {
 			holder = new ViewHolder();
 			convertView = inflater.inflate(R.layout.item_expandable_group, null);
-			holder.tv = (TextView) convertView.findViewById(R.id.id_group_txt);
-			holder.tv1 = (Button) convertView.findViewById(R.id.layer_render);
+			holder.tv_layerName = (TextView) convertView.findViewById(R.id.id_group_txt);
+			holder.btn_simple = (Button) convertView.findViewById(R.id.layer_render_simple);
+			holder.btn_unique = (Button) convertView.findViewById(R.id.layer_render_unique);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		holder.tv.setText(list.get(position).getLname());
-		holder.tv1.setOnClickListener(new View.OnClickListener() {
+		holder.tv_layerName.setText(list.get(position).getLname());
+		holder.btn_simple.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
-				renderSetDialog.showLayerRender(list.get(position));
+				renderSetDialog.showLayerRender(list.get(position),0);
+			}
+		});
+		holder.btn_unique.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				renderSetDialog.showLayerRender(list.get(position),1);
 			}
 		});
 		return convertView;
 	}
 
 	class ViewHolder {
-		TextView tv;
-		Button tv1;
+		TextView tv_layerName;
+		Button btn_simple;
+		Button btn_unique;
 	}
 
 }

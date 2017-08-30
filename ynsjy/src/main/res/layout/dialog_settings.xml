@@ -74,7 +74,8 @@
             android:padding="10dp"
             android:text="@string/versioncheck"
             android:textColor="@color/blue"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="gone"/>
 
         <View
             android:layout_width="match_parent"

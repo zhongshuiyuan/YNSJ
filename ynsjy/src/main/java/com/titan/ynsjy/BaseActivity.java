@@ -91,7 +91,6 @@ import com.esri.core.tasks.na.StopGraphic;
 import com.esri.core.tasks.query.QueryParameters;
 import com.titan.baselibrary.util.DialogParamsUtil;
 import com.titan.baselibrary.util.ProgressDialogUtil;
-import com.titan.versionupdata.VersionUpdata;
 import com.titan.ynsjy.adapter.FeatureResultAdapter;
 import com.titan.ynsjy.adapter.SetAdapter;
 import com.titan.ynsjy.custom.MorePopWindow;
@@ -384,15 +383,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
         isHaveSBH();
 
-        if(MyApplication.getInstance().hasNetWork()){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String updateurl = mContext.getResources().getString(R.string.apk_updata);
-                    new VersionUpdata(BaseActivity.this).checkVersion(updateurl);
-                }
-            }).start();
-        }
+//        if(MyApplication.getInstance().hasNetWork()){
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    String updateurl = mContext.getResources().getString(R.string.apk_updata);
+//                    new VersionUpdata(BaseActivity.this).checkVersion(updateurl);
+//                }
+//            }).start();
+//        }
     }
 
     public abstract View getParentView();

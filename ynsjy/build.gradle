@@ -21,6 +21,7 @@ android {
     }
     buildTypes {
         release {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -53,6 +54,14 @@ android {
 
 }
 
+repositories {
+    jcenter()
+    // Add the following ArcGIS repository
+    maven {
+        url 'https://esri.bintray.com/arcgis'
+    }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -79,6 +88,9 @@ dependencies {
     compile project(':photopicker')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:multidex:1.0.1'
+
+    // Add ArcGIS Runtime SDK for Android dependency
+    compile 'com.esri.arcgis.android:arcgis-android:10.2.9'
 }
 
 tasks.withType(JavaCompile) {
