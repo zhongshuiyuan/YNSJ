@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.esri.core.geometry.Point;
+import com.titan.model.Photo;
 import com.titan.ynsjy.dao.DaoMaster;
 import com.titan.ynsjy.dao.DaoMaster.DevOpenHelper;
 import com.titan.ynsjy.dao.DaoSession;
@@ -48,6 +49,37 @@ public class DataBaseHelper{
 
 	public synchronized static DataBaseHelper getInstance(Context context) {
 		return dataBaseHelperUtil;
+	}
+
+	/**
+	 * 新增照片
+	 * @param context
+	 * @param photo
+	 * @return
+	 */
+	public static boolean addNewPhoto(Context context, Photo photo) {
+		boolean flag = false;
+		try {
+			String databaseName = ResourcesManager.getInstance(context).getDataBase("guiji.sqlite");
+			Class.forName("jsqlite.JDBCDriver").newInstance();
+			Database db = new jsqlite.Database();
+			db.open(databaseName, jsqlite.Constants.SQLITE_OPEN_READWRITE);
+			String sql = "insert into photos(FK_FXH_UID,TIME,INFO,REMARK,ADDEESS,URI,Geometry) "
+					+ " values("+photo.getFk_Fxh_Uid()+","
+					+ photo.getTime() + ","
+					+ photo.getInfo() + ","
+					+ photo.getRemark() + ","
+					+ photo.getAddeess() + ","
+					+ photo.getUri() + ","
+					+ "geomfromtext('POINT(" + photo.getLon() + " " + photo.getLat() + ")',4490))";
+			db.exec(sql, null);
+			db.close();
+			flag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return flag;
+		}
+		return flag;
 	}
 	
 	/**����ֶε�geodatabase���ݿ����sqlite���ݿ�
