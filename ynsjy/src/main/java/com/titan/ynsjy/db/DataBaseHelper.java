@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.esri.core.geometry.Point;
+import com.titan.model.EditInfo;
 import com.titan.model.Photo;
 import com.titan.ynsjy.dao.DaoMaster;
 import com.titan.ynsjy.dao.DaoMaster.DevOpenHelper;
@@ -60,7 +61,7 @@ public class DataBaseHelper{
 	public static boolean addNewPhoto(Context context, Photo photo) {
 		boolean flag = false;
 		try {
-			String databaseName = ResourcesManager.getInstance(context).getDataBase("guiji.sqlite");
+			String databaseName = ResourcesManager.getInstance(context).getDataBase("db_sjy.sqlite");
 			Class.forName("jsqlite.JDBCDriver").newInstance();
 			Database db = new jsqlite.Database();
 			db.open(databaseName, jsqlite.Constants.SQLITE_OPEN_READWRITE);
@@ -81,6 +82,38 @@ public class DataBaseHelper{
 		}
 		return flag;
 	}
+
+    /**
+     * 保存编辑
+     * @param context
+     * @return
+     */
+    public static boolean saveEdit(Context context, EditInfo editInfo) {
+        boolean flag = false;
+        try {
+            String databaseName = ResourcesManager.getInstance(context).getDataBase("db_sjy.sqlite");
+            Class.forName("jsqlite.JDBCDriver").newInstance();
+            Database db = new jsqlite.Database();
+            db.open(databaseName, jsqlite.Constants.SQLITE_OPEN_READWRITE);
+            String sql = "insert into edit (FK_EDIT_UID,MODIFYINFO,MODIFYTIME,BEFOREINFO,AFTERINFO,INFO,REMARK,Geometry) "
+                    + " values("
+                    + editInfo.getFk_Edit_Uid()+","
+                    + editInfo.getModifyinfo() + ","
+                    + editInfo.getModifytime() + ","
+                    + editInfo.getBeforeinfo() + ","
+                    + editInfo.getAfterinfo() + ","
+                    + editInfo.getInfo() + ","
+                    + editInfo.getRemark() + ","
+                    + "GeomFromGeoJSON('"+editInfo.getGeometry()+"')";
+            db.exec(sql, null);
+            db.close();
+            flag = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return flag;
+        }
+        return flag;
+    }
 	
 	/**����ֶε�geodatabase���ݿ����sqlite���ݿ�
 	 * dbpath:���ݿ��ļ����ش��·��
