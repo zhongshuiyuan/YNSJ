@@ -93,18 +93,18 @@ dependencies {
     compile 'com.esri.arcgis.android:arcgis-android:10.2.9'
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-
-
-subprojects {
-    afterEvaluate { project ->
-        if (project.hasProperty("dependencies")) {
-            dependencies {
-                //compile 'com.esri.arcgisruntime:arcgis-android:10.2.4'
-            }
-        }
-    }
-}
+//tasks.withType(JavaCompile) {
+//    options.encoding = "UTF-8"
+//}
+//
+//
+//
+//subprojects {
+//    afterEvaluate { project ->
+//        if (project.hasProperty("dependencies")) {
+//            dependencies {
+//                //compile 'com.esri.arcgisruntime:arcgis-android:10.2.4'
+//            }
+//        }
+//    }
+//}
