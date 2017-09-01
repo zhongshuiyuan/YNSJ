@@ -30,7 +30,6 @@ public class YzlActivity extends BaseActivity {
 		
 		activitytype = getIntent().getStringExtra("name");
 		proData = BussUtil.getConfigXml(mContext,"yzl");
-		
 	}
 
 	@Override

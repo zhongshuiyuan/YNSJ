@@ -53,15 +53,15 @@ public class EditPhotoDialog extends Dialog {
 		if (bitmap != null) {
 			showimage.setImageBitmap(bitmap);
 		}
-		Button zuobiaobz = (Button) findViewById(R.id.zuobiaobz);
-		zuobiaobz.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				PhotoTask task = new PhotoTask(imagepath, "", zuobiao, "");
-				task.start();
-			}
-		});
+		//Button zuobiaobz = (Button) findViewById(R.id.zuobiaobz);
+//		zuobiaobz.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View arg0) {
+//				PhotoTask task = new PhotoTask(imagepath, "", zuobiao, "");
+//				task.start();
+//			}
+//		});
 		Button timebz = (Button) findViewById(R.id.timebz);
 		timebz.setOnClickListener(new View.OnClickListener() {
 

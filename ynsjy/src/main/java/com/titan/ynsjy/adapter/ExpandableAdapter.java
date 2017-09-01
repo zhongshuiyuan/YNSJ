@@ -74,6 +74,12 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 					.get(groups.get(groupPosition).getName())
 					.get(childPosition).getName().replace(".geodatabase", ""));
 		}
+//		if (childs.get(groupPosition).get(groups.get(groupPosition).getName())
+//				.get(childPosition).getName().endsWith(".shp")){
+//			holder.cText.setText(childs.get(groupPosition)
+//					.get(groups.get(groupPosition).getName())
+//					.get(childPosition).getName().replace(".shp", ""));
+//		}
 		
 		String path = childs.get(groupPosition).get(groups.get(groupPosition).getName()).get(childPosition).getPath();
 		boolean flag = childCheckBox.get(path);

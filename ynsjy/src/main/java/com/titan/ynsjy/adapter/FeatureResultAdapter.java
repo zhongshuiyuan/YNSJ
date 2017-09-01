@@ -13,6 +13,8 @@ import com.titan.ynsjy.R;
 import java.util.List;
 import java.util.Map;
 
+import static com.titan.ynsjy.BaseActivity.seflayerName;
+
 public class FeatureResultAdapter extends BaseAdapter {
 
 	Context mContext;
@@ -20,7 +22,7 @@ public class FeatureResultAdapter extends BaseAdapter {
 	Map<GeodatabaseFeature,String> selMap = null;
 	
 	
-	public FeatureResultAdapter(Context context, List<GeodatabaseFeature> list,Map<GeodatabaseFeature,String> selMap) {
+	public FeatureResultAdapter(Context context, List<GeodatabaseFeature> list, Map<GeodatabaseFeature,String> selMap) {
 		this.mContext = context;
 		this.list = list;
 		this.selMap = selMap;
@@ -61,7 +63,7 @@ public class FeatureResultAdapter extends BaseAdapter {
 		}
 		long field = list.get(position).getId();
 		String cname = selMap.get(list.get(position));
-		String lname = list.get(position).getTable().getTableName();
+		String lname = seflayerName ;//list.get(position).getTable().getTableName();
 		holder.tv.setText(cname+"--"+lname);
 		holder.tv1.setText(field+"");
 		

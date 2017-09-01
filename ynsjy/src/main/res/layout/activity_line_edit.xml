@@ -26,7 +26,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/photograph"
+            android:id="@+id/line_edit_photograph"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -40,7 +40,6 @@
             android:paddingRight="20dp"
             android:onClick="takephotop"
             android:text="拍照"
-            android:visibility="invisible"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
@@ -52,7 +51,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:layout_toLeftOf="@+id/photograph"
+            android:layout_toLeftOf="@+id/line_edit_photograph"
             android:background="@drawable/blue_btn_select"
             android:gravity="center"
             android:text="图片浏览"

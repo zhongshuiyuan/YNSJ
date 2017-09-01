@@ -13,6 +13,7 @@ import com.esri.core.map.CodedValueDomain;
 import com.esri.core.map.Field;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.util.Util;
 
 import java.util.ArrayList;
@@ -27,17 +28,17 @@ public class SetAdapter extends BaseAdapter {
 	List<GeodatabaseFeature> list = null;
 	private LayoutInflater inflater = null;
 	private Context context;
-	private String pname;
+	private  MyLayer myLayer;
 
 	private Map<String, String> xiangMap = new HashMap<String, String>();
 	private Map<String, String> xianMap = new HashMap<String, String>();
 	private Map<String, String> cunMap = new HashMap<String, String>();
 
-	public SetAdapter(List<GeodatabaseFeature> list,Context context,String pname) {
+	public SetAdapter(List<GeodatabaseFeature> list, Context context, MyLayer myLayer) {
 		inflater = LayoutInflater.from(context);
 		this.list = list;
 		this.context = context;
-		this.pname = pname;
+		this.myLayer = myLayer;
 		xianMap = Util.getXianValue(context);
 		xiangMap = Util.getXiangValue(context);
 		cunMap = Util.getCunValue(context);
@@ -81,11 +82,11 @@ public class SetAdapter extends BaseAdapter {
 		String xian = "", xiang = "", cun = "", xbh = "";// 对应 县 乡 村
 		String xianD = "", xiangD = "";
 
-		GeodatabaseFeature feature = list.get(position);
-		List<Field> lst = feature.getTable().getFields();
+        GeodatabaseFeature feature = list.get(position);
+		List<Field> lst = myLayer.getLayer().getFeatureTable().getFields();
 		for (Field f : lst) {
 
-			Object obj = feature.getAttributeValue(f);
+			Object obj = feature.getAttributeValue(f.getAlias());
 			CodedValueDomain domain = (CodedValueDomain) f.getDomain();
 
 			if (f.getAlias().contains("县")) {
@@ -154,11 +155,11 @@ public class SetAdapter extends BaseAdapter {
 		protected Void doInBackground(ViewHolder... holder) {
 			view =holder.clone();
 			int position = view[0].position;
-			GeodatabaseFeature feature = list.get(position);
-			List<Field> lst = feature.getTable().getFields();
+            GeodatabaseFeature feature = list.get(position);
+			List<Field> lst = myLayer.getLayer().getFeatureTable().getFields();
 			for (Field f : lst) {
 
-				Object obj = feature.getAttributeValue(f);
+				Object obj = feature.getAttributeValue(f.getAlias());
 				CodedValueDomain domain = (CodedValueDomain) f.getDomain();
 
 				if (f.getAlias().contains("县")) {

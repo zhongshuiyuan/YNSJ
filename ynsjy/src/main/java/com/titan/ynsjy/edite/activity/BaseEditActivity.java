@@ -30,7 +30,7 @@ import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.MyFeture;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.listviewinedittxt.Line;
-import com.titan.ynsjy.listviewinedittxt.LineAdapter;
+import com.titan.ynsjy.listviewinedittxt.SecondLineAdapter;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.CursorUtil;
 import com.titan.ynsjy.util.ResourcesManager;
@@ -84,7 +84,8 @@ public abstract class BaseEditActivity extends Activity {
     protected List<Field> fieldList = new ArrayList<>();
 
     protected ArrayList<Line> mLines;
-    protected LineAdapter mAdapter;
+    //protected LineAdapter mAdapter;
+    protected SecondLineAdapter mAdapter;
     /**图片字段*/
     protected Line pcLine;
     protected String picname;
@@ -114,12 +115,11 @@ public abstract class BaseEditActivity extends Activity {
         selGeoFeature = myFeture.getFeature();
         fid = selGeoFeature.getId();
         featureLayer = myFeture.getMyLayer().getLayer();
-        fieldList = selGeoFeature.getTable().getFields();
+        fieldList = featureLayer.getFeatureTable().getFields(); //selGeoFeature.getTable().getFields();
         LINE_NUM = selGeoFeature.getAttributes().size();
 
 
         listView = (ListView) childView.findViewById(R.id.listView_xbedit);
-
     }
 
     public abstract View getParentView();
@@ -138,12 +138,12 @@ public abstract class BaseEditActivity extends Activity {
         String xianD = "",xiangD= "";
         for (int i = 0; i < LINE_NUM; i++) {
             Field field = fieldList.get(i);
-            if (field.getAlias().equals("OBJECTID_1")|| field.getAlias().equals("OBJECTID")||field.getAlias().equals("Shape_Leng")){
+            if (field.getName().equals("OBJECTID_1")|| field.getName().equals("OBJECTID")||field.getName().equals("Shape_Leng")){
                 continue;
             }
             Line line = new Line();
             line.setNum(i);
-            line.setTview(field.getAlias());
+            line.setTview(field.getName());
             line.setfLength(field.getLength());
             line.setKey(field.getName());
             CodedValueDomain domain = (CodedValueDomain) field.getDomain();
@@ -156,9 +156,9 @@ public abstract class BaseEditActivity extends Activity {
             if(obj != null){
                 String value = obj.toString();
 
-                if(field.getAlias().contains("县") || field.getAlias().contains("XIAN") ||field.getAlias().contains("xian")){
+                if(field.getName().contains("县") || field.getName().contains("XIAN") ||field.getName().contains("xian")){
                     xianD = value;
-                }else if(field.getAlias().contains("乡") || field.getAlias().contains("XIANG") ||field.getAlias().contains("xiang")){
+                }else if(field.getName().contains("乡") || field.getName().contains("XIANG") ||field.getName().contains("xiang")){
                     xiangD = value;
                 }
 
@@ -175,14 +175,14 @@ public abstract class BaseEditActivity extends Activity {
                         if(key.equals(value)){
                             line.setText(values.get(key));
                             break;
-                        }else if(field.getAlias().contains("乡") || field.getAlias().contains("XIANG") ||field.getAlias().contains("xianG")){
+                        }else if(field.getName().contains("乡") || field.getName().contains("XIANG") ||field.getName().contains("xianG")){
                             if(!value.contains(xianD) && key.equals(xianD+value)){
                                 line.setText(values.get(key));
                                 break;
                             }else{
                                 line.setText(value);
                             }
-                        }else if(field.getAlias().contains("村")|| field.getAlias().contains("CUN") ||field.getAlias().contains("cun")){
+                        }else if(field.getName().contains("村")|| field.getName().contains("CUN") ||field.getName().contains("cun")){
                             if(value.contains(xiangD) && key.equals(xianD+value)){
                                 line.setText(values.get(key));
                                 break;
@@ -198,15 +198,15 @@ public abstract class BaseEditActivity extends Activity {
                     }
                 }else{
 
-                    if(field.getAlias().contains("县") || field.getName().equals("xian") || field.getName().equals("XIAN")){
+                    if(field.getName().contains("县") || field.getName().equals("xian") || field.getName().equals("XIAN")){
                         xianD = value;
                         String str = Util.getXXCValue(mContext, value, "", xianMap);
                         line.setText(str);
-                    }else if(field.getAlias().contains("乡") || field.getName().equals("xiang") || field.getName().equals("XIANG")){
+                    }else if(field.getName().contains("乡") || field.getName().equals("xiang") || field.getName().equals("XIANG")){
                         xiangD = value;
                         String str = Util.getXXCValue(mContext, value, xianD, xiangMap);
                         line.setText(str);
-                    }else if(field.getAlias().contains("村") || field.getName().equals("cun") || field.getName().equals("CUN")){
+                    }else if(field.getName().contains("村") || field.getName().equals("cun") || field.getName().equals("CUN")){
                         String str = value;
                         if(xiangD.contains(xianD)){
                             str = Util.getXXCValue(mContext, value, xiangD, cunMap);
@@ -346,7 +346,7 @@ public abstract class BaseEditActivity extends Activity {
                 Object value = geoFeature.getAttributes().get(field.getName());
                 if(value == null || value.equals(" ") || value.equals("")){
                     flag = true;
-                    obString = field.getAlias();
+                    obString = field.getName();
                     break;
                 }
             }
@@ -454,7 +454,7 @@ public abstract class BaseEditActivity extends Activity {
                 //textPaint.setShadowLayer(3f, 1, 1, Color.DKGRAY);
 
                 // 时间水印
-                String mark = pcLine.getTview()+"    唯一号:"+currentxbh +"  拍摄时间:"+getCurrTime("yyyy-MM-dd HH:mm:ss");
+                String mark = "拍摄时间:"+getCurrTime("yyyy-MM-dd HH:mm:ss");//pcLine.getTview()+"    唯一号:"+currentxbh +"
                 float textWidth = textPaint.measureText(mark);
                 canvas.drawText(mark, width1 - textWidth - 10, height1 - 26, textPaint);
 

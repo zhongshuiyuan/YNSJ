@@ -46,7 +46,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp"
+            android:visibility="gone">
 
             <CheckBox
                 android:id="@+id/cb_sl"
@@ -85,7 +86,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp"
+            android:visibility="gone">
 
             <CheckBox
                 android:id="@+id/cb_ys"

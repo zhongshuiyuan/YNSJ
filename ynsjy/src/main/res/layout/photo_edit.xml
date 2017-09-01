@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#ffffff"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,7 +55,62 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" >
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="添加图片信息"
+                        android:layout_margin="10dp"
+                        android:textSize="18sp"/>
+                    <EditText
+                        android:id="@+id/photo_edit_info"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="添加图片备注"
+                        android:layout_margin="10dp"
+                        android:textSize="18sp"/>
+                    <EditText
+                        android:id="@+id/photo_edit_remark"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="添加图片地址"
+                        android:layout_margin="10dp"
+                        android:textSize="18sp"/>
+                    <EditText
+                        android:id="@+id/photo_edit_address"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"/>
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
 
@@ -80,17 +136,8 @@
                 android:background="@drawable/background_view_button"
                 android:padding="10dp"
                 android:textColor="@color/white"
-                android:textSize="@dimen/larger_txtsize18" />
-            <Button
-                android:id="@+id/zuobiaobz"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="添加坐标标注" 
-                android:layout_margin="10dp"
-                android:background="@drawable/background_view_button"
-                android:padding="10dp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/larger_txtsize18" />
+                android:textSize="@dimen/larger_txtsize18"
+                android:visibility="gone"/>
             <Button
                 android:id="@+id/tianjiams"
                 android:layout_width="match_parent"
@@ -99,6 +146,7 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/background_view_button"
                 android:padding="10dp"
+                android:visibility="gone"
                 android:textColor="@color/white"
                 android:textSize="@dimen/larger_txtsize18" />
             <Button
@@ -106,6 +154,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="确定" 
+                android:layout_margin="10dp"
+                android:background="@drawable/background_view_button"
+                android:padding="10dp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/larger_txtsize18" />
+
+            <Button
+                android:id="@+id/photo_edit_close"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="返回"
                 android:layout_margin="10dp"
                 android:background="@drawable/background_view_button"
                 android:padding="10dp"

@@ -31,6 +31,8 @@ import com.titan.ynsjy.util.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.titan.ynsjy.BaseActivity.seflayerName;
+
 /**
  * Created by li on 2017/6/2.
  * 小班合并
@@ -51,7 +53,7 @@ public class MergeFeatureDialog extends Dialog{
         this.mContext = context;
     }
 
-    public MergeFeatureDialog(@NonNull Context context, @StyleRes int themeResId,List<GeodatabaseFeature> list,IBaseView baseView) {
+    public MergeFeatureDialog(@NonNull Context context, @StyleRes int themeResId, List<GeodatabaseFeature> list, IBaseView baseView) {
         super(context, themeResId);
         this.mContext = context;
         this.list = list;
@@ -91,7 +93,7 @@ public class MergeFeatureDialog extends Dialog{
                     public void run() {
                         mergedex = position;
                         mergeFeature = list.get(position);
-                        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(mergeFeature, BaseActivity.layerNameList);
+                        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
                         iBaseView.getGraphicLayer().removeAll();
                         Graphic graphic = new Graphic(mergeFeature.getGeometry(), new SimpleFillSymbol(Color.BLUE));
                         iBaseView.getGraphicLayer().addGraphic(graphic);

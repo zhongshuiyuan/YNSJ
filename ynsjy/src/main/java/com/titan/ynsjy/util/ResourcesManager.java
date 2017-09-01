@@ -401,8 +401,7 @@ public class ResourcesManager implements Serializable {
 			for (File file : files) {
 				if (file.isDirectory())
 					continue;
-				if (file.getName().endsWith(".otms")
-						|| file.getName().endsWith(".geodatabase")) {
+				if (file.getName().endsWith(".otms")||file.getName().endsWith(".geodatabase")) {
 					list.add(file);
 				}
 			}

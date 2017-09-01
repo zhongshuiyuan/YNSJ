@@ -180,7 +180,7 @@ public class DialogImpl implements IDialogDao {
         id = -1;
         int count = list.size();
         final Polyline polyline = new Polyline();
-        final LineSymbol lineSymbol = new SimpleLineSymbol(Color.RED, 3);;
+        final LineSymbol lineSymbol = new SimpleLineSymbol(Color.RED, 3);
         for(int i=count-1;i>=0;i--){
             GjPoint gjPoint = list.get(i);
             final double lon = Double.parseDouble(gjPoint.getLon());
@@ -689,6 +689,7 @@ public class DialogImpl implements IDialogDao {
             }
             if(closeView != null){
                 closeView.setVisibility(View.GONE);
+                graphicsLayer.removeAll();
             }
         }
     }

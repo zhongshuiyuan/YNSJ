@@ -135,7 +135,6 @@ import com.titan.ynsjy.presenter.NavigationPresenter;
 import com.titan.ynsjy.presenter.RepairPresenter;
 import com.titan.ynsjy.presenter.StatisticsSpacePresenter;
 import com.titan.ynsjy.presenter.TrajectoryPresenter;
-import com.titan.ynsjy.presenter.XbqueryPresenter;
 import com.titan.ynsjy.service.RetrofitHelper;
 import com.titan.ynsjy.util.ArcGISUtils;
 import com.titan.ynsjy.util.BaseUtil;
@@ -290,7 +289,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /*小班属性编辑时的id*/
     //public static long sefID;
     /*小班属性编辑时的所选择图层名称*/
-    //public static String seflayerName;
+    public static String seflayerName;
     /* 选择图斑的属性信息 */
     public static Map<String, Object> selectFeatureAts = null;
     /*选择图斑的属性字段 */
@@ -313,6 +312,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     private long firstTime = 0;
     private static final int ALBUM = 0x000002;
     private static final int TAKE_PHOTO = 0x000001;
+    private static final int EDIT_FEATURE = 0x000004;
     private String mCurrentPhotoPath = "";// 图片路径
     public static Point touchpoint;
     /*GPS位置监听 */
@@ -335,7 +335,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     public RepairPresenter repairPresenter;
     public NavigationPresenter navigationPresenter;
     public GpsCollectPresenter gpsCollectPresenter;
-    public XbqueryPresenter xbqueryPresenter;
+    //public XbqueryPresenter xbqueryPresenter;
     public TrajectoryPresenter trajectoryPresenter;
     public LayerControlPresenter layerControlPresenter;
     public LayerLablePresenter lablePresenter;
@@ -360,7 +360,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         //setContentView(R.layout.activity_base);
         //去除arcgis文字
         ///ArcGISRuntimeEnvironment.setLicense("runtimelite,1000,rud8065403504,none,RP5X0H4AH7CLJ9HSX018");
-        // ArcGISRuntime.setClientId("qwvvlkN4jCDmbEAO");//去除水印的
+        //ArcGISRuntime.setClientId("qwvvlkN4jCDmbEAO");//去除水印的
         /*初始化数据*/
         initData();
         /* 定位设置 */
@@ -401,7 +401,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      */
     private void initPresenter() {
         basePresenter = new BasePresenter(BaseActivity.this, this);
-        xbqueryPresenter = new XbqueryPresenter(mContext,this);
+        //xbqueryPresenter = new XbqueryPresenter(mContext,this);
         trajectoryPresenter = new TrajectoryPresenter(BaseActivity.this,this);
         gpsCollectPresenter = new GpsCollectPresenter(mContext, this);
         navigationPresenter = new NavigationPresenter(mContext, this);
@@ -1700,7 +1700,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 } else if (layerNameList.size() > 0) {
                     if (layerNameList.size() == 1) {
                         basePresenter.getMylayer();
-                        xbqueryPresenter.showSearchXBjd(xbSearchJdInclude);
+                        //xbqueryPresenter.showSearchXBjd(xbSearchJdInclude);
                     } else {
                         showFeatureLayer(ActionMode.MODE_XBSEARCHJD, layerNameList);
                     }
@@ -1714,7 +1714,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 } else if (layerNameList.size() > 0) {
                     if (layerNameList.size() == 1) {
                         basePresenter.getMylayer();
-                        xbqueryPresenter.showSearchXiaoZDY(xbSearchZdyInclude);
+                        //xbqueryPresenter.showSearchXiaoZDY(xbSearchZdyInclude);
                     } else {
                         showFeatureLayer(ActionMode.MODE_XBSEARCHZDY, layerNameList);
                     }
@@ -1842,14 +1842,14 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case TAKE_PHOTO:// 拍照
-                if (resultCode == RESULT_OK) {
-                    EditPhotoDialog dialog = new EditPhotoDialog(mContext,
-                            R.style.Dialog, mCurrentPhotoPath, currentPoint);
-                    dialog.show();
-                    personCenterPopup.dismiss();
-                }
-                break;
+//            case TAKE_PHOTO:// 拍照
+//                if (resultCode == RESULT_OK) {
+//                    EditPhotoDialog dialog = new EditPhotoDialog(mContext,
+//                            R.style.Dialog, mCurrentPhotoPath, currentPoint);
+//                    dialog.show();
+//                    personCenterPopup.dismiss();
+//                }
+//                break;
             case ALBUM:// 从相册选取
                 if (resultCode == RESULT_OK && null != data) {
                     Uri selectedImage = data.getData();
@@ -1867,10 +1867,35 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 }
                 break;
             case PicUpDialog.PICK_PHOTO:
-                if (requestCode == 3 && resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     PicUpDialog.initSelectPics(mContext,data);
                 }
-            break;
+                break;
+            case EDIT_FEATURE:
+                if(resultCode==1){
+                    String gname = layerControlPresenter.gname;
+                    String cname = layerControlPresenter.cname;
+                    final String path = layerControlPresenter.path;
+                    for (int i = 0; i < layerNameList.size(); i++) {
+                        if (gname.equals(layerNameList.get(i).getPname())&&cname.equals(layerNameList.get(i).getCname())){
+                            boolean encryption = layerNameList.get(i).isFlag();
+                            if(encryption){
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        SytemUtil.jiamicript(path);
+                                    }
+                                }).start();
+                            }
+                            mapView.removeLayer(layerNameList.get(i).getLayer());
+                        }
+                    }
+                    boolean flag = SytemUtil.checkGeodatabase(path);
+                    if (flag) {
+                        SytemUtil.decript(path);
+                    }
+                    layerControlPresenter.loadGeodatabase(path,flag,gname,cname);
+                }
             default:
                 break;
         }
@@ -2150,7 +2175,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      */
     public void attributeFeture(View view) {
         initTouch();
-        List<GeodatabaseFeature> data = new ArrayList<GeodatabaseFeature>();
+        List<GeodatabaseFeature> data = new ArrayList<>();
         data.addAll(selGeoFeaturesList);
         int size = data.size();
         if (size > 0) {
@@ -2163,7 +2188,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             }
         } else {
             attributButton.setChecked(false);
-            ToastUtil.setToast(mContext, "未任何选中图斑");
+            ToastUtil.setToast(mContext, "未选中任何图斑");
         }
     }
 
@@ -2956,7 +2981,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         bundle.putSerializable("parent", "Base");
         bundle.putSerializable("id", selGeoFeature.getId() + "");
         intent.putExtras(bundle);
-        startActivity(intent);
+        startActivityForResult(intent,EDIT_FEATURE);
         feture = null;
     }
 
@@ -2974,7 +2999,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     GeodatabaseFeature feature = selGeoFeaturesList.get(position);
-                    MyLayer myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(feature,layerNameList);
+                    MyLayer myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(seflayerName,layerNameList);
                     FeatureTable featureTable = myLayer.getTable();
 
                     featureTable.deleteFeature(id);
@@ -3044,7 +3069,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 return;
             }
             FeatureLayer layer = myLayer.getLayer();
-            GeodatabaseFeatureTable table = myLayer.getTable();
+            GeodatabaseFeatureTable table =  myLayer.getTable();
             long id = table.addFeature(feature);
 
 			/* 添加小班后 记录添加小班的id 备撤销时删除 */
@@ -3179,7 +3204,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                             Iterator<Object> iterator = featureResult.iterator();
                             GeodatabaseFeature geodatabaseFeature = null;
                             while (iterator.hasNext()) {
-                                geodatabaseFeature = (GeodatabaseFeature) iterator.next();
+                                geodatabaseFeature = (GeodatabaseFeature)iterator.next();
                                 selGeoFeaturesList.add(geodatabaseFeature);
                                 selMap.put(geodatabaseFeature, layer.getCname());
                             }
@@ -3241,7 +3266,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     public GeodatabaseFeature getSelParams(List<GeodatabaseFeature> list, int position) {
 
         GeodatabaseFeature feature = list.get(position);
-        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(feature,layerNameList);
+        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(seflayerName,layerNameList);
         if (myLayer == null) {
             ToastUtil.setToast(mContext, "数据图层已经移除，请重新选择小班");
             return null;
@@ -3251,7 +3276,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             selGeoFeature = (GeodatabaseFeature) myLayer.getTable().getFeature(id);
             selectGeometry = selGeoFeature.getGeometry();
             selectFeatureAts = selGeoFeature.getAttributes();
-            selectfiledList = selGeoFeature.getTable().getFields();
+            //selectfiledList = myLayer.getTable().getFields();
         } catch (TableException e) {
             e.printStackTrace();
         }
@@ -3384,7 +3409,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             view.setVisibility(View.VISIBLE);
         }
         ListView listView = (ListView) xbqdInclude.findViewById(R.id.xb_data_listview);
-        SetAdapter adapter = new SetAdapter(datalist, mContext, layer.getPname());
+        SetAdapter adapter = new SetAdapter(datalist, mContext, myLayer);
         BaseUtil.getIntance(mContext).setHeight(adapter, listView);
         listView.setAdapter(adapter);
 
@@ -3429,7 +3454,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      * 点击地图获取地图点坐标数据并展示
      */
     public void addCalloutPoint(MapView map, Point mappoint) {
-        Point point = (Point) GeometryEngine.project(mappoint, spatialReference, SpatialReference.create(4326));
+        Point point = (Point) GeometryEngine.project(mappoint, spatialReference, SpatialReference.create(4507));
         XmlPullParser parser = getResources().getXml(R.xml.calloutpopuwindowstyle);
 
         CalloutStyle style = new CalloutStyle(mContext, Xml.asAttributeSet(parser));
@@ -3685,7 +3710,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             ToastUtil.setToast(mContext, "你选择的小班为设计小班,不可编辑请重新选择编辑图层");
             return;
         }
-        SytemUtil.getEditSymbo(BaseActivity.this, myLayer.getLayer());
+        //SytemUtil.getEditSymbo(BaseActivity.this, myLayer.getLayer());
         dialog.dismiss();
         if (mode == ActionMode.MODE_XBQD) {
             ProgressDialogUtil.startProgressDialog(mContext);
@@ -3694,10 +3719,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             showDialogKjtj();
         } else if (mode == ActionMode.MODE_XBSEARCHZDY) {
 					/* 小班自定义查询 */
-            xbqueryPresenter.showSearchXiaoZDY(xbSearchZdyInclude);
+            //xbqueryPresenter.showSearchXiaoZDY(xbSearchZdyInclude);
         } else if (mode == ActionMode.MODE_XBSEARCHJD) {
 					/* 小班简单查询 */
-            xbqueryPresenter.showSearchXBjd(xbSearchJdInclude);
+            //xbqueryPresenter.showSearchXBjd(xbSearchJdInclude);
         } else if (mode == ActionMode.MODE_EDIT_ADD) {
 					/* 新增图斑 */
             if (layerType.equals(Geometry.Type.POINT)) {
@@ -3734,7 +3759,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
         } else if (mode == ActionMode.MODE_EDIT_ADD_GB) {
             String tbname1 = myLayer.getTable().getTableName();
-            String tbname2 = selGeoFeaturesList.get(0).getTable().getTableName();
+            String tbname2 = seflayerName;//selGeoFeaturesList.get(0).getTable().getTableName();
             if (!tbname1.equals(tbname2)) {
                 ToastUtil.setToast(mContext, "选择添加数据图层与选中小班不在一个数据图层");
                 return;

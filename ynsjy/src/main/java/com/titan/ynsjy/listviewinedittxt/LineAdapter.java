@@ -74,8 +74,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
-
 /**
  * Created by li on 2017/6/16.
  * 面属性编辑adapter
@@ -94,6 +92,7 @@ public class LineAdapter extends BaseAdapter {
 	//private List<Row> notes = new ArrayList<Row>();
 	/* 标识数据是否修改了 */
 	public boolean saveflag = false;
+	boolean flag;//是否可修改
 	public HashMap<String, String> hashMap = new HashMap<String, String>();
 
 	@SuppressLint("SimpleDateFormat")
@@ -108,9 +107,10 @@ public class LineAdapter extends BaseAdapter {
 
 	MyFeture myFeture = null;
 
-	public LineAdapter(XbEditActivity context, List<Line> lines, MyFeture myFeture) {
+	public LineAdapter(XbEditActivity context, List<Line> lines, MyFeture myFeture,boolean flag) {
 		this.mContext = context;
 		this.lines = lines;
+		this.flag = flag;
 		this.myFeture = myFeture;
 		this.pname = myFeture.getPname();
 		this.featureLayer = myFeture.getMyLayer().getLayer();
@@ -164,7 +164,7 @@ public class LineAdapter extends BaseAdapter {
 		holder.tvLine.setText(alias);
 
 		String key = line.getKey();
-		boolean flag = false;
+
 		String layername = featureLayer.getFeatureTable().getTableName();
 		if (layername.contains("设计") || pname.contains("设计")) {
 			flag = true;
@@ -190,9 +190,9 @@ public class LineAdapter extends BaseAdapter {
 //			//holder.etLine.setBackgroundColor(Color.RED);
 //		}
 
-		if(!line.isNullable() && !line.getKey().contains("OBJECTID")){
-			holder.tvLine.setBackgroundColor(Color.RED);
-		}
+//		if(!line.isNullable() && !line.getKey().contains("OBJECTID")){
+//			holder.tvLine.setBackgroundColor(Color.RED);
+//		}
 
 		if (line.isFocus()) {
 			if (!holder.etLine.isFocused()) {

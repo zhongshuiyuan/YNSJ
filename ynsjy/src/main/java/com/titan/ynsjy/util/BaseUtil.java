@@ -21,7 +21,6 @@ import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.symbol.TextSymbol;
-import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.entity.MyLayer;
 
@@ -51,14 +50,14 @@ public class BaseUtil {
     /**
      * 获取操作小班所在 featureLayer
      */
-    public MyLayer getFeatureInLayer(GeodatabaseFeature feature,List<MyLayer> layerNameList) {
+    public MyLayer getFeatureInLayer(String tableName, List<MyLayer> layerNameList) {
         MyLayer myLayer = null;
         for (MyLayer layer : layerNameList) {
             String name = layer.getTable().getTableName();
-            String tbname = feature.getTable().getTableName();
-            if (name.equals(tbname)) {
+            //String tbname = ;//要ShapefileFeature的名字，记得改
+            if (name.equals(tableName)) {
                 myLayer = layer;
-                SytemUtil.getEditSymbo((BaseActivity) mContext, layer.getLayer());
+                //SytemUtil.getEditSymbo((BaseActivity) mContext, layer.getLayer());
                 break;
             }
         }
@@ -141,16 +140,16 @@ public class BaseUtil {
      */
     public static boolean checkGeoFeature(List<GeodatabaseFeature> selGeoFeaturesList) {
         boolean flag = true;
-        GeodatabaseFeature feature = selGeoFeaturesList.get(0);
-        String tbname = feature.getTable().getTableName();
-        for (GeodatabaseFeature f : selGeoFeaturesList) {
-            String tbn = f.getTable().getTableName();
-            if (tbname.equals(tbn)) {
-                flag = true;
-            } else {
-                return false;
-            }
-        }
+//        GeodatabaseFeature feature = selGeoFeaturesList.get(0);
+//        String tbname = feature.getTable().getTableName();
+//        for (GeodatabaseFeature f : selGeoFeaturesList) {
+//            String tbn = f.getTable().getTableName();
+//            if (tbname.equals(tbn)) {
+//                flag = true;
+//            } else {
+//                return false;
+//            }
+//        }
         return flag;
     }
 

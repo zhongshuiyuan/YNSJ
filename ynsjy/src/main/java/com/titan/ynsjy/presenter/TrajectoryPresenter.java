@@ -314,7 +314,6 @@ public class TrajectoryPresenter {
             @Override
             public void onClick(View arg0) {
                 view.setVisibility(View.GONE);
-                iBaseView.getGraphicLayer().removeAll();
             }
         });
     }

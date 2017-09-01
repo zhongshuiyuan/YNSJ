@@ -26,7 +26,6 @@
             android:textSize="16sp" />
         
         <TextView
-            android:onClick="takephotop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -39,12 +38,12 @@
             android:paddingRight="20dp"
             android:text="红色部分为必须填写字段"
             android:textColor="@color/red"
+            android:visibility="gone"
             android:textSize="18sp" />
-        
 
         <TextView
             android:onClick="takephoto"
-            android:id="@+id/photograph"
+            android:id="@+id/fragment_photograph"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -57,7 +56,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:text="拍照"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
@@ -69,10 +68,38 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:layout_toLeftOf="@+id/photograph"
+            android:layout_toLeftOf="@+id/fragment_photograph"
             android:background="@drawable/blue_btn_select"
             android:gravity="center"
             android:text="图片浏览"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/ld_audit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@+id/ld_see_pic"
+            android:background="@drawable/blue_btn_select"
+            android:gravity="center"
+            android:text="审计"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/ld_audit_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@+id/ld_audit"
+            android:background="@drawable/blue_btn_select"
+            android:gravity="center"
+            android:text="审计历史"
             android:textColor="@color/white"
             android:textSize="18sp" />
     </RelativeLayout>

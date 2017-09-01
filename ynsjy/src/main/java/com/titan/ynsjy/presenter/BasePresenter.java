@@ -27,8 +27,6 @@ import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.core.geodatabase.GeodatabaseFeature;
-import com.esri.core.geodatabase.GeodatabaseFeatureTable;
-import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.MultiPath;
@@ -66,7 +64,6 @@ import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.CursorUtil;
 import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.SymbolUtil;
-import com.titan.ynsjy.util.SytemUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
@@ -87,6 +84,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static com.titan.ynsjy.BaseActivity.seflayerName;
 
 /**
  * Created by li on 2017/5/9.
@@ -437,7 +436,7 @@ public class BasePresenter {
                 bundle.putSerializable("parent", "Base");
                 bundle.putSerializable("id", BaseActivity.selGeoFeature.getId() + "");
                 intent.putExtras(bundle);
-                baseActivity.startActivity(intent);
+                baseActivity.startActivityForResult(intent,4);
                 feture = null;
             }
         });
@@ -732,7 +731,7 @@ public class BasePresenter {
         String layername = BaseActivity.myLayer.getLname();
 
         ToastUtil.setToast(baseActivity, layername);
-        SytemUtil.getEditSymbo(baseActivity, BaseActivity.myLayer.getLayer());
+        //SytemUtil.getEditSymbo(baseActivity, BaseActivity.myLayer.getLayer());
     }
 
     /**
@@ -813,7 +812,7 @@ public class BasePresenter {
      * id  feature的id
      */
     public void delFeature(GeodatabaseFeature feature) {
-        MyLayer myLayer = BaseUtil.getIntance(baseActivity).getFeatureInLayer(feature, BaseActivity.layerNameList);
+        MyLayer myLayer = BaseUtil.getIntance(baseActivity).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
         FeatureTable featureTable = myLayer.getTable();
         try {
             featureTable.deleteFeature(feature.getId());
@@ -847,47 +846,47 @@ public class BasePresenter {
      * selFeatureAts  图层属性
      */
     public void addFeatureOnLayer(Geometry geom, Map<String, Object> selFeatureAts) {
-        try {
-            if (geom.isEmpty() || !geom.isValid()) {
-                return;
-            }
-
-            Envelope envelope = new Envelope();
-            geom.queryEnvelope(envelope);
-            if (envelope.isEmpty() || !envelope.isValid()) {
-                return;
-            }
-
-            GeodatabaseFeatureTable table = BaseActivity.myLayer.getTable();
-            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
-            Symbol symbol = BaseActivity.myLayer.getRenderer().getSymbol(g);
-            // symbol为null也可以 why？
-            Map<String, Object> editAttributes = null;
-            if (selFeatureAts == null) {
-                editAttributes = g.getAttributes();
-            } else {
-                editAttributes = selFeatureAts;
-            }
-            //TODO
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-            String str = format.format(new Date());
-            editAttributes.put("WYBH", str);
-
-            Graphic addedGraphic = new Graphic(geom, symbol, editAttributes);
-            long id = table.addFeature(addedGraphic);
-
-            Feature feature = table.getFeature(id);
-            Geometry geometry = feature.getGeometry();
-            if (geometry.isEmpty() || !geometry.isValid()) {
-                table.deleteFeature(id);
-            } else {
-				/* 添加小班后 记录添加小班的id 备撤销时删除 */
-                recordXb(id, "add", editAttributes, geom, BaseActivity.myLayer.getLayer());
-            }
-        } catch (TableException e) {
-            e.printStackTrace();
-        }
-        mapView.invalidate();
+//        try {
+//            if (geom.isEmpty() || !geom.isValid()) {
+//                return;
+//            }
+//
+//            Envelope envelope = new Envelope();
+//            geom.queryEnvelope(envelope);
+//            if (envelope.isEmpty() || !envelope.isValid()) {
+//                return;
+//            }
+//
+//            GeodatabaseFeatureTable table =  BaseActivity.myLayer.getTable();
+//            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
+//            Symbol symbol = BaseActivity.myLayer.getRenderer().getSymbol(g);
+//            // symbol为null也可以 why？
+//            Map<String, Object> editAttributes = null;
+//            if (selFeatureAts == null) {
+//                editAttributes = g.getAttributes();
+//            } else {
+//                editAttributes = selFeatureAts;
+//            }
+//            //TODO
+//            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+//            String str = format.format(new Date());
+//            editAttributes.put("WYBH", str);
+//
+//            Graphic addedGraphic = new Graphic(geom, symbol, editAttributes);
+//            long id = table.addFeature(addedGraphic);
+//
+//            Feature feature = table.getFeature(id);
+//            Geometry geometry = feature.getGeometry();
+//            if (geometry.isEmpty() || !geometry.isValid()) {
+//                table.deleteFeature(id);
+//            } else {
+//				/* 添加小班后 记录添加小班的id 备撤销时删除 */
+//                recordXb(id, "add", editAttributes, geom, BaseActivity.myLayer.getLayer());
+//            }
+//        } catch (TableException e) {
+//            e.printStackTrace();
+//        }
+//        mapView.invalidate();
     }
 
     /**
@@ -917,14 +916,14 @@ public class BasePresenter {
                     return;
                 }
             }
-
-            GeodatabaseFeature g = BaseActivity.myLayer.getTable().createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
+//            GeodatabaseFeatureTable table = BaseActivity.myLayer.getTable();
+//            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
+            Feature g =  BaseActivity.selGeoFeature;
             Symbol symbol = BaseActivity.myLayer.getRenderer().getSymbol(g);
             // symbol为null也可以 why？
-            if (selectFeatureAts == null) {
-                selectFeatureAts = g.getAttributes();
-            }
-            //TODO
+//            if (selectFeatureAts == null) {
+//                selectFeatureAts = g.getAttributes();
+//            }
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
             String str = format.format(new Date());
             selectFeatureAts.put("WYBH", str);
@@ -968,9 +967,9 @@ public class BasePresenter {
         String pname = BaseActivity.myLayer.getPname();
         try {
             DecimalFormat format = new DecimalFormat("0.000000");
-            GeodatabaseFeatureTable table = BaseActivity.myLayer.getTable();
-            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
-            List<Field> pointFields = g.getTable().getFields();
+//            GeodatabaseFeatureTable table =(GeodatabaseFeatureTable) BaseActivity.myLayer.getTable();
+//            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
+            List<Field> pointFields = BaseActivity.myLayer.getTable().getFields();
             for (Field field : pointFields) {
                 if (field.getAlias().contains("横坐标") || field.getAlias().contains("经度")) {
                     baseActivity.layerFeatureAts.put(field.getName(), format.format(point_all.getX()));

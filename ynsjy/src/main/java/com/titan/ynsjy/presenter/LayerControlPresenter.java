@@ -44,12 +44,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.titan.ynsjy.BaseActivity.seflayerName;
+
 /**
  * Created by li on 2017/5/5.
  * 图层控制Presenter
  */
 
-public class LayerControlPresenter {
+public class LayerControlPresenter{
 
     private Context mContext;
     private LayerControlView controlView;
@@ -57,6 +59,10 @@ public class LayerControlPresenter {
     public Map<String, ArcGISLocalTiledLayer> imgTileLayerMap = new HashMap<>();
     /** 影像图文件地址 */
     public HashMap<String, Boolean> imgCheckMap = new HashMap<>();
+
+    public String gname;
+    public String cname;
+    public String path;
 
     private View childView;
     private View.OnClickListener onClickListener;
@@ -291,7 +297,7 @@ public class LayerControlPresenter {
 
                 String parentName = groups.get(gPosition).getName();
                 String childName = childs.get(gPosition).get(parentName).get(cPosition).getName().split("\\.")[0];
-                String path = childs.get(gPosition).get(parentName).get(cPosition).getPath();
+                path = childs.get(gPosition).get(parentName).get(cPosition).getPath();
 
                 boolean ischeck = controlView.getLayerCheckBox().get(path);
                 changeCBoxStatus(ischeck, path, parentName, childName);
@@ -381,8 +387,8 @@ public class LayerControlPresenter {
         if(flag){
             controlView.getLayerCheckBox().put(path, false);
             for (int j = 0; j < controlView.getLayerNameList().size();j++) {
-                String gname = controlView.getLayerNameList().get(j).getPname();
-                String cname = controlView.getLayerNameList().get(j).getCname();
+                 gname = controlView.getLayerNameList().get(j).getPname();
+                 cname = controlView.getLayerNameList().get(j).getCname();
                 if(gpname.equals(gname)&&childName.equals(cname)){
                     boolean encryption = controlView.getLayerNameList().get(j).isFlag();
                     if(encryption){
@@ -413,55 +419,64 @@ public class LayerControlPresenter {
     }
 
     /** 加载geodatabase数据 */
-    Geodatabase geodatabase;
-    private void loadGeodatabase(String path, boolean flag, String gname,String cname) {
-        try {
-            geodatabase = new Geodatabase(path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (RuntimeException e){
-            e.printStackTrace();
-            ToastUtil.setToast(mContext,"数据库错误");
-        }
-
-        if (geodatabase == null)
-            return;
-
+    private Geodatabase geodatabase;
+    public void loadGeodatabase(String path, boolean flag, String gname,String cname) {
         boolean ff = false;
-
-        List<GeodatabaseFeatureTable> list = geodatabase.getGeodatabaseTables();
-        for (GeodatabaseFeatureTable gdbFeatureTable : list) {
-            if (gdbFeatureTable.hasGeometry()) {
-                final FeatureLayer layer = new FeatureLayer(gdbFeatureTable);
-                if(controlView.getTitleLayer() != null && controlView.getTitleLayer().isInitialized()){
-                    SpatialReference sp1 = controlView.getTitleLayer().getSpatialReference();
-                    SpatialReference sp2 = layer.getDefaultSpatialReference();
-                    if(!sp1.equals(sp2)){
-                        ToastUtil.setToast(mContext, "加载数据与基础底图投影系不同,无法加载");
-                        continue;
-                    }
-                }
-
-                Renderer renderer = layer.getRenderer();
-                Renderer renderer1 = getHisSymbol(layer);
-                layer.setRenderer(renderer1);
-
-                ff = true;
-                controlView.getMapView().addLayer(layer);
-
-                MyLayer myLayer = new MyLayer();
-                myLayer.setPname(gname);
-                myLayer.setCname(cname);
-                myLayer.setPath(path);
-                myLayer.setFlag(flag);
-                myLayer.setLname(layer.getName());
-                myLayer.setSelectColor(layer.getSelectionColor());
-                myLayer.setRenderer(renderer);
-                myLayer.setLayer(layer);
-                myLayer.setTable(gdbFeatureTable);
-                controlView.getLayerNameList().add(myLayer);
+//        if (path.endsWith(".shp")){
+//            try {
+//                ff = true;
+//                GeodatabaseFeature featureTable = new GeodatabaseFeature(path);
+//                FeatureLayer layer = new FeatureLayer(featureTable);
+//                if(controlView.getTitleLayer() != null && controlView.getTitleLayer().isInitialized()){
+//                    SpatialReference sp1 = controlView.getTitleLayer().getSpatialReference();
+//                    SpatialReference sp2 = layer.getDefaultSpatialReference();
+//                    if(!sp1.equals(sp2)){
+//                        ToastUtil.setToast(mContext, "加载数据与基础底图投影系不同,无法加载");
+//                        return;
+//                    }
+//                }
+//                Renderer renderer = getHisSymbol(layer);
+//                layer.setRenderer(renderer);
+//
+//                controlView.getMapView().addLayer(layer);
+//                setMyLayer(gname,cname,path,flag,layer,featureTable);
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//        }else {
+            try {
+                geodatabase = new Geodatabase(path);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }catch (RuntimeException e){
+                e.printStackTrace();
+                ToastUtil.setToast(mContext,"数据库错误");
             }
-        }
+            if (geodatabase == null)
+                return;
+            List<GeodatabaseFeatureTable> list = geodatabase.getGeodatabaseTables();
+            for (GeodatabaseFeatureTable gdbFeatureTable : list) {
+                if (gdbFeatureTable.hasGeometry()) {
+                    final FeatureLayer layer = new FeatureLayer(gdbFeatureTable);
+                    if(controlView.getTitleLayer() != null && controlView.getTitleLayer().isInitialized()){
+                        SpatialReference sp1 = controlView.getTitleLayer().getSpatialReference();
+                        SpatialReference sp2 = layer.getDefaultSpatialReference();
+                        if(!sp1.equals(sp2)){
+                            ToastUtil.setToast(mContext, "加载数据与基础底图投影系不同,无法加载");
+                            continue;
+                        }
+                    }
+
+                    Renderer renderer = getHisSymbol(layer);
+                    layer.setRenderer(renderer);
+
+                    ff = true;
+                    controlView.getMapView().addLayer(layer);
+
+                    setMyLayer(gname,cname,path,flag,layer,gdbFeatureTable);
+                }
+            }
+//        }
 
         controlView.removeGraphicLayer();
         controlView.addGraphicLayer();
@@ -478,6 +493,22 @@ public class LayerControlPresenter {
         if(!file.exists()){
             Util.copyFile(mContext, fpath, "config_oo.xml", "config.xml");
         }
+    }
+
+    //设置MyLayer的相关信息
+    private void setMyLayer(String gname,String cname,String path,boolean flag,FeatureLayer layer,GeodatabaseFeatureTable featureTable){
+        MyLayer myLayer = new MyLayer();
+        myLayer.setPname(gname);
+        myLayer.setCname(cname);
+        myLayer.setPath(path);
+        myLayer.setFlag(flag);
+        myLayer.setLname(layer.getName());
+        myLayer.setSelectColor(layer.getSelectionColor());
+        myLayer.setRenderer(layer.getRenderer());
+        myLayer.setLayer(layer);
+        myLayer.setTable(featureTable);
+        seflayerName = featureTable.getTableName();
+        controlView.getLayerNameList().add(myLayer);
     }
 
     /**获取历史Renderer*/
@@ -548,4 +579,12 @@ public class LayerControlPresenter {
         }
     }
 
+//    @Override
+//    public void upLayerData() {
+//        boolean flag = SytemUtil.checkGeodatabase(path);
+//        if (flag) {
+//            SytemUtil.decript(path);
+//        }
+//        loadGeodatabase(path,true,gname,cname);
+//    }
 }

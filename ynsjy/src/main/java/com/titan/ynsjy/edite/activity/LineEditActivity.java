@@ -11,6 +11,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.esri.core.geodatabase.GeodatabaseFeature;
+import com.esri.core.map.CodedValueDomain;
 import com.esri.core.map.Field;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
@@ -22,8 +23,13 @@ import com.titan.ynsjy.listviewinedittxt.Line;
 import com.titan.ynsjy.listviewinedittxt.PolylineAdapter;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ToastUtil;
+import com.titan.ynsjy.util.Util;
+
 import java.io.File;
+import java.sql.Date;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -89,83 +95,83 @@ public class LineEditActivity extends BaseEditActivity {
 		return childView;
 	}
 
-//	/** 绑定数据*/
-//	private ArrayList<Line> createLines() {
-//		ArrayList<Line> lines = new ArrayList<Line>();
-//		String xianD = "",xiangD= "";
-//		for (int i = 0; i < LINE_NUM; i++) {
-//			Field field = fieldList.get(i);
-//			Line line = new Line();
-//			line.setNum(i);
-//			line.setTview(field.getAlias());
-//			line.setfLength(field.getLength());
-//			line.setKey(field.getName());
-//			CodedValueDomain domain = (CodedValueDomain) field.getDomain();
-//			line.setDomain(domain);
-//			line.setFieldType(field.getFieldType());
-//			boolean ff = field.isNullable();
-//			line.setNullable(ff);
-//
-//			Object obj = selGeoFeature.getAttributeValue(field.getName());
-//			if(obj != null){
-//				String value = obj.toString();
-//				if(line.getFieldType() == Field.esriFieldTypeDate){
-//					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//					Date date = new Date(Long.parseLong(obj.toString()));
-//					value = sdf.format(date);
-//				}
-//
-//				if(domain != null){
-//					Map<String, String> values = domain.getCodedValues();
-//					for(String key : values.keySet()){
-//						if(key.equals(value)){
-//							line.setText(values.get(key));
-//							break;
-//						}else{
-//							line.setText(value);
-//						}
-//					}
-//				}else{
-//
-//					if(field.getAlias().contains("县") || field.getName().equals("xian") || field.getName().equals("XIAN")){
-//						xianD = value;
-//						String str = Util.getXXCValue(mContext, value, "", xianMap);
-//						line.setText(str);
-//					}else if(field.getAlias().contains("乡") || field.getName().equals("xiang") || field.getName().equals("XIANG")){
-//						xiangD = value;
-//						String str = Util.getXXCValue(mContext, value, xianD, xiangMap);
-//						line.setText(str);
-//					}else if(field.getAlias().contains("村") || field.getName().equals("cun") || field.getName().equals("CUN")){
-//						String str = value;
-//						if(xiangD.contains(xianD)){
-//							str = Util.getXXCValue(mContext, value, xiangD, cunMap);
-//						}else{
-//							str = Util.getXXCValue(mContext, value,xianD+xiangD, cunMap);
-//						}
-//						line.setText(str);
-//					}else{
-//						List<Row> list = isDMField(field.getName());
-//						if(list != null && list.size() > 0){
-//							for(Row row : list){
-//								if(row.getId().equals(value)){
-//									line.setText(row.getName());
-//									break;
-//								}else{
-//									line.setText(value);
-//								}
-//							}
-//						}else{
-//							line.setText(value);
-//						}
-//					}
-//				}
-//			}else{
-//				line.setText("");
-//			}
-//			lines.add(line);
-//		}
-//		return lines;
-//	}
+	/** 绑定数据*/
+	public ArrayList<Line> createLines() {
+		ArrayList<Line> lines = new ArrayList<Line>();
+		String xianD = "",xiangD= "";
+		for (int i = 0; i < LINE_NUM; i++) {
+			Field field = fieldList.get(i);
+			Line line = new Line();
+			line.setNum(i);
+			line.setTview(field.getName());
+			line.setfLength(field.getLength());
+			line.setKey(field.getName());
+			CodedValueDomain domain = (CodedValueDomain) field.getDomain();
+			line.setDomain(domain);
+			line.setFieldType(field.getFieldType());
+			boolean ff = field.isNullable();
+			line.setNullable(ff);
+
+			Object obj = selGeoFeature.getAttributeValue(field.getName());
+			if(obj != null){
+				String value = obj.toString();
+				if(line.getFieldType() == Field.esriFieldTypeDate){
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date date = new Date(Long.parseLong(obj.toString()));
+					value = sdf.format(date);
+				}
+
+				if(domain != null){
+					Map<String, String> values = domain.getCodedValues();
+					for(String key : values.keySet()){
+						if(key.equals(value)){
+							line.setText(values.get(key));
+							break;
+						}else{
+							line.setText(value);
+						}
+					}
+				}else{
+
+					if(field.getName().contains("县") || field.getName().equals("xian") || field.getName().equals("XIAN")){
+						xianD = value;
+						String str = Util.getXXCValue(mContext, value, "", xianMap);
+						line.setText(str);
+					}else if(field.getName().contains("乡") || field.getName().equals("xiang") || field.getName().equals("XIANG")){
+						xiangD = value;
+						String str = Util.getXXCValue(mContext, value, xianD, xiangMap);
+						line.setText(str);
+					}else if(field.getName().contains("村") || field.getName().equals("cun") || field.getName().equals("CUN")){
+						String str = value;
+						if(xiangD.contains(xianD)){
+							str = Util.getXXCValue(mContext, value, xiangD, cunMap);
+						}else{
+							str = Util.getXXCValue(mContext, value,xianD+xiangD, cunMap);
+						}
+						line.setText(str);
+					}else{
+						List<Row> list = isDMField(field.getName());
+						if(list != null && list.size() > 0){
+							for(Row row : list){
+								if(row.getId().equals(value)){
+									line.setText(row.getName());
+									break;
+								}else{
+									line.setText(value);
+								}
+							}
+						}else{
+							line.setText(value);
+						}
+					}
+				}
+			}else{
+				line.setText("");
+			}
+			lines.add(line);
+		}
+		return lines;
+	}
 
 	class MyListener implements View.OnClickListener{
 
@@ -173,7 +179,7 @@ public class LineEditActivity extends BaseEditActivity {
 		public void onClick(View view) {
 			switch (view.getId()) {
 				case R.id.btnreturn:
-					finishThis();
+					//finishThis();
 					break;
 				case R.id.ld_see_pic:
 					/*图片浏览*/
