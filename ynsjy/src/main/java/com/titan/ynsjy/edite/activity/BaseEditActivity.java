@@ -30,7 +30,7 @@ import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.MyFeture;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.listviewinedittxt.Line;
-import com.titan.ynsjy.listviewinedittxt.SecondLineAdapter;
+import com.titan.ynsjy.listviewinedittxt.LineAdapter;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.CursorUtil;
 import com.titan.ynsjy.util.ResourcesManager;
@@ -84,15 +84,15 @@ public abstract class BaseEditActivity extends Activity {
     protected List<Field> fieldList = new ArrayList<>();
 
     protected ArrayList<Line> mLines;
-    //protected LineAdapter mAdapter;
-    protected SecondLineAdapter mAdapter;
+    protected LineAdapter mAdapter;
+    //protected SecondLineAdapter mAdapter;
     /**图片字段*/
     protected Line pcLine;
     protected String picname;
     protected EditText zpeditText;
     /**图片保存地址*/
     protected String picPath = "";
-    protected static final int TAKE_PICTURE = 0x000001;
+    public static final int TAKE_PICTURE = 0x000001;
     /** 记录小班的唯一编号 当前小班的小班号*/
     protected String currentxbh="";
 
@@ -143,9 +143,9 @@ public abstract class BaseEditActivity extends Activity {
             }
             Line line = new Line();
             line.setNum(i);
-            line.setTview(field.getName());
+            line.setTview(field.getAlias());
             line.setfLength(field.getLength());
-            line.setKey(field.getName());
+            line.setKey(field.getAlias());
             CodedValueDomain domain = (CodedValueDomain) field.getDomain();
             line.setDomain(domain);
             line.setFieldType(field.getFieldType());
@@ -156,9 +156,9 @@ public abstract class BaseEditActivity extends Activity {
             if(obj != null){
                 String value = obj.toString();
 
-                if(field.getName().contains("县") || field.getName().contains("XIAN") ||field.getName().contains("xian")){
+                if(field.getAlias().contains("县") || field.getName().contains("XIAN") ||field.getName().contains("xian")){
                     xianD = value;
-                }else if(field.getName().contains("乡") || field.getName().contains("XIANG") ||field.getName().contains("xiang")){
+                }else if(field.getAlias().contains("乡") || field.getName().contains("XIANG") ||field.getName().contains("xiang")){
                     xiangD = value;
                 }
 
@@ -175,14 +175,14 @@ public abstract class BaseEditActivity extends Activity {
                         if(key.equals(value)){
                             line.setText(values.get(key));
                             break;
-                        }else if(field.getName().contains("乡") || field.getName().contains("XIANG") ||field.getName().contains("xianG")){
+                        }else if(field.getAlias().contains("乡") || field.getName().contains("XIANG") ||field.getName().contains("xianG")){
                             if(!value.contains(xianD) && key.equals(xianD+value)){
                                 line.setText(values.get(key));
                                 break;
                             }else{
                                 line.setText(value);
                             }
-                        }else if(field.getName().contains("村")|| field.getName().contains("CUN") ||field.getName().contains("cun")){
+                        }else if(field.getAlias().contains("村")|| field.getName().contains("CUN") ||field.getName().contains("cun")){
                             if(value.contains(xiangD) && key.equals(xianD+value)){
                                 line.setText(values.get(key));
                                 break;
@@ -198,15 +198,15 @@ public abstract class BaseEditActivity extends Activity {
                     }
                 }else{
 
-                    if(field.getName().contains("县") || field.getName().equals("xian") || field.getName().equals("XIAN")){
+                    if(field.getAlias().contains("县") || field.getName().equals("xian") || field.getName().equals("XIAN")){
                         xianD = value;
                         String str = Util.getXXCValue(mContext, value, "", xianMap);
                         line.setText(str);
-                    }else if(field.getName().contains("乡") || field.getName().equals("xiang") || field.getName().equals("XIANG")){
+                    }else if(field.getAlias().contains("乡") || field.getName().equals("xiang") || field.getName().equals("XIANG")){
                         xiangD = value;
                         String str = Util.getXXCValue(mContext, value, xianD, xiangMap);
                         line.setText(str);
-                    }else if(field.getName().contains("村") || field.getName().equals("cun") || field.getName().equals("CUN")){
+                    }else if(field.getAlias().contains("村") || field.getName().equals("cun") || field.getName().equals("CUN")){
                         String str = value;
                         if(xiangD.contains(xianD)){
                             str = Util.getXXCValue(mContext, value, xiangD, cunMap);

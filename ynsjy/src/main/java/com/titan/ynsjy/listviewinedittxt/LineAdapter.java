@@ -213,9 +213,11 @@ public class LineAdapter extends BaseAdapter {
 
 				CodedValueDomain domain = line.getDomain();
 				hide(holder.etLine);
-				if (tview.contains("照片") || tview.contains("相片")) {
-					showTakePhoto(line);
-				} else if (tview.contains("时间") || tview.equals("dcsj")
+//				if (tview.contains("照片") || tview.contains("相片")) {
+//					//showTakePhoto(line);
+//					//showKeyDialog(line,holder.etLine);
+//				} else
+				if (tview.contains("时间") || tview.equals("dcsj")
 						|| tview.contains("日期")) {
 					initSelectTimePopuwindow(line, holder.etLine);
 				} else if (tview.contains("坐标") || tview.contains("经度")

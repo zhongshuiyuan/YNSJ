@@ -19,19 +19,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.titan.model.Photo;
+import com.esri.core.map.Graphic;
+import com.esri.core.table.FeatureTable;
+import com.esri.core.table.TableException;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.db.DataBaseHelper;
+import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.ScreenTool;
 import com.titan.ynsjy.mview.IUpLayerData;
+import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.UtilTime;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by hanyw on 2017/7/14/014.
@@ -48,14 +54,16 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
     private EditText ed_infor;//信息
     private EditText ed_mark;//备注
     private int labelTextSize;//标注文字大小
-    private long fk_Fxh_Uid;//对应数据ID
+    private Long fk_Fxh_Uid;//对应数据ID
+    private Long fk_Edit_Uid;//对应数据修改id
     private IUpLayerData listener;//图层更新回调监听
 
-    public EditPhoto(Context context, String path,long fk_Fxh_Uid) {
+    public EditPhoto(Context context, String path, Long fk_Fxh_Uid,Long fk_Edit_Uid) {
         super(context);
         this.mContext = context;
         this.photoPath = path;
         this.fk_Fxh_Uid = fk_Fxh_Uid;
+        this.fk_Edit_Uid = fk_Edit_Uid;
     }
 
     @Override
@@ -100,23 +108,40 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.sure://确定
                 deletFile(photoPath, mContext);
-                sure(ed_infor,photo.getHeight() - textSize, textSize);
+                sure(ed_infor, photo.getHeight() - textSize, textSize);
                 saveBitmap(photoPath, photo);
                 savePhotoInfo();
                 listener.upLayerData();
                 dismiss();
                 break;
             case R.id.photo_edit_close://返回
-                deletFile(photoPath,mContext);
+                deletFile(photoPath, mContext);
                 dismiss();
                 break;
         }
     }
 
+    private void savePhotoInfo() {
+        createFeature();
+    }
+
+    private void createFeature() {
+        MyLayer myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("photo", BaseActivity.layerNameList);
+        FeatureTable featureTable = myLayer.getTable();
+        Graphic g = new Graphic(null, null,setPhotoInfo());
+        try {
+            long newId = featureTable.addFeature(g);
+            featureTable.updateFeature(newId,g);
+        } catch (TableException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
         if (view.getVisibility() == View.VISIBLE && keyCode == KeyEvent.KEYCODE_BACK) {
-            deletFile(photoPath,mContext);
+            deletFile(photoPath, mContext);
             dismiss();
             return false;
         } else {
@@ -124,26 +149,27 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
         }
     }
 
-    private void savePhotoInfo() {
-        Photo photo = new Photo();
-//        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        String d = format.format(System.currentTimeMillis());
-        Date date = new Date(System.currentTimeMillis());
-//        try {
-//            date = (Date) format.parse(d);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        Log.e("tag",date.toString());
-        photo.setFk_Edit_Uid(fk_Fxh_Uid);
-        photo.setTime(date);
-        photo.setInfo(ed_infor.getText().toString().trim());
-        photo.setRemark(ed_mark.getText().toString().trim());
-        photo.setAddeess(ed_address.getText().toString().trim());
-        photo.setUri(photoPath);
-        photo.setLon(String.valueOf(BaseActivity.currentLon));
-        photo.setLat(String.valueOf(BaseActivity.currentLat));
-        DataBaseHelper.addNewPhoto(mContext,photo);
+
+    /**
+     * 添加数据
+     */
+    private Map<String, Object> setPhotoInfo() {
+        Map<String, Object> map = new HashMap<>();
+        //map.put("PK_UID", fk_Fxh_Uid);
+        map.put("FK_FXH_UID", fk_Fxh_Uid);
+        map.put("TIME", UtilTime.getSystemtime2());
+        map.put("INFO", ed_infor.getText().toString());
+        map.put("REMARK", ed_mark.getText().toString());
+        map.put("ADDEESS", ed_address.getText().toString());
+        map.put("URI", "123");//photoPath
+        map.put("FK_EDITID",fk_Edit_Uid);
+        map.put("ZPBH",getPicName(photoPath));
+        return map;
+    }
+
+    private String getPicName(String path) {
+        String picName = StringUtils.substringAfterLast(path,File.separator);
+        return StringUtils.substringBefore(picName,".");
     }
 
     private void setTimeLabel(int textSize) {
@@ -188,15 +214,16 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
     }
 
     /*确定*/
-    private void sure(EditText editText,int paddingTop, int size) {
+    private void sure(EditText editText, int paddingTop, int size) {
         String infor = editText.getText().toString();
         photo = myDrawText(infor, photo, paddingTop, size);
         img_photo.setImageBitmap(photo);
     }
 
-    public void setUpLayerDataListener(IUpLayerData listener){
+    public void setUpLayerDataListener(IUpLayerData listener) {
         this.listener = listener;
     }
+
     /*画笔设定*/
     private Bitmap myDrawText(String text, Bitmap bitmap, int paddingTop, int size) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);

@@ -84,10 +84,10 @@
             android:name=".edite.activity.ImageActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:label="@string/title_activity_image" />
-        <activity
-            android:name=".edite.activity.YzlYddActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
-            android:label="@string/title_activity_yzl_ydd" />
+        <!--<activity-->
+            <!--android:name=".edite.activity.YzlYddActivity"-->
+            <!--android:configChanges="screenSize|keyboardHidden|orientation"-->
+            <!--android:label="@string/title_activity_yzl_ydd" />-->
         <activity
             android:name=".edite.activity.PointEditActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"

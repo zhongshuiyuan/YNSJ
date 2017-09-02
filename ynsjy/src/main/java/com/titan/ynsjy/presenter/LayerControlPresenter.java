@@ -2,6 +2,7 @@ package com.titan.ynsjy.presenter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
@@ -451,6 +452,7 @@ public class LayerControlPresenter{
             }catch (RuntimeException e){
                 e.printStackTrace();
                 ToastUtil.setToast(mContext,"数据库错误");
+                Log.e("tag",e.getMessage());
             }
             if (geodatabase == null)
                 return;
@@ -474,6 +476,7 @@ public class LayerControlPresenter{
                     controlView.getMapView().addLayer(layer);
 
                     setMyLayer(gname,cname,path,flag,layer,gdbFeatureTable);
+                    //Log.e("tag",gdbFeatureTable.getFields().toString());
                 }
             }
 //        }

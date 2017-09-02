@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -33,12 +34,12 @@ import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.EdFeatureResultAdapter;
 import com.titan.ynsjy.adapter.LayerAdapter;
-import com.titan.ynsjy.db.DataBaseHelper;
+import com.titan.ynsjy.dialog.AuditDialog;
 import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.listviewinedittxt.Line;
-import com.titan.ynsjy.listviewinedittxt.SecondLineAdapter;
+import com.titan.ynsjy.listviewinedittxt.LineAdapter;
 import com.titan.ynsjy.mview.IUpLayerData;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ToastUtil;
@@ -106,10 +107,10 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 		} else {
 			mLines = savedInstanceState.getParcelableArrayList(EXTRA_LINES);
 		}
-		String id = selGeoFeature.getAttributeValue("FID").toString();
-		map = DataBaseHelper.getLayerData(mContext,id);
-		//mAdapter = new LineAdapter(XbEditActivity.this,mLines,myFeture,false);
-		mAdapter = new SecondLineAdapter(XbEditActivity.this,false,map);
+//		String id = selGeoFeature.getAttributeValue("FID").toString();
+//		map = DataBaseHelper.getLayerData(mContext,id);
+		mAdapter = new LineAdapter(XbEditActivity.this,mLines,myFeture,false);
+		//mAdapter = new SecondLineAdapter(XbEditActivity.this,false,map);
 		listView.setAdapter(mAdapter);
 
 		btnreturn = (TextView) findViewById(R.id.btnreturn);//返回
@@ -172,9 +173,10 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 
 	@Override
 	public void upLayerData() {
-		mAdapter.notifyDataSetChanged();
-		isChanged = true;
-		setActivityResult();
+		Log.e("tag","2asde2");
+//		mAdapter.notifyDataSetChanged();
+//		isChanged = true;
+//		setActivityResult();
 	}
 
 	class MyListener implements View.OnClickListener{
@@ -192,7 +194,13 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 					break;
 				case R.id.ld_audit:
 					/* 审计 */
-
+					AuditDialog dialog = new AuditDialog();
+					Bundle bundle = new Bundle();
+					bundle.putLong("id", fid);
+					bundle.putString("picPath",picPath);
+					//bundle.putString("currentxbh",fid);
+					dialog.setArguments(bundle);
+					dialog.show(getFragmentManager(),"dialogFragment");
 					break;
 				case R.id.fragment_photograph:
 					/* 拍照 */
@@ -206,80 +214,17 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 
 	private void photograph() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		imagePath = getImagePath(myFeture.getPath())+"/"+"images"+ getPicName();
+		imagePath = getImagePath(myFeture.getPath())+"/"+getPicName(String.valueOf(fid));
 		Uri uri = Uri.fromFile(new File(imagePath));
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 		startActivityForResult(intent, TAKE_PICTURE);
 	}
 
-	private String getPicName() {
+	public static String getPicName(String id) {
 		Date date = new Date(System.currentTimeMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("'img'_yyyyMMddHHmmss", Locale.CHINA);
+		SimpleDateFormat sdf = new SimpleDateFormat("'id'"+id+"_yyyyMMddHHmmss", Locale.CHINA);
 		return sdf.format(date) + ".jpg";
 	}
-
-	/** 样地调查表数据填写*/
-//	public void yddcb(final String ydlayerName){
-//		Builder builder = new Builder(mContext);
-//		builder.setMessage("使用当前点!");
-//		builder.setTitle("信息提示");
-//		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				Intent intent = new Intent(mContext, YzlYddActivity.class);
-//				myFeture.setFeature((GeodatabaseFeature)featureLayer.getFeature(selGeoFeature.getId()));
-//				intent.putExtra("xbh", currentxbh);//小班唯一编号
-//				intent.putExtra("myfeture", myFeture);
-//				intent.putExtra("yddname", ydlayerName);
-//				intent.putExtra("numSize", numSize);
-//				startActivity(intent);
-//				dialog.dismiss();
-//			}
-//		});
-//		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				dialog.dismiss();
-//				XbEditActivity.this.finish();
-//			}
-//		});
-//		builder.create().show();
-//
-//	}
-	/**展示样地点图层*/
-//	public void showYddLayer(){
-//		List<MyLayer> list = new ArrayList<MyLayer>();
-//		for(MyLayer myLayer : BaseActivity.layerNameList){
-//			GeodatabaseFeatureTable table = (GeodatabaseFeatureTable)myLayer.getTable();
-//			Type type = table.getGeometryType();
-//			String name = myLayer.getCname();
-//			if(type.equals(Type.POINT) && cname.equals(name)){
-//				list.add(myLayer);
-//			}
-//		}
-//		int size = list.size();
-//		if (size == 1) {
-//			if(BaseActivity.currentPoint == null || !BaseActivity.currentPoint.isValid()){
-//				ToastUtil.setToast(mContext, "未获取到当前位置坐标");
-//				return;
-//			}
-//			MyLayer layer = list.get(0);
-//			yddLayername = layer.getTable().getTableName();
-//			boolean flag = GeometryEngine.intersects(selGeoFeature.getGeometry(), BaseActivity.currentPoint, BaseActivity.mapView.getSpatialReference());
-//			if(flag){
-//				//yddcb(yddLayername);
-//			}else{
-//				ToastUtil.setToast(mContext, "当前位置不在所选小班范围内");
-//			}
-//		}else{
-//			if (size > 1) {
-//				showFeatureLayer(list);
-//				return;
-//			}
-//		}
-//	}
 
 	/** 编辑图层选择窗口， 选择要编辑的图层 */
 	public void showFeatureLayer(final List<MyLayer> list) {
@@ -396,8 +341,9 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 			//dealPhotoFile(mCurrentPhotoPath);
 
 			//updateZPBH();
-			Object value = selGeoFeature.getAttributeValue("FID");
-			EditPhoto dialog = new EditPhoto(mContext,imagePath,(long) value);
+			//Object value = selGeoFeature.getAttributeValue("OBJECTID_12");
+			//Log.e("tag",selGeoFeature.getAttributes().toString());
+			EditPhoto dialog = new EditPhoto(mContext,imagePath,fid,null);
 			dialog.setUpLayerDataListener(this);
 			dialog.show();
 

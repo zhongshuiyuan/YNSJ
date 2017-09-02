@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.esri.core.geometry.Point;
-import com.titan.model.Audit;
 import com.titan.model.EditInfo;
 import com.titan.model.Photo;
 import com.titan.ynsjy.dao.DaoMaster;
@@ -35,8 +34,6 @@ import de.greenrobot.dao.query.DeleteQuery;
 import de.greenrobot.dao.query.QueryBuilder;
 import jsqlite.Callback;
 import jsqlite.Database;
-
-import static com.tencent.bugly.crashreport.inner.InnerAPI.context;
 
 public class DataBaseHelper {
     public static DataBaseHelper dataBaseHelperUtil;
@@ -154,20 +151,6 @@ public class DataBaseHelper {
             e.printStackTrace();
         }
         return map;
-    }
-
-    public static void upLayerData(Audit audit) {
-        String databaseName = null;
-        try {
-            databaseName = ResourcesManager.getInstance(context).getDataBase("db_sjy.sqlite");
-            Class.forName("jsqlite.JDBCDriver").newInstance();
-            Database db = new jsqlite.Database();
-            db.open(databaseName, jsqlite.Constants.SQLITE_OPEN_READWRITE);
-            String sql = "insert into edit";
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**

@@ -1917,6 +1917,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         actionMode = ActionMode.MODE_SELECT;
         drawType = ENVELOPE;
         activate(drawType);
+        showFeatureLayer(actionMode,layerNameList);
     }
 
     /**
@@ -2794,7 +2795,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             myLayer = layerList.get(0);
             layerType = myLayer.getLayer().getGeometryType();
             layerLableInclude.setVisibility(View.VISIBLE);
-            lablePresenter.showLayerAials(layerLableInclude,myLayer);
+            //lablePresenter.showLayerAials(layerLableInclude,myLayer);
         }else{
             LayerSelectDialog selectDialog = new LayerSelectDialog(mContext,R.style.Dialog,layerList,mode);
             selectDialog.setLayerOnItemClickListener(this);
@@ -2999,7 +3000,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     GeodatabaseFeature feature = selGeoFeaturesList.get(position);
-                    MyLayer myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(seflayerName,layerNameList);
+                    MyLayer myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(feature.getTable().getTableName(),layerNameList);
                     FeatureTable featureTable = myLayer.getTable();
 
                     featureTable.deleteFeature(id);
@@ -3171,9 +3172,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      */
     public void getGeometryInfo(Geometry geometry) {
         selGeoFeaturesList.clear();
-        for (final MyLayer layer : layerNameList) {
-            getGeometryInfo(geometry, layer);
-        }
+//        for (final MyLayer layer : layerNameList) {
+//            getGeometryInfo(geometry, layer);
+//        }
+        getGeometryInfo(geometry, myLayer);
     }
 
     /**根据勾绘区域查询图层小班*/
