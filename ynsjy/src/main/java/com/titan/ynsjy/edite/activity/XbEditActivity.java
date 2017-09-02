@@ -32,9 +32,9 @@ import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.activity.AuditActivity;
 import com.titan.ynsjy.adapter.EdFeatureResultAdapter;
 import com.titan.ynsjy.adapter.LayerAdapter;
-import com.titan.ynsjy.dialog.AuditDialog;
 import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
@@ -194,13 +194,17 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 					break;
 				case R.id.ld_audit:
 					/* 审计 */
-					AuditDialog dialog = new AuditDialog();
-					Bundle bundle = new Bundle();
-					bundle.putLong("id", fid);
-					bundle.putString("picPath",picPath);
-					//bundle.putString("currentxbh",fid);
-					dialog.setArguments(bundle);
-					dialog.show(getFragmentManager(),"dialogFragment");
+					Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
+					intent.putExtra("id", fid);
+					intent.putExtra("picPath",picPath);
+					startActivity(intent);
+//					AuditDialog dialog = new AuditDialog();
+//					Bundle bundle = new Bundle();
+//					bundle.putLong("id", fid);
+//					bundle.putString("picPath",picPath);
+//					//bundle.putString("currentxbh",fid);
+//					dialog.setArguments(bundle);
+//					dialog.show(getFragmentManager(),"dialogFragment");
 					break;
 				case R.id.fragment_photograph:
 					/* 拍照 */

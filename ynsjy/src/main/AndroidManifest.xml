@@ -72,6 +72,8 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".activity.AuditActivity"
+            android:configChanges="screenSize|keyboardHidden|orientation"/>
         <activity
             android:name=".supertreeview.Image2Activity"
             android:configChanges="screenSize|keyboardHidden|orientation" />

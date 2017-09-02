@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/blue"
     android:orientation="vertical"
     android:paddingEnd="5dp"
@@ -13,174 +13,97 @@
         android:padding="5dp"
         android:text="审计"
         android:textColor="@color/white"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_centerVertical="true"
+            android:text="审计"
+            android:textColor="@color/white"
+            android:textSize="22sp"/>
+
+        <TextView
+            android:id="@+id/audit_pic_browse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_btn_select"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_toStartOf="@+id/audit_take_pic"
+            android:text="图片浏览"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_margin="5dp"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/audit_take_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_btn_select"
+            android:text="拍照"
+            android:layout_alignParentEnd="true"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_margin="5dp"
+            android:gravity="center" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/white"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="修改原因"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/audit_reason"
+            <ListView
+                android:id="@+id/audit_add_list"
+                android:background="@color/white"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="描述信息"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/audit_info"
+            <include
+                android:id="@+id/audit_add"
+                layout="@layout/audit_view"
+                android:layout_height="match_parent"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="修改前状况"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/audit_edit_before"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="修改后状况"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/audit_edit_after"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="备注"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/audit_mark"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white">
-            <TextView
-                android:id="@+id/audit_pic_browse"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/blue_btn_select"
-                android:text="图片浏览"
-                android:textSize="18sp"
-                android:textColor="@color/white"
-                android:layout_margin="5dp"
-                android:gravity="center" />
+                android:visibility="gone"
+                />
 
-            <TextView
-                android:id="@+id/audit_take_pic"
+            <include
+                android:id="@+id/audit_compare"
+                layout="@layout/audit_view"
+                android:layout_height="match_parent"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/blue_btn_select"
-                android:text="拍照"
-                android:textSize="18sp"
-                android:textColor="@color/white"
-                android:layout_margin="5dp"
-                android:gravity="center" />
+                android:visibility="gone"/>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/audit_sure"
@@ -189,7 +112,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/blue_btn_select"
                 android:text="确定"
-                android:textSize="18sp"
+                android:textSize="22sp"
                 android:textColor="@color/white"
                 android:layout_margin="5dp"
                 android:gravity="center"/>
@@ -201,7 +124,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/blue_btn_select"
                 android:text="取消"
-                android:textSize="18sp"
+                android:textSize="22sp"
                 android:textColor="@color/white"
                 android:layout_margin="5dp"
                 android:gravity="center"/>

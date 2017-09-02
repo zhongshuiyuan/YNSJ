@@ -85,7 +85,7 @@
             android:layout_toLeftOf="@+id/ld_see_pic"
             android:background="@drawable/blue_btn_select"
             android:gravity="center"
-            android:text="审计"
+            android:text="新增审计"
             android:textColor="@color/white"
             android:textSize="18sp" />
         <TextView
