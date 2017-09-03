@@ -1,23 +1,34 @@
 package com.titan.ynsjy.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.esri.android.map.FeatureLayer;
+import com.esri.core.geodatabase.GeodatabaseFeature;
+import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Feature;
+import com.esri.core.map.FeatureResult;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
+import com.esri.core.tasks.SpatialRelationship;
+import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
@@ -26,14 +37,18 @@ import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.edite.activity.ImageActivity;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.mview.IUpLayerData;
+import com.titan.ynsjy.mview.LayerControlView;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,16 +63,16 @@ import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
  */
 
 public class AuditActivity extends AppCompatActivity implements IUpLayerData {
-    @BindView(R.id.audit_reason)
     EditText auditReason;
-    @BindView(R.id.audit_info)
     EditText auditInfo;
-    @BindView(R.id.audit_edit_before)
     EditText auditEditBefore;
-    @BindView(R.id.audit_edit_after)
     EditText auditEditAfter;
-    @BindView(R.id.audit_mark)
     EditText auditMark;
+    EditText auditReason2;
+    EditText auditInfo2;
+    EditText auditEditBefore2;
+    EditText auditEditAfter2;
+    EditText auditMark2;
     @BindView(R.id.audit_pic_browse)
     TextView auditPicBrowse;
     @BindView(R.id.audit_take_pic)
@@ -68,10 +83,15 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     TextView auditCancel;
     @BindView(R.id.audit_title)
     TextView auditTitle;
+    @BindView(R.id.audit_history)
+    TextView auditHistory;
     @BindView(R.id.audit_add_list)
     ListView auditAddList;
 
     private Context mContext;
+    private View view;
+    private View addView;
+    private View compareView;
     private Feature feature;//小班
     private FeatureTable featureTable;
     private MyLayer myLayer;
@@ -81,19 +101,47 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     private String currentxbh = "";//小班唯一号
     private String imagePath = "";//图片地址
     private boolean auditType = false;
+    private List<Feature> featureList;
+    private List<String> historyList;
+    private List<Feature> selectList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_audit);
+        view = LayoutInflater.from(this).inflate(R.layout.dialog_audit, null);
+        setContentView(view);
         ButterKnife.bind(this);
+        initView();
         getData();
+        setMyVisibility(auditType);
         this.mContext = AuditActivity.this;
-        AuditAdapter adapter = new AuditAdapter(this,feature.getAttributes());
-        auditAddList.setAdapter(adapter);
     }
 
-    @OnClick({R.id.audit_pic_browse, R.id.audit_take_pic, R.id.audit_sure, R.id.audit_cancel})
+    private void setMyVisibility(boolean auditType) {
+        if (auditType) {
+            compareView.setVisibility(View.VISIBLE);
+            auditPicBrowse.setVisibility(View.GONE);
+            auditTakePic.setVisibility(View.GONE);
+            auditSure.setVisibility(View.GONE);
+        }
+    }
+
+    private void initView() {
+        addView = view.findViewById(R.id.audit_add);
+        compareView = view.findViewById(R.id.audit_compare);
+        auditReason = (EditText) addView.findViewById(R.id.audit_reason);
+        auditInfo = (EditText) addView.findViewById(R.id.audit_info);
+        auditEditBefore = (EditText) addView.findViewById(R.id.audit_edit_before);
+        auditEditAfter = (EditText) addView.findViewById(R.id.audit_edit_after);
+        auditMark = (EditText) addView.findViewById(R.id.audit_mark);
+        auditReason2 = (EditText) compareView.findViewById(R.id.audit_reason);
+        auditInfo2 = (EditText) compareView.findViewById(R.id.audit_info);
+        auditEditBefore2 = (EditText) compareView.findViewById(R.id.audit_edit_before);
+        auditEditAfter2 = (EditText) compareView.findViewById(R.id.audit_edit_after);
+        auditMark2 = (EditText) compareView.findViewById(R.id.audit_mark);
+    }
+
+    @OnClick({R.id.audit_pic_browse, R.id.audit_take_pic, R.id.audit_sure, R.id.audit_cancel, R.id.audit_history})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.audit_pic_browse:
@@ -108,6 +156,9 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
             case R.id.audit_cancel:
                 delAuditData();
                 break;
+            case R.id.audit_history:
+                showAuditHistoryDialog();
+                break;
         }
     }
 
@@ -119,6 +170,59 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
             dialog.setUpLayerDataListener(this);
             dialog.show();
         }
+    }
+
+    public void showAuditHistoryDialog() {
+        queryAuditHistory();
+        Dialog dialog = new Dialog(mContext, R.style.Dialog);
+        dialog.setContentView(R.layout.audit_history_choice);
+        dialog.setCanceledOnTouchOutside(true);
+        ListView choiceView = (ListView) dialog.findViewById(R.id.audit_choice_list);
+        TextView btn_sure = (TextView) dialog.findViewById(R.id.audit_choice_sure);
+        btn_sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, Object> map = selectList.get(0).getAttributes();
+                Map<String, Object> map2 = selectList.get(1).getAttributes();
+                auditReason.setText(map.get("MODIFYINFO").toString());
+                auditInfo.setText(map.get("INFO").toString());
+                auditEditBefore.setText(map.get("BEFOREINFO").toString());
+                auditEditAfter.setText(map.get("AFTERINFO").toString());
+                auditMark.setText(map.get("REMARK").toString());
+                auditReason.setEnabled(false);
+                auditInfo.setEnabled(false);
+                auditEditBefore.setEnabled(false);
+                auditEditAfter.setEnabled(false);
+                auditMark.setEnabled(false);
+                auditReason2.setText(map2.get("MODIFYINFO").toString());
+                auditInfo2.setText(map2.get("INFO").toString());
+                auditEditBefore2.setText(map2.get("BEFOREINFO").toString());
+                auditEditAfter2.setText(map2.get("AFTERINFO").toString());
+                auditMark2.setText(map2.get("REMARK").toString());
+                auditReason2.setEnabled(false);
+                auditInfo2.setEnabled(false);
+                auditEditBefore2.setEnabled(false);
+                auditEditAfter2.setEnabled(false);
+                auditMark2.setEnabled(false);
+            }
+        });
+
+        AuditAdapter adapter = new AuditAdapter(mContext, historyList);
+        choiceView.setAdapter(adapter);
+
+        choiceView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (selectList.size() < 2) {
+                    selectList.add(featureList.get(position));
+                } else {
+                    selectList.remove(0);
+                    selectList.add(featureList.get(position));
+                }
+
+            }
+        });
+        dialog.show();
     }
 
     /**
@@ -152,10 +256,12 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     private void getData() {
         myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
         featureTable = myLayer.getTable();
+        BaseActivity.selGeoFeature.getAttributeValue("MODIFYTIME");
         Intent intent = getIntent();
         if (intent != null) {
             id = intent.getLongExtra("id", 0);
             picPath = intent.getStringExtra("picPath");
+            auditType = intent.getBooleanExtra("auditType", false);
         }
     }
 
@@ -222,5 +328,35 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     @Override
     public void upLayerData() {
         Log.e("tag", "1asde1");
+    }
+
+    public void queryAuditHistory() {
+        QueryParameters queryParams = new QueryParameters();
+        queryParams.setOutFields(new String[]{"*"});
+        queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
+        queryParams.setGeometry(featureTable.getExtent());
+        queryParams.setReturnGeometry(true);
+        queryParams.setWhere("1=1");
+        featureTable.queryFeatures(queryParams, new CallbackListener<FeatureResult>() {
+            @Override
+            public void onCallback(FeatureResult objects) {
+                if (objects.featureCount() <= 0) {
+                    ToastUtil.setToast(mContext, "没有查询到数据");
+                    return;
+                }
+                historyList = new ArrayList<>();
+                featureList = new ArrayList<>();
+                for (Object object : objects) {
+                    Feature feature = (Feature) object;
+                    featureList.add(feature);
+                    historyList.add(feature.getAttributeValue("MODIFYTIME").toString());
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                ToastUtil.setToast(mContext, "没有查询到数据");
+            }
+        });
     }
 }

@@ -31,6 +31,19 @@
             android:textSize="22sp"/>
 
         <TextView
+            android:id="@+id/audit_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_btn_select"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_toStartOf="@+id/audit_pic_browse"
+            android:text="审计历史"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_margin="5dp"
+            android:gravity="center" />
+        <TextView
             android:id="@+id/audit_pic_browse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,16 +92,15 @@
                 android:background="@color/white"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:visibility="gone"/>
 
             <include
                 android:id="@+id/audit_add"
                 layout="@layout/audit_view"
                 android:layout_height="match_parent"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:visibility="gone"
-                />
+                android:layout_weight="1"/>
 
             <include
                 android:id="@+id/audit_compare"

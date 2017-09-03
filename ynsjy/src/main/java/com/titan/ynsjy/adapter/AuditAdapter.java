@@ -25,10 +25,10 @@ public class AuditAdapter extends BaseAdapter {
     private Map<String,Object> map = new HashMap<>();
     private List<String> list = new ArrayList<>();
 
-    public AuditAdapter(Context context, Map<String, Object> map) {
+    public AuditAdapter(Context context, List<String> list) {
         this.mContext = context;
-        this.map = map;
-        getList();
+        this.list = list;
+        //getList();
     }
 
     public List<String> getList() {
@@ -56,13 +56,11 @@ public class AuditAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView==null){
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.audit_item, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.audit_choice_item, parent, false);
         }
-        final TextView tv_key = ViewHolderUtil.get(convertView,R.id.audit_key);
-        final TextView ed_value = ViewHolderUtil.get(convertView,R.id.audit_value);
+        final TextView tv_key = ViewHolderUtil.get(convertView,R.id.audit_checkbox);
         String key = list.get(position);
         tv_key.setText(key);
-        ed_value.setText(map.get(key).toString());
         return convertView;
     }
 
