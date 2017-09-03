@@ -192,19 +192,13 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 					/*图片浏览*/
 					lookpictures(XbEditActivity.this);
 					break;
+				case R.id.ld_audit_history:
+					/*审计历史*/
+					auditAddOrCompare(false);
+					break;
 				case R.id.ld_audit:
 					/* 审计 */
-					Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
-					intent.putExtra("id", fid);
-					intent.putExtra("picPath",picPath);
-					startActivity(intent);
-//					AuditDialog dialog = new AuditDialog();
-//					Bundle bundle = new Bundle();
-//					bundle.putLong("id", fid);
-//					bundle.putString("picPath",picPath);
-//					//bundle.putString("currentxbh",fid);
-//					dialog.setArguments(bundle);
-//					dialog.show(getFragmentManager(),"dialogFragment");
+					auditAddOrCompare(false);
 					break;
 				case R.id.fragment_photograph:
 					/* 拍照 */
@@ -214,6 +208,14 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 					break;
 			}
 		}
+	}
+
+	private void auditAddOrCompare(boolean type) {
+		Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
+		intent.putExtra("id", fid);
+		intent.putExtra("picPath",picPath);
+		intent.putExtra("auditType",type);
+		startActivity(intent);
 	}
 
 	private void photograph() {
