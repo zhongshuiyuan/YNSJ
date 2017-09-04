@@ -194,7 +194,7 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 					break;
 				case R.id.ld_audit_history:
 					/*审计历史*/
-					auditAddOrCompare(false);
+					auditAddOrCompare(true);
 					break;
 				case R.id.ld_audit:
 					/* 审计 */

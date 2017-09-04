@@ -8,19 +8,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.esri.android.map.FeatureLayer;
-import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
@@ -37,7 +33,6 @@ import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.edite.activity.ImageActivity;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.mview.IUpLayerData;
-import com.titan.ynsjy.mview.LayerControlView;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
@@ -45,10 +40,8 @@ import com.titan.ynsjy.util.UtilTime;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,30 +56,32 @@ import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
  */
 
 public class AuditActivity extends AppCompatActivity implements IUpLayerData {
+    /**新增审计*/
     EditText auditReason;
     EditText auditInfo;
     EditText auditEditBefore;
     EditText auditEditAfter;
     EditText auditMark;
+    /**审计对比*/
     EditText auditReason2;
     EditText auditInfo2;
     EditText auditEditBefore2;
     EditText auditEditAfter2;
     EditText auditMark2;
-    @BindView(R.id.audit_pic_browse)
+    @BindView(R.id.audit_pic_browse)//图片浏览
     TextView auditPicBrowse;
-    @BindView(R.id.audit_take_pic)
+    @BindView(R.id.audit_take_pic)//拍照
     TextView auditTakePic;
-    @BindView(R.id.audit_sure)
+    @BindView(R.id.audit_sure)//确定
     TextView auditSure;
-    @BindView(R.id.audit_cancel)
+    @BindView(R.id.audit_cancel)//取消
     TextView auditCancel;
-    @BindView(R.id.audit_title)
+    @BindView(R.id.audit_title)//审计标题
     TextView auditTitle;
-    @BindView(R.id.audit_history)
+    @BindView(R.id.audit_history)//审计历史
     TextView auditHistory;
-    @BindView(R.id.audit_add_list)
-    ListView auditAddList;
+//    @BindView(R.id.audit_add_list)
+//    ListView auditAddList;
 
     private Context mContext;
     private View view;
@@ -157,7 +152,8 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 delAuditData();
                 break;
             case R.id.audit_history:
-                showAuditHistoryDialog();
+                queryAuditHistory();
+                //showAuditHistoryDialog();
                 break;
         }
     }
@@ -173,8 +169,7 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     }
 
     public void showAuditHistoryDialog() {
-        queryAuditHistory();
-        Dialog dialog = new Dialog(mContext, R.style.Dialog);
+        final Dialog dialog = new Dialog(mContext, R.style.Dialog);
         dialog.setContentView(R.layout.audit_history_choice);
         dialog.setCanceledOnTouchOutside(true);
         ListView choiceView = (ListView) dialog.findViewById(R.id.audit_choice_list);
@@ -204,9 +199,14 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 auditEditBefore2.setEnabled(false);
                 auditEditAfter2.setEnabled(false);
                 auditMark2.setEnabled(false);
+                dialog.dismiss();
             }
         });
 
+        if (historyList.size()<=0){
+            ToastUtil.setToast(mContext,"没有历史记录");
+            return;
+        }
         AuditAdapter adapter = new AuditAdapter(mContext, historyList);
         choiceView.setAdapter(adapter);
 
@@ -320,6 +320,7 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         Graphic graphic = new Graphic(null, null, setData());
         try {
             featureTable.updateFeature(newId, graphic);
+            Log.e("tag",featureTable.getFeature(newId).toString());
         } catch (TableException e) {
             e.printStackTrace();
         }
@@ -351,6 +352,8 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                     featureList.add(feature);
                     historyList.add(feature.getAttributeValue("MODIFYTIME").toString());
                 }
+                Log.e("tag","list:"+historyList.toString());
+                showAuditHistoryDialog();
             }
 
             @Override

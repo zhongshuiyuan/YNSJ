@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="审计历史"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:padding="5dp"
+        android:background="@color/blue"/>
+    <ListView
+        android:id="@+id/audit_choice_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <TextView
+        android:id="@+id/audit_choice_sure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/blue_btn_select"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_toStartOf="@+id/audit_pic_browse"
+        android:text="确定"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:layout_margin="5dp"
+        android:gravity="center" />
+</LinearLayout>
