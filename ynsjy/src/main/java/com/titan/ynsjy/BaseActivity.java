@@ -3187,7 +3187,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         queryParams.setGeometry(geometry);
         queryParams.setReturnGeometry(true);
         queryParams.setWhere("1=1");
-        layer.getLayer().setSelectionColor(layer.getSelectColor());
+        //layer.getLayer().setSelectionColor(layer.getSelectColor());
         queryParams.setOutSpatialReference(tiledLayer.getSpatialReference());
         layer.getLayer().selectFeatures(queryParams, SelectionMode.NEW,
                 new CallbackListener<FeatureResult>() {

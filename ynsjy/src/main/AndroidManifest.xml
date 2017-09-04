@@ -73,6 +73,7 @@
         </service>
 
         <activity android:name=".activity.AuditActivity"
+            android:windowSoftInputMode="stateHidden"
             android:configChanges="screenSize|keyboardHidden|orientation"/>
         <activity
             android:name=".supertreeview.Image2Activity"

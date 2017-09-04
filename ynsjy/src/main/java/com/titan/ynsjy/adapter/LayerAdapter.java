@@ -49,11 +49,27 @@ public class LayerAdapter extends BaseAdapter {
 		String gname = list.get(position).getPname();
 		String cname = list.get(position).getCname();
 		String lname = list.get(position).getLname();
-		holder.tv1.setText(gname+":"+cname+":"+lname);
+		holder.tv1.setText(gname+":"+cname+":"+getLayerName(lname));
 		return convertView;
 	}
 	
 	final class LayerViewHolder {
 		TextView tv1;
+	}
+
+	private String getLayerName(String alias){
+		String name = "";
+		switch (alias){
+			case "fxh":
+				name = "原始数据表";
+				break;
+			case "photo":
+				name = "照片数据表";
+				break;
+			case "edit":
+				name = "修改数据表";
+				break;
+		}
+		return name;
 	}
 }

@@ -95,6 +95,7 @@ public abstract class BaseEditActivity extends Activity {
     public static final int TAKE_PICTURE = 0x000001;
     /** 记录小班的唯一编号 当前小班的小班号*/
     protected String currentxbh="";
+    private String[] filterField = new String[]{"OBJECTID_1","OBJECTID_12","OBJECTID","Shape_Leng","Shape_Le_1"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -136,9 +137,17 @@ public abstract class BaseEditActivity extends Activity {
     public ArrayList<Line> createLines() {
         ArrayList<Line> lines = new ArrayList<Line>();
         String xianD = "",xiangD= "";
+        boolean flag = false;
         for (int i = 0; i < LINE_NUM; i++) {
+            flag = false;
             Field field = fieldList.get(i);
-            if (field.getName().equals("OBJECTID_1")|| field.getName().equals("OBJECTID")||field.getName().equals("Shape_Leng")){
+            for (String aFilterField : filterField) {
+                if (field.getName().equals(aFilterField)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag){
                 continue;
             }
             Line line = new Line();

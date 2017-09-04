@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.esri.android.map.FeatureLayer;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.map.CallbackListener;
@@ -74,8 +73,8 @@ public class LayerLablePresenter {
         q.setInSpatialReference(iLayerView.getBaseTitleLayer().getSpatialReference());
         q.setReturnGeometry(true);
         q.setGeometry(iLayerView.getCurrentEnvelope());
-        myLayer.getLayer().setSelectionColor(0);
-        myLayer.getLayer().selectFeatures(q, FeatureLayer.SelectionMode.NEW, new CallbackListener<FeatureResult>() {
+        //myLayer.getLayer().setSelectionColor(0);
+        myLayer.getTable().queryFeatures(q, new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult featureResult) {
                 if (featureResult.featureCount() > 0){

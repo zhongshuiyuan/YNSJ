@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Feature;
@@ -24,6 +27,7 @@ import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
 import com.esri.core.tasks.SpatialRelationship;
+import com.esri.core.tasks.query.Order;
 import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
@@ -42,8 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,20 +100,39 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     private String currentxbh = "";//小班唯一号
     private String imagePath = "";//图片地址
     private boolean auditType = false;
-    private List<Feature> featureList;
-    private List<String> historyList;
+    //private List<Feature> featureList;
+    private List<Feature> historyList;
     private List<Feature> selectList = new ArrayList<>();
+    private Map<String,Boolean> auditCheckMap = new HashMap<>();
+    private static final int QUERY_FINISH = 1;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case QUERY_FINISH:
+                    showAuditHistoryDialog();
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.mContext = AuditActivity.this;
         view = LayoutInflater.from(this).inflate(R.layout.dialog_audit, null);
         setContentView(view);
         ButterKnife.bind(this);
         initView();
         getData();
         setMyVisibility(auditType);
-        this.mContext = AuditActivity.this;
+        if (auditType){
+            queryAuditHistory();
+        }
     }
 
     private void setMyVisibility(boolean auditType) {
@@ -151,15 +172,14 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 saveData();
                 break;
             case R.id.audit_cancel:
-                delAuditData();
+                if (auditType){
+                    this.finish();
+                }else {
+                    delAuditData();
+                }
                 break;
             case R.id.audit_history:
-                try {
-                    queryAuditHistory();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                //showAuditHistoryDialog();
+                queryAuditHistory();
                 break;
         }
     }
@@ -175,60 +195,71 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     }
 
     public void showAuditHistoryDialog() {
-        final Dialog dialog = new Dialog(mContext, R.style.Dialog);
-        dialog.setContentView(R.layout.audit_history_choice);
-        dialog.setCanceledOnTouchOutside(true);
-        ListView choiceView = (ListView) dialog.findViewById(R.id.audit_choice_list);
-        TextView btn_sure = (TextView) dialog.findViewById(R.id.audit_choice_sure);
-        btn_sure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Map<String, Object> map = selectList.get(0).getAttributes();
-                Map<String, Object> map2 = selectList.get(1).getAttributes();
-                auditReason.setText(map.get("MODIFYINFO").toString());
-                auditInfo.setText(map.get("INFO").toString());
-                auditEditBefore.setText(map.get("BEFOREINFO").toString());
-                auditEditAfter.setText(map.get("AFTERINFO").toString());
-                auditMark.setText(map.get("REMARK").toString());
-                auditReason.setEnabled(false);
-                auditInfo.setEnabled(false);
-                auditEditBefore.setEnabled(false);
-                auditEditAfter.setEnabled(false);
-                auditMark.setEnabled(false);
-                auditReason2.setText(map2.get("MODIFYINFO").toString());
-                auditInfo2.setText(map2.get("INFO").toString());
-                auditEditBefore2.setText(map2.get("BEFOREINFO").toString());
-                auditEditAfter2.setText(map2.get("AFTERINFO").toString());
-                auditMark2.setText(map2.get("REMARK").toString());
-                auditReason2.setEnabled(false);
-                auditInfo2.setEnabled(false);
-                auditEditBefore2.setEnabled(false);
-                auditEditAfter2.setEnabled(false);
-                auditMark2.setEnabled(false);
-                dialog.dismiss();
-            }
-        });
-
-        if (historyList.size()<=0){
-            ToastUtil.setToast(mContext,"没有历史记录");
-            return;
-        }
-        AuditAdapter adapter = new AuditAdapter(mContext, historyList);
-        choiceView.setAdapter(adapter);
-
-        choiceView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (selectList.size() < 2) {
-                    selectList.add(featureList.get(position));
-                } else {
-                    selectList.remove(0);
-                    selectList.add(featureList.get(position));
+        try {
+            final Dialog dialog = new Dialog(mContext, R.style.Dialog);
+            dialog.setContentView(R.layout.audit_history_choice);
+//            dialog.setCanceledOnTouchOutside(false);
+            ListView choiceView = (ListView) dialog.findViewById(R.id.audit_choice_list);
+            TextView btn_sure = (TextView) dialog.findViewById(R.id.audit_choice_sure);
+            btn_sure.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Map<String, Object> map = selectList.get(0).getAttributes();
+                    Map<String, Object> map2 = selectList.get(1).getAttributes();
+                    auditReason.setText(map.get("MODIFYINFO").toString());
+                    auditInfo.setText(map.get("INFO").toString());
+                    auditEditBefore.setText(map.get("BEFOREINFO").toString());
+                    auditEditAfter.setText(map.get("AFTERINFO").toString());
+                    auditMark.setText(map.get("REMARK").toString());
+                    auditReason.setEnabled(false);
+                    auditInfo.setEnabled(false);
+                    auditEditBefore.setEnabled(false);
+                    auditEditAfter.setEnabled(false);
+                    auditMark.setEnabled(false);
+                    auditReason2.setText(map2.get("MODIFYINFO").toString());
+                    auditInfo2.setText(map2.get("INFO").toString());
+                    auditEditBefore2.setText(map2.get("BEFOREINFO").toString());
+                    auditEditAfter2.setText(map2.get("AFTERINFO").toString());
+                    auditMark2.setText(map2.get("REMARK").toString());
+                    auditReason2.setEnabled(false);
+                    auditInfo2.setEnabled(false);
+                    auditEditBefore2.setEnabled(false);
+                    auditEditAfter2.setEnabled(false);
+                    auditMark2.setEnabled(false);
+                    dialog.dismiss();
                 }
-
+            });
+            if (historyList.size()<=0){
+                Toast.makeText(mContext, "没有历史记录",Toast.LENGTH_SHORT).show();
+                return;
             }
-        });
-        dialog.show();
+            final AuditAdapter adapter = new AuditAdapter(mContext, historyList,auditCheckMap);
+            choiceView.setAdapter(adapter);
+
+            choiceView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String featureId = String.valueOf(historyList.get(position).getId());
+                    if (auditCheckMap.get(featureId)){
+                        auditCheckMap.put(featureId,false);
+                        selectList.remove((historyList.get(position)));
+                    }else if (selectList.size() < 2) {
+                        selectList.add(historyList.get(position));
+                        auditCheckMap.put(featureId,true);
+                    } else {
+                        Feature s = selectList.get(0);
+                        selectList.remove(s);
+                        auditCheckMap.put(String.valueOf(s.getId()),false);
+                        selectList.add(historyList.get(position));
+                        auditCheckMap.put(featureId,true);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            });
+            dialog.show();
+        }catch (Exception e){
+            Log.e("tag","error:"+e.getMessage());
+        }
     }
 
     /**
@@ -262,7 +293,6 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     private void getData() {
         myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
         featureTable = myLayer.getTable();
-        BaseActivity.selGeoFeature.getAttributeValue("MODIFYTIME");
         Intent intent = getIntent();
         if (intent != null) {
             id = intent.getLongExtra("id", 0);
@@ -337,16 +367,18 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         Log.e("tag", "1asde1");
     }
 
-    public void queryAuditHistory() throws ExecutionException, InterruptedException {
+    public void queryAuditHistory(){
         QueryParameters queryParams = new QueryParameters();
         queryParams.setOutFields(new String[]{"*"});
         queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
-        queryParams.setGeometry(featureTable.getExtent());
-        queryParams.setReturnGeometry(true);
+        //queryParams.setGeometry(featureTable.getExtent());
+        //queryParams.setReturnGeometry(true);
         queryParams.setWhere("1=1");
+        Map<String, Order> orderFields = new HashMap<>();
+        orderFields.put("MODIFYTIME", Order.DESC );
+        queryParams.setOrderByFields(orderFields);//设置输出字段值降序排序
         queryParams.setOutSpatialReference(BaseActivity.spatialReference);
-        Log.e("tag","list2:");
-        Future<FeatureResult> resultFuture = featureTable.queryFeatures(queryParams, new CallbackListener<FeatureResult>() {
+        featureTable.queryFeatures(queryParams, new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult objects) {
                 Log.e("tag","list1:"+String.valueOf(objects.featureCount()));
@@ -354,14 +386,15 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                     ToastUtil.setToast(mContext, "没有查询到数据");
                     return;
                 }
-//                historyList = new ArrayList<>();
-//                featureList = new ArrayList<>();
-//                for (Object object : objects) {
-//                    Feature feature = (Feature) object;
-//                    featureList.add(feature);
-//                    historyList.add(feature.getAttributeValue("MODIFYTIME").toString());
-//                }
-                showAuditHistoryDialog();
+                historyList = new ArrayList<>();
+                for (Object object : objects) {
+                    Feature feature = (Feature) object;
+                    historyList.add(feature);
+                    auditCheckMap.put(String.valueOf(feature.getId()),false);
+                }
+                Message message = new Message();
+                message.what = QUERY_FINISH;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -369,16 +402,20 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 ToastUtil.setToast(mContext, "没有查询到数据");
             }
         });
-        historyList = new ArrayList<>();
-        featureList = new ArrayList<>();
-        for (Object o:resultFuture.get()){
-            if (o instanceof Feature){
-                Feature feature = (Feature) o;
-                featureList.add(feature);
-                historyList.add(feature.getAttributeValue("MODIFYTIME").toString());
-            }
-        }
-        Log.e("tag","list:"+historyList.toString());
-        showAuditHistoryDialog();
+//        historyList = new ArrayList<>();
+//        //featureList = new ArrayList<>();
+//        try {
+//            for (Object o:resultFuture.get()){
+//                if (o instanceof Feature){
+//                    Feature feature = (Feature) o;
+//                    //featureList.add(feature);
+//                    historyList.add(feature);
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        Log.e("tag","list:"+historyList.toString());
+//        showAuditHistoryDialog();
     }
 }

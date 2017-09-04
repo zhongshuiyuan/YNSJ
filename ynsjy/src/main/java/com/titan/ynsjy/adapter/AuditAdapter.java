@@ -5,8 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
+import android.widget.CheckBox;
 
+import com.esri.core.map.Feature;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.util.ViewHolderUtil;
 
@@ -23,20 +24,22 @@ import java.util.Map;
 public class AuditAdapter extends BaseAdapter {
     private Context mContext;
     private Map<String,Object> map = new HashMap<>();
-    private List<String> list = new ArrayList<>();
+    private List<Feature> list = new ArrayList<>();
+    private Map<String,Boolean> auditCheckMap;
 
-    public AuditAdapter(Context context, List<String> list) {
+    public AuditAdapter(Context context, List<Feature> list, Map<String,Boolean> auditCheckMap) {
         this.mContext = context;
         this.list = list;
+        this.auditCheckMap = auditCheckMap;
         //getList();
     }
 
-    public List<String> getList() {
-        for (String key : map.keySet()) {
-            list.add(key);
-        }
-        return list;
-    }
+//    public List<String> getList(List<Feature> featureList) {
+//        for (int i = 0; i < featureList.size(); i++) {
+//            list.add(featureList.get(i).getAttributeValue("MODIFYTIME").toString());
+//        }
+//        return list;
+//    }
 
     @Override
     public int getCount() {
@@ -58,9 +61,10 @@ public class AuditAdapter extends BaseAdapter {
         if (convertView==null){
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.audit_choice_item, parent, false);
         }
-        final TextView tv_key = ViewHolderUtil.get(convertView,R.id.audit_checkbox);
-        String key = list.get(position);
+        final CheckBox tv_key = ViewHolderUtil.get(convertView,R.id.audit_checkbox);
+        String key = list.get(position).getAttributeValue("MODIFYTIME").toString();
         tv_key.setText(key);
+        tv_key.setChecked(auditCheckMap.get(String.valueOf(list.get(position).getId())));
         return convertView;
     }
 
