@@ -127,8 +127,8 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         view = LayoutInflater.from(this).inflate(R.layout.dialog_audit, null);
         setContentView(view);
         ButterKnife.bind(this);
-        initView();
         getData();
+        initView();
         setMyVisibility(auditType);
         if (auditType){
             queryAuditHistory();
@@ -157,6 +157,20 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         auditEditBefore2 = (EditText) compareView.findViewById(R.id.audit_edit_before);
         auditEditAfter2 = (EditText) compareView.findViewById(R.id.audit_edit_after);
         auditMark2 = (EditText) compareView.findViewById(R.id.audit_mark);
+
+        if (auditType){
+            auditReason.setEnabled(false);
+            auditInfo.setEnabled(false);
+            auditEditBefore.setEnabled(false);
+            auditEditAfter.setEnabled(false);
+            auditMark.setEnabled(false);
+
+            auditReason2.setEnabled(false);
+            auditInfo2.setEnabled(false);
+            auditEditBefore2.setEnabled(false);
+            auditEditAfter2.setEnabled(false);
+            auditMark2.setEnabled(false);
+        }
     }
 
     @OnClick({R.id.audit_pic_browse, R.id.audit_take_pic, R.id.audit_sure, R.id.audit_cancel, R.id.audit_history})
@@ -211,21 +225,11 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                     auditEditBefore.setText(map.get("BEFOREINFO").toString());
                     auditEditAfter.setText(map.get("AFTERINFO").toString());
                     auditMark.setText(map.get("REMARK").toString());
-                    auditReason.setEnabled(false);
-                    auditInfo.setEnabled(false);
-                    auditEditBefore.setEnabled(false);
-                    auditEditAfter.setEnabled(false);
-                    auditMark.setEnabled(false);
                     auditReason2.setText(map2.get("MODIFYINFO").toString());
                     auditInfo2.setText(map2.get("INFO").toString());
                     auditEditBefore2.setText(map2.get("BEFOREINFO").toString());
                     auditEditAfter2.setText(map2.get("AFTERINFO").toString());
                     auditMark2.setText(map2.get("REMARK").toString());
-                    auditReason2.setEnabled(false);
-                    auditInfo2.setEnabled(false);
-                    auditEditBefore2.setEnabled(false);
-                    auditEditAfter2.setEnabled(false);
-                    auditMark2.setEnabled(false);
                     dialog.dismiss();
                 }
             });
