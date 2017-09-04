@@ -134,7 +134,8 @@
             android:padding="10dp"
             android:text="添加在线地图"
             android:textColor="@color/blue"
-            android:textSize="@dimen/larger_txtsize16" />
+            android:textSize="@dimen/larger_txtsize16"
+            android:visibility="gone"/>
 
         <TextView
             android:layout_width="fill_parent"
@@ -150,7 +151,8 @@
             android:padding="10dp"
             android:text="移除在线地图"
             android:textColor="@color/blue"
-            android:textSize="@dimen/larger_txtsize16" />
+            android:textSize="@dimen/larger_txtsize16"
+            android:visibility="gone"/>
 
         <TextView
             android:layout_width="fill_parent"
@@ -166,7 +168,8 @@
             android:padding="10dp"
             android:text="照片上传"
             android:textColor="@color/blue"
-            android:textSize="@dimen/larger_txtsize16" />
+            android:textSize="@dimen/larger_txtsize16"
+            android:visibility="gone" />
 
     </LinearLayout>
 
