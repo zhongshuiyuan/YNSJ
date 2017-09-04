@@ -171,7 +171,7 @@ import rx.schedulers.Schedulers;
 public abstract class BaseActivity extends AppCompatActivity implements LayerSelectDialog.SetOnItemClickListener,
         View.OnClickListener, DrawEventListener, IYzlView, LayerControlView,ILayerView, INavigatView {
     /*系统投影坐标系*/
-    public static SpatialReference spatialReference = SpatialReference.create(3857);
+    public static SpatialReference spatialReference = SpatialReference.create(4507);
     public Context mContext;
     public View childview;
     public static MapView mapView;

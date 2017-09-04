@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -152,7 +154,11 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 delAuditData();
                 break;
             case R.id.audit_history:
-                queryAuditHistory();
+                try {
+                    queryAuditHistory();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 //showAuditHistoryDialog();
                 break;
         }
@@ -331,28 +337,30 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         Log.e("tag", "1asde1");
     }
 
-    public void queryAuditHistory() {
+    public void queryAuditHistory() throws ExecutionException, InterruptedException {
         QueryParameters queryParams = new QueryParameters();
         queryParams.setOutFields(new String[]{"*"});
         queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
         queryParams.setGeometry(featureTable.getExtent());
         queryParams.setReturnGeometry(true);
         queryParams.setWhere("1=1");
-        featureTable.queryFeatures(queryParams, new CallbackListener<FeatureResult>() {
+        queryParams.setOutSpatialReference(BaseActivity.spatialReference);
+        Log.e("tag","list2:");
+        Future<FeatureResult> resultFuture = featureTable.queryFeatures(queryParams, new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult objects) {
+                Log.e("tag","list1:"+String.valueOf(objects.featureCount()));
                 if (objects.featureCount() <= 0) {
                     ToastUtil.setToast(mContext, "没有查询到数据");
                     return;
                 }
-                historyList = new ArrayList<>();
-                featureList = new ArrayList<>();
-                for (Object object : objects) {
-                    Feature feature = (Feature) object;
-                    featureList.add(feature);
-                    historyList.add(feature.getAttributeValue("MODIFYTIME").toString());
-                }
-                Log.e("tag","list:"+historyList.toString());
+//                historyList = new ArrayList<>();
+//                featureList = new ArrayList<>();
+//                for (Object object : objects) {
+//                    Feature feature = (Feature) object;
+//                    featureList.add(feature);
+//                    historyList.add(feature.getAttributeValue("MODIFYTIME").toString());
+//                }
                 showAuditHistoryDialog();
             }
 
@@ -361,5 +369,16 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 ToastUtil.setToast(mContext, "没有查询到数据");
             }
         });
+        historyList = new ArrayList<>();
+        featureList = new ArrayList<>();
+        for (Object o:resultFuture.get()){
+            if (o instanceof Feature){
+                Feature feature = (Feature) o;
+                featureList.add(feature);
+                historyList.add(feature.getAttributeValue("MODIFYTIME").toString());
+            }
+        }
+        Log.e("tag","list:"+historyList.toString());
+        showAuditHistoryDialog();
     }
 }
