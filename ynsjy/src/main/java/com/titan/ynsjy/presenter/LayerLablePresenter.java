@@ -2,7 +2,6 @@ package com.titan.ynsjy.presenter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -13,12 +12,13 @@ import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Field;
 import com.esri.core.map.Graphic;
 import com.esri.core.symbol.TextSymbol;
-import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.LayerLableAdapter;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.mview.ILayerView;
+import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.util.ToastUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,13 +81,7 @@ public class LayerLablePresenter {
      * 查询当前区域内的对应图层的小班数据
      */
     public void queryFeatures(final MyLayer myLayer, final boolean isChecked, final List<Field> fields, final int position) {
-        QueryParameters q = new QueryParameters();
-        q.setWhere("1=1");
-        q.setInSpatialReference(iLayerView.getBaseTitleLayer().getSpatialReference());
-        q.setReturnGeometry(true);
-        q.setGeometry(iLayerView.getCurrentEnvelope());
-        //myLayer.getLayer().setSelectionColor(0);
-        myLayer.getTable().queryIds(q, new CallbackListener<long[]>() {
+        ArcGISQueryUtils.getQueryIds(iLayerView.getCurrentEnvelope(),iLayerView.getSpatialReference(),myLayer.getTable(),new CallbackListener<long[]>() {
             @Override
             public void onCallback(long[] longs) {
                 if (longs.length > 0) {
@@ -98,7 +92,7 @@ public class LayerLablePresenter {
 
             @Override
             public void onError(Throwable throwable) {
-
+                ToastUtil.setToast(mContext, "查询出错");
             }
         });
     }
@@ -119,7 +113,6 @@ public class LayerLablePresenter {
             GeodatabaseFeature feature = (GeodatabaseFeature) myLayer.getLayer().getFeature(id);
             Object obj = feature.getAttributeValue(fields.get(position));
             String text;
-            Log.e("tag","obj"+obj);
             if (obj != null&&!obj.equals("")) {
                 text = obj.toString();
             } else {

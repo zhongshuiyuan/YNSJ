@@ -20,7 +20,7 @@ public class LocationDaoImpl implements ILocationDao {
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);// 设置定位模式
         option.setOpenGps(true); // 打开gps
-        option.setCoorType("bd09ll"); // 设置坐标类型bd09ll gcj02 GCJ-02
+        option.setCoorType("gcj02"); // 设置坐标类型bd09ll gcj02 GCJ-02
         option.setScanSpan(1000);
         client.setLocOption(option);
         client.start();

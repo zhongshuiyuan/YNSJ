@@ -108,7 +108,8 @@
             android:layout_gravity="bottom"
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
-            android:src="@drawable/share_person_center" />
+            android:src="@drawable/share_person_center"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/share_xtsz"

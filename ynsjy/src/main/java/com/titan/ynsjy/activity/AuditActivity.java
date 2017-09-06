@@ -26,18 +26,15 @@ import com.esri.core.map.FeatureResult;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
-import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.query.Order;
-import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.BaseActivity;
-import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.AuditAdapter;
 import com.titan.ynsjy.dialog.EditPhoto;
-import com.titan.ynsjy.edite.activity.ImageActivity;
 import com.titan.ynsjy.entity.MyLayer;
-import com.titan.ynsjy.mview.IUpLayerData;
+import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
@@ -51,6 +48,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.R.attr.id;
 import static com.titan.ynsjy.edite.activity.BaseEditActivity.TAKE_PICTURE;
 import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
 
@@ -59,7 +57,7 @@ import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
  * 审计
  */
 
-public class AuditActivity extends AppCompatActivity implements IUpLayerData {
+public class AuditActivity extends AppCompatActivity {
     /**新增审计*/
     EditText auditReason;
     EditText auditInfo;
@@ -94,7 +92,7 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     private Feature feature;//小班
     private FeatureTable featureTable;
     private MyLayer myLayer;
-    private long id;//原始数据小班id
+    private long fid;//原始数据小班id
     private String picPath;//图片文件夹地址
     private long newId;//新增小班id
     private String currentxbh = "";//小班唯一号
@@ -186,11 +184,12 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 saveData();
                 break;
             case R.id.audit_cancel:
-                if (auditType){
-                    this.finish();
-                }else {
-                    delAuditData();
-                }
+                this.finish();
+//                if (auditType){
+//
+//                }else {
+//                    delAuditData();
+//                }
                 break;
             case R.id.audit_history:
                 queryAuditHistory();
@@ -202,8 +201,7 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            EditPhoto dialog = new EditPhoto(mContext, imagePath, null, id);
-            dialog.setUpLayerDataListener(this);
+            EditPhoto dialog = new EditPhoto(mContext, imagePath, null, fid);
             dialog.show();
         }
     }
@@ -212,24 +210,26 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         try {
             final Dialog dialog = new Dialog(mContext, R.style.Dialog);
             dialog.setContentView(R.layout.audit_history_choice);
-//            dialog.setCanceledOnTouchOutside(false);
             ListView choiceView = (ListView) dialog.findViewById(R.id.audit_choice_list);
             TextView btn_sure = (TextView) dialog.findViewById(R.id.audit_choice_sure);
             btn_sure.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Map<String, Object> map = selectList.get(0).getAttributes();
-                    Map<String, Object> map2 = selectList.get(1).getAttributes();
-                    auditReason.setText(map.get("MODIFYINFO").toString());
-                    auditInfo.setText(map.get("INFO").toString());
-                    auditEditBefore.setText(map.get("BEFOREINFO").toString());
-                    auditEditAfter.setText(map.get("AFTERINFO").toString());
-                    auditMark.setText(map.get("REMARK").toString());
-                    auditReason2.setText(map2.get("MODIFYINFO").toString());
-                    auditInfo2.setText(map2.get("INFO").toString());
-                    auditEditBefore2.setText(map2.get("BEFOREINFO").toString());
-                    auditEditAfter2.setText(map2.get("AFTERINFO").toString());
-                    auditMark2.setText(map2.get("REMARK").toString());
+                    auditReason.setText(getAttrValue(map,"MODIFYINFO"));
+                    auditInfo.setText(getAttrValue(map,"INFO"));
+                    auditEditBefore.setText(getAttrValue(map,"BEFOREINFO"));
+                    auditEditAfter.setText(getAttrValue(map,"AFTERINFO"));
+                    auditMark.setText(getAttrValue(map,"REMARK"));
+                    Log.e("tag",":"+map);
+                    if (selectList.size()==2){
+                        Map<String, Object> map2 = selectList.get(1).getAttributes();
+                        auditReason2.setText(getAttrValue(map2,"MODIFYINFO"));
+                        auditInfo2.setText(getAttrValue(map2,"INFO"));
+                        auditEditBefore2.setText(getAttrValue(map2,"BEFOREINFO"));
+                        auditEditAfter2.setText(getAttrValue(map2,"AFTERINFO"));
+                        auditMark2.setText(getAttrValue(map2,"REMARK"));
+                    }
                     dialog.dismiss();
                 }
             });
@@ -240,6 +240,7 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
             final AuditAdapter adapter = new AuditAdapter(mContext, historyList,auditCheckMap);
             choiceView.setAdapter(adapter);
 
+            selectList.clear();
             choiceView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -262,24 +263,30 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
             });
             dialog.show();
         }catch (Exception e){
-            Log.e("tag","error:"+e.getMessage());
+            ToastUtil.setToast(mContext,"数据获取失败");
         }
     }
 
+    private String getAttrValue(Map<String, Object> map,String attr){
+        String value = map.get(attr).toString();
+        if (value.isEmpty()||value.equals("")){
+            value = "空";
+        }
+        return value;
+    }
     /**
      * 图片浏览
      */
     public void lookpictures(Activity activity) {
-        List<File> lst = MyApplication.resourcesManager.getImages(picPath);
-        if (lst.size() == 0) {
+        List<String> lst = ResourcesManager.getImagesFiles(picPath,"id"+fid+"_"); //getImages(picPath);
+        if(lst == null||lst.size()==0){
             ToastUtil.setToast(mContext, "没有图片");
             return;
         }
 
-        Intent intent = new Intent(activity, ImageActivity.class);
-        intent.putExtra("xbh", currentxbh);
+        Intent intent = new Intent(activity, PicSampActivity.class);
+        intent.putExtra("fid", fid);
         intent.putExtra("picPath", picPath);
-        intent.putExtra("type", "0");
         startActivity(intent);
     }
 
@@ -299,7 +306,7 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         featureTable = myLayer.getTable();
         Intent intent = getIntent();
         if (intent != null) {
-            id = intent.getLongExtra("id", 0);
+            fid = intent.getLongExtra("fid", 0);
             picPath = intent.getStringExtra("picPath");
             auditType = intent.getBooleanExtra("auditType", false);
         }
@@ -360,32 +367,18 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
         Graphic graphic = new Graphic(null, null, setData());
         try {
             featureTable.updateFeature(newId, graphic);
-            Log.e("tag",featureTable.getFeature(newId).toString());
+            ToastUtil.setToast(mContext,"数据保存成功");
+            this.finish();
         } catch (TableException e) {
             e.printStackTrace();
+            ToastUtil.setToast(mContext,"数据保存失败");
         }
     }
 
-    @Override
-    public void upLayerData() {
-        Log.e("tag", "1asde1");
-    }
-
     public void queryAuditHistory(){
-        QueryParameters queryParams = new QueryParameters();
-        queryParams.setOutFields(new String[]{"*"});
-        queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
-        //queryParams.setGeometry(featureTable.getExtent());
-        //queryParams.setReturnGeometry(true);
-        queryParams.setWhere("1=1");
-        Map<String, Order> orderFields = new HashMap<>();
-        orderFields.put("MODIFYTIME", Order.DESC );
-        queryParams.setOrderByFields(orderFields);//设置输出字段值降序排序
-        queryParams.setOutSpatialReference(BaseActivity.spatialReference);
-        featureTable.queryFeatures(queryParams, new CallbackListener<FeatureResult>() {
+        ArcGISQueryUtils.getQueryFeatures(featureTable,"MODIFYTIME",Order.ASC,new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult objects) {
-                Log.e("tag","list1:"+String.valueOf(objects.featureCount()));
                 if (objects.featureCount() <= 0) {
                     ToastUtil.setToast(mContext, "没有查询到数据");
                     return;
@@ -406,20 +399,5 @@ public class AuditActivity extends AppCompatActivity implements IUpLayerData {
                 ToastUtil.setToast(mContext, "没有查询到数据");
             }
         });
-//        historyList = new ArrayList<>();
-//        //featureList = new ArrayList<>();
-//        try {
-//            for (Object o:resultFuture.get()){
-//                if (o instanceof Feature){
-//                    Feature feature = (Feature) o;
-//                    //featureList.add(feature);
-//                    historyList.add(feature);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        Log.e("tag","list:"+historyList.toString());
-//        showAuditHistoryDialog();
     }
 }

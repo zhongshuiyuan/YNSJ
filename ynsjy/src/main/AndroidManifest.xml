@@ -75,6 +75,8 @@
         <activity android:name=".activity.AuditActivity"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="screenSize|keyboardHidden|orientation"/>
+        <activity android:name=".activity.PicSampActivity"/>
+        <activity android:name=".activity.ShowPicActivity"/>
         <activity
             android:name=".supertreeview.Image2Activity"
             android:configChanges="screenSize|keyboardHidden|orientation" />

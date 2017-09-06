@@ -48,7 +48,6 @@ import com.esri.android.map.Callout;
 import com.esri.android.map.CalloutPopupWindow;
 import com.esri.android.map.CalloutStyle;
 import com.esri.android.map.FeatureLayer;
-import com.esri.android.map.FeatureLayer.SelectionMode;
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.GraphicsLayer.RenderingMode;
 import com.esri.android.map.LocationDisplayManager;
@@ -84,18 +83,15 @@ import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.symbol.Symbol;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
-import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.na.NAFeaturesAsFeature;
 import com.esri.core.tasks.na.RouteTask;
 import com.esri.core.tasks.na.StopGraphic;
-import com.esri.core.tasks.query.QueryParameters;
 import com.titan.baselibrary.util.DialogParamsUtil;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.ynsjy.adapter.FeatureResultAdapter;
 import com.titan.ynsjy.adapter.SetAdapter;
 import com.titan.ynsjy.custom.MorePopWindow;
 import com.titan.ynsjy.daoImpl.LocationDaoImpl;
-import com.titan.ynsjy.dialog.AddAddressDialog;
 import com.titan.ynsjy.dialog.AddnewLayerDialog;
 import com.titan.ynsjy.dialog.ChooseDialog;
 import com.titan.ynsjy.dialog.CoordinateDialog;
@@ -136,6 +132,7 @@ import com.titan.ynsjy.presenter.RepairPresenter;
 import com.titan.ynsjy.presenter.StatisticsSpacePresenter;
 import com.titan.ynsjy.presenter.TrajectoryPresenter;
 import com.titan.ynsjy.service.RetrofitHelper;
+import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.ArcGISUtils;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.BussUtil;
@@ -163,6 +160,8 @@ import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.titan.ynsjy.R.xml.call;
 
 /**
  * Created by li on 2016/5/26.
@@ -381,7 +380,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         //featureLayerList.clear();
         //featureLayer = null;
 
-        isHaveSBH();
+        //isHaveSBH();
         //检查版本更新
 //        if(MyApplication.getInstance().hasNetWork()){
 //            new Thread(new Runnable() {
@@ -1175,7 +1174,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             super(context, view);
             map = view;
             callout = map.getCallout();
-            callout.setStyle(R.xml.call);
+            callout.setStyle(call);
         }
 
         @Override
@@ -1480,7 +1479,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 // 小地名添加
                 Graphic graphic = new Graphic(mapPoint, pictureMarkerSymbol);
                 int id = graphicsLayer.addGraphic(graphic);
-                showAddXdmView(mapPoint, id);
             } else if (actionMode == ActionMode.MODE_EDIT_ADD && layerType != null) {
 				/* 古树名木添加 */
                 if (layerType.equals(Geometry.Type.POINT)) {
@@ -2740,32 +2738,23 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      * 小班数据查询
      */
     public void getFeatureInfo(final Geometry geometry, FeatureLayer layer) {
-        QueryParameters queryParams = new QueryParameters();
-        queryParams.setOutFields(new String[]{"*"});
-        queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
-        queryParams.setGeometry(geometry);
-        queryParams.setReturnGeometry(true);
-        queryParams.setOutSpatialReference(spatialReference);
-        layer.selectFeatures(queryParams, SelectionMode.NEW,
-                new CallbackListener<FeatureResult>() {
-                    @Override
-                    public void onError(Throwable arg0) {
-                        ToastUtil.setToast(mContext, "查询出错");
+        ArcGISQueryUtils.getSelectFeatures(geometry, spatialReference, layer, new CallbackListener<FeatureResult>() {
+            @Override
+            public void onError(Throwable arg0) {
+                ToastUtil.setToast(mContext, "查询出错");
+            }
+
+            @Override
+            public void onCallback(final FeatureResult featureResult) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        if (featureResult.featureCount() > 0) {
+                            showFeaturInfo(geometry, featureResult);
+                        }
                     }
-
-                    @Override
-                    public void onCallback(final FeatureResult featureResult) {
-
-                        new Thread(new Runnable() {
-                            public void run() {
-                                if (featureResult.featureCount() > 0) {
-                                    showFeaturInfo(geometry, featureResult);
-                                }
-                            }
-                        }).start();
-                    }
-                });
-
+                }).start();
+            }
+        });
     }
 
     /**显示小班查询数据*/
@@ -2841,59 +2830,42 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     }
 
     /**
-     * 弹出添加小地名窗口
-     */
-    public void showAddXdmView(Point mappoint, int id) {
-        AddAddressDialog addressDialog = new AddAddressDialog(mContext,R.style.Dialog,mappoint,id,this);
-        BussUtil.setDialogParams(mContext, addressDialog, 0.5, 0.6);
-    }
-
-    /**
      * 选择小班查询方法
      */
     public void showGeometryInfo(Geometry geometry, FeatureLayer layer, final ActionMode mode) {
-        QueryParameters queryParams = new QueryParameters();
-        queryParams.setOutFields(new String[]{"*"});
-        queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
-        queryParams.setGeometry(geometry);
-        queryParams.setReturnGeometry(true);
-        queryParams.setWhere("1=1");
-        queryParams.setOutSpatialReference(spatialReference);
-        layer.selectFeatures(queryParams, SelectionMode.NEW,
-                new CallbackListener<FeatureResult>() {
+        ArcGISQueryUtils.getSelectFeatures(geometry, spatialReference, layer, new CallbackListener<FeatureResult>() {
+            @Override
+            public void onError(Throwable arg0) {
+                ToastUtil.setToast(mContext, "查询出错");
+            }
 
-                    @Override
-                    public void onError(Throwable arg0) {
-                        ToastUtil.setToast(mContext, "查询出错");
-                    }
-
-                    @Override
-                    public void onCallback(FeatureResult featureResult) {
-                        if (featureResult.featureCount() == 0) {
-                            ToastUtil.setToast(mContext, "没有选中任何图斑");
-                            return;
+            @Override
+            public void onCallback(FeatureResult featureResult) {
+                if (featureResult.featureCount() == 0) {
+                    ToastUtil.setToast(mContext, "没有选中任何图斑");
+                    return;
+                }
+                final List<GeodatabaseFeature> list = new ArrayList<GeodatabaseFeature>();
+                Iterator<Object> iterator = featureResult.iterator();
+                GeodatabaseFeature geodatabaseFeature = null;
+                while (iterator.hasNext()) {
+                    geodatabaseFeature = (GeodatabaseFeature) iterator.next();
+                    list.add(geodatabaseFeature);
+                }
+                graphicsLayer.removeAll();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        ProgressDialogUtil.stopProgressDialog(mContext);
+                        if (mode == ActionMode.MODE_DBCEMJ) {
+                            showResultMj(list);
+                        } else {
+                            //统计表展示
+                            listSelectFeatures(list);
                         }
-                        final List<GeodatabaseFeature> list = new ArrayList<GeodatabaseFeature>();
-                        Iterator<Object> iterator = featureResult.iterator();
-                        GeodatabaseFeature geodatabaseFeature = null;
-                        while (iterator.hasNext()) {
-                            geodatabaseFeature = (GeodatabaseFeature) iterator.next();
-                            list.add(geodatabaseFeature);
-                        }
-                        graphicsLayer.removeAll();
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                ProgressDialogUtil.stopProgressDialog(mContext);
-                                if (mode == ActionMode.MODE_DBCEMJ) {
-                                    showResultMj(list);
-                                }else{
-                                    //统计表展示
-                                    listSelectFeatures(list);
-                                }
-                            }
-                        });
                     }
                 });
+            }
+        });
     }
 
     /**统计表展示*/
@@ -3181,77 +3153,34 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /**根据勾绘区域查询图层小班*/
     public void getGeometryInfo(final Geometry geometry, final MyLayer layer) {
         selGeoFeaturesList.clear();
-        QueryParameters queryParams = new QueryParameters();
-        queryParams.setOutFields(new String[]{"*"});
-        queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
-        queryParams.setGeometry(geometry);
-        queryParams.setReturnGeometry(true);
-        queryParams.setWhere("1=1");
-        //layer.getLayer().setSelectionColor(layer.getSelectColor());
-        queryParams.setOutSpatialReference(tiledLayer.getSpatialReference());
-        layer.getLayer().selectFeatures(queryParams, SelectionMode.NEW,
-                new CallbackListener<FeatureResult>() {
-
-                    @Override
-                    public void onError(Throwable arg0) {
-                        ToastUtil.setToast(mContext, "查询出错");
-                        ProgressDialogUtil.stopProgressDialog(mContext);
+        ArcGISQueryUtils.getSelectFeatures(geometry, tiledLayer.getSpatialReference(), layer.getLayer(), new CallbackListener<FeatureResult>() {
+            @Override
+            public void onCallback(FeatureResult objects) {
+                long size = objects.featureCount();
+                if (size > 0) {
+                    Iterator<Object> iterator = objects.iterator();
+                    GeodatabaseFeature geodatabaseFeature;
+                    while (iterator.hasNext()) {
+                        geodatabaseFeature = (GeodatabaseFeature)iterator.next();
+                        selGeoFeaturesList.add(geodatabaseFeature);
+                        selMap.put(geodatabaseFeature, layer.getCname());
                     }
-
-                    @Override
-                    public void onCallback(FeatureResult featureResult) {
-
-                        long size = featureResult.featureCount();
-                        if (size > 0) {
-                            Iterator<Object> iterator = featureResult.iterator();
-                            GeodatabaseFeature geodatabaseFeature = null;
-                            while (iterator.hasNext()) {
-                                geodatabaseFeature = (GeodatabaseFeature)iterator.next();
-                                selGeoFeaturesList.add(geodatabaseFeature);
-                                selMap.put(geodatabaseFeature, layer.getCname());
-                            }
-                            //小班路径导航
-                            if (size == 1 && actionMode == ActionMode.MODE_XBNAVIGATION) {
-                                // 小班路径导航
-                                if (currentPoint == null || !currentPoint.isValid()) {
-                                    ToastUtil.setToast(mContext, "未获取到当前位置坐标");
-                                    return;
-                                }
-                                Graphic graphic = new Graphic(currentPoint, pictureMarkerSymbol);
-                                graphicsLayer.addGraphic(graphic);
-                                mStops.clearFeatures();
-                                polyline_nav = new Polyline();
-                                if (mStops.getFeatures().size() == 0) {
-                                    polyline_nav.startPath(currentPoint);
-                                }
-                                StopGraphic stop = new StopGraphic(graphic);
-                                mStops.addFeature(stop);
-
-                                navigationPresenter.drawLineToMap((Point) geometry, polyline_nav);
-                                mapView.setExtent(polyline_nav);
-                                mapView.invalidate();
-                                actionMode = ActionMode.MODE_NULL;
-                                polyline_nav = null;
-                            } else if (actionMode == ActionMode.MODE_XBQD) {
-                                runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        ProgressDialogUtil.stopProgressDialog(mContext);
-                                        allFeaturesList.clear();
-                                        allFeaturesList.addAll(selGeoFeaturesList);
-                                        showXbListData(allFeaturesList, layer);
-                                    }
-                                });
-                            }
-                        }else{
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    ProgressDialogUtil.stopProgressDialog(mContext);
-                                    ToastUtil.setToast(mContext, "没有查询到数据");
-                                }
-                            });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            ProgressDialogUtil.stopProgressDialog(mContext);
+                            ToastUtil.setToast(mContext, "没有查询到数据");
                         }
-                    }
-                });
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                ToastUtil.setToast(mContext, "查询出错");
+                ProgressDialogUtil.stopProgressDialog(mContext);
+            }
+        });
     }
 
     /**

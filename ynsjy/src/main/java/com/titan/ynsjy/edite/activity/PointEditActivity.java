@@ -1,30 +1,19 @@
 package com.titan.ynsjy.edite.activity;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.esri.android.map.FeatureLayer.SelectionMode;
 import com.esri.core.geodatabase.GeodatabaseFeature;
-import com.esri.core.geometry.Geometry;
-import com.esri.core.geometry.SpatialReference;
-import com.esri.core.map.CallbackListener;
 import com.esri.core.map.CodedValueDomain;
-import com.esri.core.map.FeatureResult;
 import com.esri.core.map.Field;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
-import com.esri.core.tasks.SpatialRelationship;
-import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
@@ -39,7 +28,6 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 /**
@@ -103,8 +91,6 @@ public class PointEditActivity extends BaseEditActivity {
 		//getXdLayer();
 
 		picPath = getImagePath(path);
-		Log.e("tag","point");
-
 	}
 
     @Override
@@ -125,7 +111,6 @@ public class PointEditActivity extends BaseEditActivity {
 					lookpictures(PointEditActivity.this);
 					break;
 				case R.id.xbfeature:
-					toXbFeatureData();
 					break;
 				default:
 					break;
@@ -239,113 +224,7 @@ public class PointEditActivity extends BaseEditActivity {
 		picPath = getImagePath(path);
 	}
 
-	@Override
-	public void onBackPressed() {
-		//super.onBackPressed();
-		//finishThis();
-		return;
-	}
-
-	/** 获取样地所在位置的小班数据 */
-	public void getGeometryInfo(Geometry geometry,final MyLayer layer) {
-		QueryParameters queryParams = new QueryParameters();
-		queryParams.setOutFields(new String[] { "*" });
-		queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
-		queryParams.setGeometry(geometry);
-		queryParams.setReturnGeometry(true);
-		queryParams.setOutSpatialReference(SpatialReference.create(2343));
-		layer.getLayer().selectFeatures(queryParams, SelectionMode.NEW,
-				new CallbackListener<FeatureResult>() {
-
-					@Override
-					public void onError(Throwable arg0) {
-						ToastUtil.setToast(mContext, "查询出错");
-					}
-
-					@Override
-					public void onCallback(FeatureResult result) {
-						if(result.featureCount() > 0){
-							Iterator<Object> iterator = result.iterator();
-							while (iterator.hasNext()) {
-								GeodatabaseFeature feature = (GeodatabaseFeature) iterator.next();
-								xblist.add(feature);
-								xbMap.put(feature, layer);
-							}
-
-							if(xblist.size() == 1){
-								xbwybh = xblist.get(0).getAttributes().get("WYBH").toString();
-							}
-						}
-					}
-				});
-	}
-
-	/**获取样地所在的图层及样地数据*/
-//	public void getXdLayer(){
-//		for(MyLayer myLayer : BaseActivity.layerNameList){
-//			GeodatabaseFeatureTable table = (GeodatabaseFeatureTable)myLayer.getTable();
-//			Type type = table.getGeometryType();
-//			String name = myLayer.getCname();
-//			if(type.equals(Type.POLYGON) && cname.equals(name)){
-//				getGeometryInfo(selGeoFeature.getGeometry(),myLayer);
-//			}
-//		}
-//	}
-
-
-	/**跳转到样地所在的小班属性页*/
-	public void toXbFeatureData(){
-
-		if(parentStr.equals("XbEdit")){
-			finish();
-			return;
-		}
-
-		int size = xblist.size();
-		if(size > 1){
-			showXiaobData();
-		}else if(size == 1){
-			GeodatabaseFeature feature = xblist.get(0);
-			//toXiaobanInfo(feature,xbMap.get(feature));
-		}
-	}
-
-	/**当样地个数大于1个时显示样地列表*/
-	public void showXiaobData(){
-		Dialog dialog = new Dialog(mContext,R.style.Dialog);
-		dialog.setContentView(R.layout.dialog_yd_list);
-		ListView yd_lstview = (ListView) dialog.findViewById(R.id.yd_data_listview);
-
-//		EdFeatureResultAdapter adapter = new EdFeatureResultAdapter(mContext, xblist, "小班列表");
-//		yd_lstview.setAdapter(adapter);
-
-		yd_lstview.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> adv, View v, int position,
-									long id) {
-				GeodatabaseFeature feature = xblist.get(position);
-				//toXiaobanInfo(feature,xbMap.get(feature));
-			}
-		});
-
-		BussUtil.setDialogParams(mContext, dialog, 0.5, 0.5);
-	}
-
-	/**跳转到样地属性页*/
-//	public void toXiaobanInfo(GeodatabaseFeature feature,MyLayer layer){
-//		Intent intent = new Intent(mContext, XbEditActivity.class);
-//		MyFeture feture = new MyFeture(pname, path, cname, feature,layer);
-//		Bundle bundle = new Bundle();
-//		bundle.putSerializable("myfeture", feture);
-//		bundle.putSerializable("parent", "PointEdit");
-//		bundle.putSerializable("id",fid +"");
-//		intent.putExtras(bundle);
-//		startActivity(intent);
-//	}
-
-
-	//    /** 绑定数据 */
+	/** 绑定数据 */
 	public ArrayList<Line> createLines() {
 		ArrayList<Line> lines = new ArrayList<>();
 		String xianD = "",xiangD= "";

@@ -25,8 +25,8 @@ import com.esri.android.map.FeatureLayer;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.map.CodedValueDomain;
 import com.esri.core.map.Field;
-import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.activity.PicSampActivity;
 import com.titan.ynsjy.entity.MyFeture;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.listviewinedittxt.Line;
@@ -85,7 +85,6 @@ public abstract class BaseEditActivity extends Activity {
 
     protected ArrayList<Line> mLines;
     protected LineAdapter mAdapter;
-    //protected SecondLineAdapter mAdapter;
     /**图片字段*/
     protected Line pcLine;
     protected String picname;
@@ -312,17 +311,15 @@ public abstract class BaseEditActivity extends Activity {
 
     /** 图片浏览*/
     public void lookpictures(Activity activity){
-
-        List<File> lst = MyApplication.resourcesManager.getImages(picPath);
-        if(lst.size() == 0){
+        List<String> lst = ResourcesManager.getImagesFiles(picPath,"id"+fid+"_"); //getImages(picPath);
+        if(lst == null||lst.size()==0){
             ToastUtil.setToast(mContext, "没有图片");
             return;
         }
 
-        Intent intent = new Intent(activity, ImageActivity.class);
-        intent.putExtra("xbh", currentxbh);
+        Intent intent = new Intent(activity, PicSampActivity.class);
+        intent.putExtra("fid", fid);
         intent.putExtra("picPath", picPath);
-        intent.putExtra("type", "0");
         startActivity(intent);
     }
 

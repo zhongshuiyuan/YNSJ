@@ -1,5 +1,6 @@
 package com.titan.ynsjy.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,6 +110,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
+		Log.e("tag","asd");
 		return childs.get(groupPosition)
 				.get(groups.get(groupPosition).getName()).size();
 	}
@@ -173,6 +175,8 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 		Button img_simple;
 		Button img_unique;
 	}
+
+	private
 	
 	class MyCbCheckedChangeListener implements OnCheckedChangeListener{
 

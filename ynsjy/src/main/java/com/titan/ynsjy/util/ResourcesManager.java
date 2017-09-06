@@ -11,6 +11,8 @@ import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.service.PullParseXml;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -518,6 +520,29 @@ public class ResourcesManager implements Serializable {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * @param uri 图片目录地址
+	 * @param name 图片名称开头包含字段
+	 * @return 满足条件的所有图片文件
+	 */
+	public static List<String> getImagesFiles(String uri,String name){
+		File file = new File(uri);
+		File[] filePath = file.listFiles();
+		if (filePath == null){
+			return null;
+		}
+		List<String> fileList = new ArrayList<>();
+		for (File f : filePath) {
+			String imgName = StringUtils.substringAfterLast(f.getPath(),File.separator);
+			Boolean flag = imgName.startsWith(name)&&imgName.endsWith(".jpg");
+			if (!f.isFile() || !flag) {
+				continue;
+			}
+			fileList.add(f.getPath());
+		}
+		return fileList;
 	}
 
 	/** 获取某个目录下图片 */

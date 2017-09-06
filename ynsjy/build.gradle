@@ -88,6 +88,7 @@ dependencies {
     compile project(':photopicker')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 
     // Add ArcGIS Runtime SDK for Android dependency
     compile 'com.esri.arcgis.android:arcgis-android:10.2.9'

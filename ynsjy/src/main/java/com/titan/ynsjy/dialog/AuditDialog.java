@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.edite.activity.ImageActivity;
 import com.titan.ynsjy.entity.MyLayer;
-import com.titan.ynsjy.mview.IUpLayerData;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
@@ -48,7 +46,7 @@ import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
  * 审计
  */
 
-public class AuditDialog extends DialogFragment implements IUpLayerData{
+public class AuditDialog extends DialogFragment{
     @BindView(R.id.audit_reason)
     EditText auditReason;//修改原因
     @BindView(R.id.audit_info)
@@ -114,7 +112,6 @@ public class AuditDialog extends DialogFragment implements IUpLayerData{
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode==Activity.RESULT_OK){
             EditPhoto dialog = new EditPhoto(mContext,imagePath,null,id);
-            dialog.setUpLayerDataListener(this);
             dialog.show();
         }
     }
@@ -224,8 +221,4 @@ public class AuditDialog extends DialogFragment implements IUpLayerData{
         unbinder.unbind();
     }
 
-    @Override
-    public void upLayerData() {
-        Log.e("tag","1asde1");
-    }
 }

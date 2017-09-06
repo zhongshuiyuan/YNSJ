@@ -2,25 +2,18 @@ package com.titan.ynsjy.edite.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.esri.android.map.FeatureLayer.SelectionMode;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geometry.Geometry;
-import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.FeatureResult;
@@ -30,18 +23,13 @@ import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
 import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.query.QueryParameters;
-import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.activity.AuditActivity;
-import com.titan.ynsjy.adapter.EdFeatureResultAdapter;
-import com.titan.ynsjy.adapter.LayerAdapter;
 import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.listviewinedittxt.Line;
 import com.titan.ynsjy.listviewinedittxt.LineAdapter;
-import com.titan.ynsjy.mview.IUpLayerData;
-import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ToastUtil;
 
 import java.io.File;
@@ -55,19 +43,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
  * Created by li on 2017/6/16.
  * 面属性编辑
  */
-public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
+public class XbEditActivity extends BaseEditActivity{
 
 	/**图片字段*/
 	private TextView btnreturn,photograph,seepicture,tvyddcb,xbarea,yddlb,tv_audit,tv_auditHistory;
@@ -107,10 +93,7 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 		} else {
 			mLines = savedInstanceState.getParcelableArrayList(EXTRA_LINES);
 		}
-//		String id = selGeoFeature.getAttributeValue("FID").toString();
-//		map = DataBaseHelper.getLayerData(mContext,id);
 		mAdapter = new LineAdapter(XbEditActivity.this,mLines,myFeture,false);
-		//mAdapter = new SecondLineAdapter(XbEditActivity.this,false,map);
 		listView.setAdapter(mAdapter);
 
 		btnreturn = (TextView) findViewById(R.id.btnreturn);//返回
@@ -156,28 +139,11 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 
 	}
 
-	/**
-	 * 设定返回值
-	 */
-	private void setActivityResult(){
-		if (isChanged){
-			setResult(1);
-		}else {
-			setResult(0);
-		}
-	}
 	@Override
 	public View getParentView() {
 		return childView;
 	}
 
-	@Override
-	public void upLayerData() {
-		Log.e("tag","2asde2");
-//		mAdapter.notifyDataSetChanged();
-//		isChanged = true;
-//		setActivityResult();
-	}
 
 	class MyListener implements View.OnClickListener{
 
@@ -212,7 +178,7 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 
 	private void auditAddOrCompare(boolean type) {
 		Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
-		intent.putExtra("id", fid);
+		intent.putExtra("fid", fid);
 		intent.putExtra("picPath",picPath);
 		intent.putExtra("auditType",type);
 		startActivity(intent);
@@ -232,40 +198,6 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 		return sdf.format(date) + ".jpg";
 	}
 
-	/** 编辑图层选择窗口， 选择要编辑的图层 */
-	public void showFeatureLayer(final List<MyLayer> list) {
-		final Dialog dialog = new Dialog(mContext, R.style.Dialog);
-		dialog.setContentView(R.layout.dialog_featureselect);
-		dialog.setCanceledOnTouchOutside(true);
-
-		ListView listview = (ListView) dialog.findViewById(R.id.listview_layers);
-		LayerAdapter adapter = new LayerAdapter(list, mContext);
-		listview.setAdapter(adapter);
-
-		listview.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-									int position, long arg3) {
-				if(BaseActivity.currentPoint == null || !BaseActivity.currentPoint.isValid()){
-					ToastUtil.setToast(mContext, "未获取到当前位置坐标");
-					return;
-				}
-
-				MyLayer layer = list.get(position);
-				yddLayername = layer.getTable().getTableName();
-				dialog.dismiss();
-				boolean flag = GeometryEngine.intersects(selGeoFeature.getGeometry(), BaseActivity.currentPoint, BaseActivity.mapView.getSpatialReference());
-				if(flag){
-					//yddcb(yddLayername);
-				}else{
-					ToastUtil.setToast(mContext, "当前位置不在所选小班范围内");
-				}
-			}
-		});
-
-		BussUtil.setDialogParams(mContext, dialog, 0.5, 0.5);
-	}
 
 	/** 获取图片保存地址*/
 	public String getImagePath(String path){
@@ -276,16 +208,16 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 		if(!flag){
 			file2.mkdirs();
 		}
-		if(currentxbh==null || currentxbh.equals("")){
+		//if(currentxbh==null || currentxbh.equals("")){
 			picPath = path1;
-		}else{
-			String path2 = file2.getPath()+"/"+currentxbh;
-			File file3 = new File(path2);
-			if(!file3.exists()){
-				file3.mkdirs();
-			}
-			picPath = file3.getPath();
-		}
+//		}else{
+//			String path2 = file2.getPath()+"/"+currentxbh;
+//			File file3 = new File(path2);
+//			if(!file3.exists()){
+//				file3.mkdirs();
+//			}
+//			picPath = file3.getPath();
+//		}
 		return picPath;
 	}
 
@@ -343,36 +275,12 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
-
-			//dealPhotoFile(mCurrentPhotoPath);
-
-			//updateZPBH();
-			//Object value = selGeoFeature.getAttributeValue("OBJECTID_12");
-			//Log.e("tag",selGeoFeature.getAttributes().toString());
 			EditPhoto dialog = new EditPhoto(mContext,imagePath,fid,null);
-			dialog.setUpLayerDataListener(this);
 			dialog.show();
 
 		}
 	}
 
-	/**获取必填字段*/
-	public void getMustField(){
-		preferences = getSharedPreferences(pname+"mustfield", MODE_PRIVATE);
-		List<Row> list = BussUtil.getConfigXml(mContext, pname, "mustfield");
-		if(list == null){
-			return;
-		}
-		if(list != null || list.size() >= 0){
-			Set<String> rows = new HashSet<String>();
-			for (Row row : list) {
-				rows.add(row.getName());
-			}
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.clear();
-			editor.putStringSet(pname, rows).commit();
-		}
-	}
 
 	/** 选择小班查询方法 */
 	public void getGeometryInfo(Geometry geometry,final MyLayer layer) {
@@ -413,17 +321,6 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 //		finish();
 //	}
 
-	/** 异步类 */
-	class MyAsyncTask extends AsyncTask<String, Void, Void> {
-
-		@Override
-		protected Void doInBackground(final String... params) {
-			if (params[0].equals("getImagePath")) {
-				cpoyZhaop();
-			}
-			return null;
-		}
-	}
 	/**检查照片编号是否与唯一编号一致*/
 	public void cpoyZhaop(){
 		Map<String, Object> attrs = myFeture.getFeature().getAttributes();
@@ -472,79 +369,4 @@ public class XbEditActivity extends BaseEditActivity implements IUpLayerData{
 			e.printStackTrace();
 		}
 	}
-
-
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		//mAdapter.getGeometryInfo(myFeture.getFeature().getGeometry());
-	}
-
-	/**获取样地数据*/
-//	public void getYangdi(){
-//		if(numSize > 1){
-//			showYangdiData();
-//		}else if(numSize == 1){
-//			if(parentStr.equals("PointEdit")){
-//				this.finish();
-//				return;
-//			}
-//			GeodatabaseFeature feature = ydlist.get(0);
-//			//toYangdiInfo(feature,ydMap.get(feature));
-//		}else{
-//			ToastUtil.setToast(mContext, "不存在样地");
-//		}
-//	}
-
-	/**当样地个数大于1个时显示样地列表*/
-	public void showYangdiData(){
-		Dialog dialog = new Dialog(mContext,R.style.Dialog);
-		dialog.setContentView(R.layout.dialog_yd_list);
-		ListView yd_lstview = (ListView) dialog.findViewById(R.id.yd_data_listview);
-
-		EdFeatureResultAdapter adapter = new EdFeatureResultAdapter(mContext, ydlist, "样地点列表");
-		yd_lstview.setAdapter(adapter);
-
-		yd_lstview.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> adv, View v, int position,
-									long id) {
-				GeodatabaseFeature feature = ydlist.get(position);
-				if(parentId == feature.getId()){
-					finish();
-					return;
-				}
-				//toYangdiInfo(feature,ydMap.get(feature));
-			}
-		});
-
-		BussUtil.setDialogParams(mContext, dialog, 0.5, 0.5);
-	}
-
-	/**跳转到样地属性页*/
-//	public void toYangdiInfo(GeodatabaseFeature feature,MyLayer layer){
-//		Intent intent = new Intent(mContext, PointEditActivity.class);
-//		MyFeture feture = new MyFeture(pname, path, cname, feature,layer);
-//		Bundle bundle = new Bundle();
-//		bundle.putSerializable("myfeture", feture);
-//		bundle.putSerializable("parent", "XbEdit");
-//		bundle.putSerializable("pWybh", currentxbh);
-//		bundle.putSerializable("id", fid+"");
-//		intent.putExtras(bundle);
-//		startActivity(intent);
-//	}
-	/**获取样地所在的图层及样地数据*/
-//	public void getYdLayer(){
-//		for(MyLayer myLayer : BaseActivity.layerNameList){
-//			GeodatabaseFeatureTable table = (GeodatabaseFeatureTable)myLayer.getTable();
-//			Type type = t.getGeometryType();
-//			String name = myLayer.getCname();
-//			if(type.equals(Type.POINT) && cname.equals(name)){
-//				getGeometryInfo(selGeoFeature.getGeometry(),myLayer);
-//			}
-//		}
-//	}
-
-
 }

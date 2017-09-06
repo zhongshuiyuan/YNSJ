@@ -26,7 +26,6 @@ import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.ScreenTool;
-import com.titan.ynsjy.mview.IUpLayerData;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.UtilTime;
 
@@ -56,7 +55,6 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
     private int labelTextSize;//标注文字大小
     private Long fk_Fxh_Uid;//对应数据ID
     private Long fk_Edit_Uid;//对应数据修改id
-    private IUpLayerData listener;//图层更新回调监听
 
     public EditPhoto(Context context, String path, Long fk_Fxh_Uid,Long fk_Edit_Uid) {
         super(context);
@@ -111,7 +109,6 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
                 sure(ed_infor, photo.getHeight() - textSize, textSize);
                 saveBitmap(photoPath, photo);
                 savePhotoInfo();
-                listener.upLayerData();
                 dismiss();
                 break;
             case R.id.photo_edit_close://返回
@@ -218,10 +215,6 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
         String infor = editText.getText().toString();
         photo = myDrawText(infor, photo, paddingTop, size);
         img_photo.setImageBitmap(photo);
-    }
-
-    public void setUpLayerDataListener(IUpLayerData listener) {
-        this.listener = listener;
     }
 
     /*画笔设定*/

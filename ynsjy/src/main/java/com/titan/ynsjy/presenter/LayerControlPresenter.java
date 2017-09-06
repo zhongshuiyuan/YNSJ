@@ -2,10 +2,8 @@ package com.titan.ynsjy.presenter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
@@ -276,6 +274,9 @@ public class LayerControlPresenter{
         if(groups == null || groups.size() ==0){
             return;
         }
+//        ExpandableListView tc_exp = (ExpandableListView) childView.findViewById(R.id.tc_expandlistview);
+//        TckzListViewAdapter expandableAdapter = new TckzListViewAdapter(mContext, groups);
+//        tc_exp.setAdapter(expandableAdapter);
         final List<Map<String, List<File>>> childs = MyApplication.resourcesManager.getChildeData(mContext,groups);
         if (childs == null || childs.size() == 0)
             return;
@@ -303,7 +304,7 @@ public class LayerControlPresenter{
                 boolean ischeck = controlView.getLayerCheckBox().get(path);
                 changeCBoxStatus(ischeck, path, parentName, childName);
 
-                ((BaseExpandableListAdapter) expandableAdapter).notifyDataSetChanged();// 通知数据发生了变化
+                expandableAdapter.notifyDataSetChanged();// 通知数据发生了变化
                 return false;
             }
         });
@@ -423,28 +424,6 @@ public class LayerControlPresenter{
     private Geodatabase geodatabase;
     public void loadGeodatabase(String path, boolean flag, String gname,String cname) {
         boolean ff = false;
-//        if (path.endsWith(".shp")){
-//            try {
-//                ff = true;
-//                GeodatabaseFeature featureTable = new GeodatabaseFeature(path);
-//                FeatureLayer layer = new FeatureLayer(featureTable);
-//                if(controlView.getTitleLayer() != null && controlView.getTitleLayer().isInitialized()){
-//                    SpatialReference sp1 = controlView.getTitleLayer().getSpatialReference();
-//                    SpatialReference sp2 = layer.getDefaultSpatialReference();
-//                    if(!sp1.equals(sp2)){
-//                        ToastUtil.setToast(mContext, "加载数据与基础底图投影系不同,无法加载");
-//                        return;
-//                    }
-//                }
-//                Renderer renderer = getHisSymbol(layer);
-//                layer.setRenderer(renderer);
-//
-//                controlView.getMapView().addLayer(layer);
-//                setMyLayer(gname,cname,path,flag,layer,featureTable);
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//        }else {
             try {
                 geodatabase = new Geodatabase(path);
             } catch (FileNotFoundException e) {
@@ -452,7 +431,6 @@ public class LayerControlPresenter{
             }catch (RuntimeException e){
                 e.printStackTrace();
                 ToastUtil.setToast(mContext,"数据库错误");
-                Log.e("tag",e.getMessage());
             }
             if (geodatabase == null)
                 return;
@@ -476,7 +454,6 @@ public class LayerControlPresenter{
                     controlView.getMapView().addLayer(layer);
 
                     setMyLayer(gname,cname,path,flag,layer,gdbFeatureTable);
-                    //Log.e("tag",gdbFeatureTable.getFields().toString());
                 }
             }
 //        }
