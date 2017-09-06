@@ -298,8 +298,10 @@ public class RenderSetDialog extends Dialog {
 
         int i =0;
         for (String field:fieldMap.keySet()) {
+
             uvs[i] = new UniqueValue();
             uniqueAttributes[i] = new String[1];
+            
 
             uniqueAttributes[i][0] = fieldMap.get(field);
             uvs[i].setDescription(fieldMap.get(field));

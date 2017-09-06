@@ -1,16 +1,22 @@
 package com.titan.ynsjy.presenter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Field;
 import com.esri.core.map.Graphic;
+import com.esri.core.symbol.PictureMarkerSymbol;
 import com.esri.core.symbol.TextSymbol;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.LayerLableAdapter;
@@ -113,6 +119,7 @@ public class LayerLablePresenter {
             GeodatabaseFeature feature = (GeodatabaseFeature) myLayer.getLayer().getFeature(id);
             Object obj = feature.getAttributeValue(fields.get(position));
             String text;
+            Log.e("tag","obj"+obj);
             if (obj != null&&!obj.equals("")) {
                 text = obj.toString();
             } else {
@@ -121,11 +128,26 @@ public class LayerLablePresenter {
             TextSymbol textSymbol = new TextSymbol(20, text, Color.BLUE);
             //解决中文乱码
             textSymbol.setFontFamily("DroidSansFallback.ttf");
+            TextView labeltext=new TextView(mContext);
+            labeltext.setText(text);
+            labeltext.setTextColor(Color.BLUE);
+            PictureMarkerSymbol pictureMarkerSymbol=new PictureMarkerSymbol(tv2Bitmap(labeltext));
             Envelope env = new Envelope();
             feature.getGeometry().queryEnvelope(env);
-            Graphic graphic = new Graphic(env.getCenter(), textSymbol);
+            Graphic graphic = new Graphic(env.getCenter(), pictureMarkerSymbol);
+            //Graphic graphic = new Graphic(feature.getGeometry(), pictureMarkerSymbol);
             iLayerView.getGraphicLayer().addGraphic(graphic);
         }
+    }
+
+    private Drawable tv2Bitmap(TextView view){
+
+        view.setDrawingCacheEnabled(true);
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        Bitmap bitmap = view.getDrawingCache();
+
+        return new BitmapDrawable(bitmap);
     }
 
 }
