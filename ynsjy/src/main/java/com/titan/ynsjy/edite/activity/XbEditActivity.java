@@ -277,7 +277,6 @@ public class XbEditActivity extends BaseEditActivity{
 		if (requestCode == TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
 			EditPhoto dialog = new EditPhoto(mContext,imagePath,fid,null);
 			dialog.show();
-
 		}
 	}
 

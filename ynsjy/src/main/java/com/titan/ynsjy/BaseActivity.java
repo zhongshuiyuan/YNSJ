@@ -24,6 +24,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Xml;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -156,6 +157,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -167,6 +170,7 @@ import static com.titan.ynsjy.R.xml.call;
  * Created by li on 2016/5/26.
  * activity基类
  */
+@RuntimePermissions
 public abstract class BaseActivity extends AppCompatActivity implements LayerSelectDialog.SetOnItemClickListener,
         View.OnClickListener, DrawEventListener, IYzlView, LayerControlView,ILayerView, INavigatView {
     /*系统投影坐标系*/
@@ -681,7 +685,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /**
      * 定位的初始化
      */
-    public void initLocation() {
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void initLocation() {
         getPersimmions();
         LocationDaoImpl locationDao = new LocationDaoImpl();
         locationDao.initLocation(mContext, mLocClient, locationListenner);
@@ -699,6 +704,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /**
      * 当前位置手动定位
      */
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     public void mylocation(View view) {
         clean(view);
         //initTouch();
@@ -957,6 +963,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /**
      * 当前位置刷新
      */
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     public void updataLocation(Point currentPoint) {
         if (currentPoint == null || !currentPoint.isValid()) {
             return;
@@ -1064,6 +1071,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /**
      * 获取位置坐标 GPS定位 网络定位 百度定位
      */
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     private Point getGPSpoint(BDLocation blocation) {
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Location location = null;
@@ -3164,6 +3172,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                         geodatabaseFeature = (GeodatabaseFeature)iterator.next();
                         selGeoFeaturesList.add(geodatabaseFeature);
                         selMap.put(geodatabaseFeature, layer.getCname());
+                        Log.e("tag",geodatabaseFeature+","+selGeoFeaturesList);
                     }
                 }else{
                     runOnUiThread(new Runnable() {
@@ -3204,11 +3213,13 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         }
         long id = feature.getId();
         try {
-            selGeoFeature = (GeodatabaseFeature) myLayer.getTable().getFeature(id);
-            selectGeometry = selGeoFeature.getGeometry();
-            selectFeatureAts = selGeoFeature.getAttributes();
+            //selGeoFeature = (GeodatabaseFeature) myLayer.getTable().getFeature(id);
+            selGeoFeature=feature;
+            Log.e("tag",selGeoFeature+"");
+            selectGeometry = feature.getGeometry();
+            selectFeatureAts = feature.getAttributes();
             //selectfiledList = myLayer.getTable().getFields();
-        } catch (TableException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return selGeoFeature;
@@ -3384,6 +3395,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /**
      * 点击地图获取地图点坐标数据并展示
      */
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     public void addCalloutPoint(MapView map, Point mappoint) {
         Point point = (Point) GeometryEngine.project(mappoint, spatialReference, SpatialReference.create(4507));
         XmlPullParser parser = getResources().getXml(R.xml.calloutpopuwindowstyle);
@@ -3460,7 +3472,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // TODO Auto-generated method stub
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
     }
 
     @Override
@@ -3641,7 +3652,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             ToastUtil.setToast(mContext, "你选择的小班为设计小班,不可编辑请重新选择编辑图层");
             return;
         }
-        //SytemUtil.getEditSymbo(BaseActivity.this, myLayer.getLayer());
+        SytemUtil.getEditSymbo(BaseActivity.this, myLayer.getLayer());
         dialog.dismiss();
         if (mode == ActionMode.MODE_XBQD) {
             ProgressDialogUtil.startProgressDialog(mContext);

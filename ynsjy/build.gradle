@@ -89,6 +89,10 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile("com.github.hotchemi:permissionsdispatcher:2.4.0") {
+        // if you don't use android.app.Fragment you can exclude support for them
+        //exclude module: "support-v13"
+    }
 
     // Add ArcGIS Runtime SDK for Android dependency
     compile 'com.esri.arcgis.android:arcgis-android:10.2.9'

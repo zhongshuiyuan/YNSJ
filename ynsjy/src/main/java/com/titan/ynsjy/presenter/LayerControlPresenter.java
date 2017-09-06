@@ -43,8 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.titan.ynsjy.BaseActivity.seflayerName;
-
 /**
  * Created by li on 2017/5/5.
  * 图层控制Presenter
@@ -487,7 +485,7 @@ public class LayerControlPresenter{
         myLayer.setRenderer(layer.getRenderer());
         myLayer.setLayer(layer);
         myLayer.setTable(featureTable);
-        seflayerName = featureTable.getTableName();
+        //seflayerName = featureTable.getTableName();
         controlView.getLayerNameList().add(myLayer);
     }
 

@@ -1,5 +1,6 @@
 package com.titan.ynsjy.edite.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -49,6 +51,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import permissions.dispatcher.NeedsPermission;
 
 /**
  * Created by li on 2017/6/16.
@@ -94,7 +98,7 @@ public abstract class BaseEditActivity extends Activity {
     public static final int TAKE_PICTURE = 0x000001;
     /** 记录小班的唯一编号 当前小班的小班号*/
     protected String currentxbh="";
-    private String[] filterField = new String[]{"OBJECTID_1","OBJECTID_12","OBJECTID","Shape_Leng","Shape_Le_1"};
+    private String[] filterField = new String[]{"OBJECTID_1","OBJECTID_12","OBJECTID","Shape_Leng","Shape_Le_1","OBJECTID_2","Shape_Le_2"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,7 +119,7 @@ public abstract class BaseEditActivity extends Activity {
         selGeoFeature = myFeture.getFeature();
         fid = selGeoFeature.getId();
         featureLayer = myFeture.getMyLayer().getLayer();
-        fieldList = featureLayer.getFeatureTable().getFields(); //selGeoFeature.getTable().getFields();
+        fieldList = selGeoFeature.getTable().getFields();//featureLayer.getFeatureTable().getFields();
         LINE_NUM = selGeoFeature.getAttributes().size();
 
 
@@ -137,6 +141,7 @@ public abstract class BaseEditActivity extends Activity {
         ArrayList<Line> lines = new ArrayList<Line>();
         String xianD = "",xiangD= "";
         boolean flag = false;
+        Log.e("tag",LINE_NUM+"，"+fieldList);
         for (int i = 0; i < LINE_NUM; i++) {
             flag = false;
             Field field = fieldList.get(i);
@@ -255,13 +260,14 @@ public abstract class BaseEditActivity extends Activity {
     /** 拍照*/
     public String mCurrentPhotoPath;// 图片路径
     //tname 为字段
+
     public void takephoto(Line line,EditText editText){
         this.pcLine = line;
         this.picname = line.getKey();
         this.zpeditText = editText;
         takephotop(new View(mContext));
     }
-
+    @NeedsPermission({Manifest.permission.CAMERA})
     public void takephotop(View view) {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

@@ -1,6 +1,5 @@
 package com.titan.ynsjy.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -89,19 +88,20 @@ public class MergeFeatureDialog extends Dialog{
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     final int position, long arg3) {
-                ((Activity)mContext).runOnUiThread(new Runnable() {
-                    public void run() {
-                        mergedex = position;
-                        mergeFeature = list.get(position);
-                        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
-                        iBaseView.getGraphicLayer().removeAll();
-                        Graphic graphic = new Graphic(mergeFeature.getGeometry(), new SimpleFillSymbol(Color.BLUE));
-                        iBaseView.getGraphicLayer().addGraphic(graphic);
-                        Envelope envelope = new Envelope();
-                        mergeFeature.getGeometry().queryEnvelope(envelope);
-                        iBaseView.getMapView().setExtent(envelope);
-                    }
-                });
+//                ((Activity)mContext).runOnUiThread(new Runnable() {
+//                    public void run() {
+//
+//                    }
+//                });
+                mergedex = position;
+                mergeFeature = list.get(position);
+                myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
+                iBaseView.getGraphicLayer().removeAll();
+                Graphic graphic = new Graphic(mergeFeature.getGeometry(), new SimpleFillSymbol(Color.BLUE));
+                iBaseView.getGraphicLayer().addGraphic(graphic);
+                Envelope envelope = new Envelope();
+                mergeFeature.getGeometry().queryEnvelope(envelope);
+                iBaseView.getMapView().setExtent(envelope);
             }
         });
 

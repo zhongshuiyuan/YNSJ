@@ -17,7 +17,6 @@ import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Field;
 import com.esri.core.map.Graphic;
 import com.esri.core.symbol.PictureMarkerSymbol;
-import com.esri.core.symbol.TextSymbol;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.LayerLableAdapter;
 import com.titan.ynsjy.entity.MyLayer;
@@ -42,7 +41,7 @@ public class LayerLablePresenter {
     public MyLayer myLayer;
     private long[] arrays;
     private HashMap<Field, Boolean> checkboxMap = new HashMap<>();
-    private String[] filterField = new String[]{"OBJECTID_1", "OBJECTID_12", "OBJECTID", "Shape_Leng", "Shape_Le_1"};
+    private String[] filterField = new String[]{"OBJECTID_1", "OBJECTID_12", "OBJECTID", "Shape_Leng", "Shape_Le_1","PK_UID","OBJECTID_2","Shape_Le_2"};
 
     public LayerLablePresenter(Context context, ILayerView layerView) {
         this.mContext = context;
@@ -64,6 +63,7 @@ public class LayerLablePresenter {
         ListView listView = (ListView) lableView.findViewById(R.id.field_list);
         List<Field> fields = myLayer.getLayer().getFeatureTable().getFields();
         boolean flag = false;
+        checkboxMap.clear();
         for (Field f : fields) {
             flag = false;
             for (String aFilterField : filterField) {
@@ -125,11 +125,12 @@ public class LayerLablePresenter {
             } else {
                 text = "空";
             }
-            TextSymbol textSymbol = new TextSymbol(20, text, Color.BLUE);
+            //TextSymbol textSymbol = new TextSymbol(20, text, Color.BLUE);
             //解决中文乱码
-            textSymbol.setFontFamily("DroidSansFallback.ttf");
+            //textSymbol.setFontFamily("DroidSansFallback.ttf");
             TextView labeltext=new TextView(mContext);
             labeltext.setText(text);
+            labeltext.setTextSize(20);
             labeltext.setTextColor(Color.BLUE);
             PictureMarkerSymbol pictureMarkerSymbol=new PictureMarkerSymbol(tv2Bitmap(labeltext));
             Envelope env = new Envelope();
