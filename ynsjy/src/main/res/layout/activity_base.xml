@@ -37,6 +37,7 @@
         android:layout_gravity="top" />
     <!--地图左侧工具-->
     <include
+        android:id="@+id/share_maptools"
         layout="@layout/share_maptools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

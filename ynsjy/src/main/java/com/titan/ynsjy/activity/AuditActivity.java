@@ -1,5 +1,7 @@
 package com.titan.ynsjy.activity;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -47,6 +49,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.RuntimePermissions;
 
 import static android.R.attr.id;
 import static com.titan.ynsjy.edite.activity.BaseEditActivity.TAKE_PICTURE;
@@ -56,7 +61,7 @@ import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
  * Created by hanyw on 2017/9/2/002.
  * 审计
  */
-
+@RuntimePermissions
 public class AuditActivity extends AppCompatActivity {
     /**新增审计*/
     EditText auditReason;
@@ -142,6 +147,13 @@ public class AuditActivity extends AppCompatActivity {
         }
     }
 
+    @TargetApi(23)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        AuditActivityPermissionsDispatcher.onRequestPermissionsResult(this,requestCode,grantResults);
+    }
+
     private void initView() {
         addView = view.findViewById(R.id.audit_add);
         compareView = view.findViewById(R.id.audit_compare);
@@ -178,7 +190,8 @@ public class AuditActivity extends AppCompatActivity {
                 lookpictures(this);
                 break;
             case R.id.audit_take_pic:
-                photograph();
+                //photograph();
+                AuditActivityPermissionsDispatcher.photographWithCheck(this);
                 break;
             case R.id.audit_sure:
                 saveData();
@@ -290,12 +303,18 @@ public class AuditActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void photograph() {
+    @NeedsPermission({Manifest.permission.CAMERA})
+    void photograph() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         imagePath = picPath + "/" + getPicName(String.valueOf(id));
         Uri uri = Uri.fromFile(new File(imagePath));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, TAKE_PICTURE);
+    }
+
+    @OnPermissionDenied({Manifest.permission.CAMERA})
+    void showRecordDenied(){
+        ToastUtil.setToast(mContext,"拒绝后将无法da打开相机，您可以在手机中手动授予权限");
     }
 
     /**

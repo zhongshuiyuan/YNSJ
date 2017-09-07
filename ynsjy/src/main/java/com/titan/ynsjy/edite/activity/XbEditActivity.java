@@ -1,5 +1,6 @@
 package com.titan.ynsjy.edite.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -24,7 +26,7 @@ import com.esri.core.table.TableException;
 import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.activity.AuditActivity;
+import com.titan.ynsjy.activity.AuditHistoryActivity;
 import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
@@ -48,11 +50,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.RuntimePermissions;
+
 
 /**
  * Created by li on 2017/6/16.
  * 面属性编辑
  */
+@RuntimePermissions
 public class XbEditActivity extends BaseEditActivity{
 
 	/**图片字段*/
@@ -136,7 +143,12 @@ public class XbEditActivity extends BaseEditActivity{
 
 		//getMustField();
 		//setActivityResult();
+	}
 
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		XbEditActivityPermissionsDispatcher.onRequestPermissionsResult(this,requestCode,grantResults);
 	}
 
 	@Override
@@ -156,7 +168,8 @@ public class XbEditActivity extends BaseEditActivity{
 					break;
 				case R.id.ld_see_pic:
 					/*图片浏览*/
-					lookpictures(XbEditActivity.this);
+					//lookpictures(XbEditActivity.this);
+					BaseEditActivityPermissionsDispatcher.lookpicturesWithCheck(XbEditActivity.this,XbEditActivity.this);
 					break;
 				case R.id.ld_audit_history:
 					/*审计历史*/
@@ -169,7 +182,8 @@ public class XbEditActivity extends BaseEditActivity{
 				case R.id.fragment_photograph:
 					/* 拍照 */
 					//takephoto(mLines.get(5),zpeditText);
-					photograph();
+					//photograph();
+					XbEditActivityPermissionsDispatcher.photographWithCheck(XbEditActivity.this);
 				default:
 					break;
 			}
@@ -177,20 +191,28 @@ public class XbEditActivity extends BaseEditActivity{
 	}
 
 	private void auditAddOrCompare(boolean type) {
-		Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
-		intent.putExtra("fid", fid);
-		intent.putExtra("picPath",picPath);
-		intent.putExtra("auditType",type);
+//		Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
+//		intent.putExtra("fid", fid);
+//		intent.putExtra("picPath",picPath);
+//		intent.putExtra("auditType",type);
+//		startActivity(intent);
+		Intent intent = new Intent(XbEditActivity.this, AuditHistoryActivity.class);
 		startActivity(intent);
 	}
 
-	private void photograph() {
+	@NeedsPermission({Manifest.permission.CAMERA})
+	void photograph() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		imagePath = getImagePath(myFeture.getPath())+"/"+getPicName(String.valueOf(fid));
 		Uri uri = Uri.fromFile(new File(imagePath));
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 		startActivityForResult(intent, TAKE_PICTURE);
 	}
+
+	@OnPermissionDenied({Manifest.permission.CAMERA})
+    void showRecordDenied(){
+        ToastUtil.setToast(mContext,"拒绝后将无法da打开相机，您可以在手机中手动授予权限");
+    }
 
 	public static String getPicName(String id) {
 		Date date = new Date(System.currentTimeMillis());

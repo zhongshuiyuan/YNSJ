@@ -63,7 +63,7 @@ public class FeatureResultAdapter extends BaseAdapter {
 		}
 		long field = list.get(position).getId();
 		String cname = selMap.get(list.get(position));
-		String lname = seflayerName ;//list.get(position).getTable().getTableName();
+		String lname = list.get(position).getTable().getTableName();
 		holder.tv.setText(cname+"--"+lname);
 		holder.tv1.setText(field+"");
 		

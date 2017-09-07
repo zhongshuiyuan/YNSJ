@@ -1,6 +1,5 @@
 package com.titan.ynsjy.presenter;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -89,8 +88,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import permissions.dispatcher.NeedsPermission;
-
 import static com.titan.ynsjy.BaseActivity.myLayer;
 import static com.titan.ynsjy.BaseActivity.seflayerName;
 
@@ -98,7 +95,6 @@ import static com.titan.ynsjy.BaseActivity.seflayerName;
  * Created by li on 2017/5/9.
  * basePresenter 基础Presenter
  */
-
 public class BasePresenter {
 
     private BaseActivity baseActivity;
@@ -255,7 +251,6 @@ public class BasePresenter {
 
     /** 拍照 */
     private static final int TAKE_PHOTO = 0x000001;
-    @NeedsPermission({Manifest.permission.CAMERA})
     public String takephoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 指定存放拍摄照片的位置

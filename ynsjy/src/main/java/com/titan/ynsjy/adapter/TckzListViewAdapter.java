@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.titan.ynsjy.R;
@@ -118,7 +120,8 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
         ExpandableListView ex_listView = ViewHolderUtil.get(convertView, R.id.tckz_expandlist);
         ChildExpandAdapter adapter = new ChildExpandAdapter(mContext,cList,map);
         ex_listView.setAdapter(adapter);
-        ListViewParamsUtils.setListViewHeightBasedOnChildren(ex_listView,groupPosition,childPosition,isLastChild,convertView,parent);
+        ex_listView.setMinimumHeight(180);
+        //ListViewParamsUtils.setListViewHeightBasedOnChildren(ex_listView,groupPosition,childPosition,isLastChild,convertView,parent);
         return convertView;
     }
 
@@ -160,7 +163,7 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
 
         @Override
         public Object getChild(int groupPosition, int childPosition) {
-            return map.get(pList.get(groupPosition).getName()).get(childPosition);
+            return map.get(cPList.get(groupPosition)).get(childPosition);
         }
 
         @Override
@@ -184,7 +187,7 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_textview, parent, false);
             }
             TextView tvSxzd = ViewHolderUtil.get(convertView, R.id.tv1);
-            String strSx = pList.get(groupPosition).getName();
+            String strSx = cPList.get(groupPosition);
             tvSxzd.setText(strSx);
             return convertView;
         }
@@ -192,11 +195,13 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_textview, parent, false);
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expandable_child, parent, false);
             }
-            TextView tvSxzd = ViewHolderUtil.get(convertView, R.id.tv1);
-            String strSx = map.get(cPList.get(groupPosition)).get(childPosition);
-            tvSxzd.setText(strSx);
+            TextView tv_child = ViewHolderUtil.get(convertView, R.id.id_child_txt);
+            CheckBox checkBox = ViewHolderUtil.get(convertView, R.id.cb_child);
+            ImageView img = ViewHolderUtil.get(convertView, R.id.featurelayer_extent);
+            Log.e("tag",": "+cPList+","+map);
+            tv_child.setText(map.get(cPList.get(groupPosition)).get(childPosition));
             return convertView;
         }
 

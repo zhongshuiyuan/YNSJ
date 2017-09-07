@@ -48,7 +48,6 @@ import java.util.Map;
  * Created by hanyw on 2017/4/28/028.
  * 小班多媒体信息采集主要是图片
  */
-
 public class PicSampActivity extends AppCompatActivity implements View.OnClickListener {
     TextView cancel;//取消全选
     TextView all;//全选
@@ -180,7 +179,7 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     /*删除文件*/
-    private void delFile(List<String> list) {
+    void delFile(List<String> list) {
         if (list.size() <= 0)
             return;
         for (int i = 0; i < list.size(); i++) {

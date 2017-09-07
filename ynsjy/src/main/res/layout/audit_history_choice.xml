@@ -25,7 +25,6 @@
         android:background="@drawable/blue_btn_select"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:layout_toStartOf="@+id/audit_pic_browse"
         android:text="确定"
         android:textSize="20sp"
         android:textColor="@color/white"

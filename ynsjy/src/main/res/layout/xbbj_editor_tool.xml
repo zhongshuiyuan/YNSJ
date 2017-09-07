@@ -40,11 +40,11 @@
         </ImageView>
     </LinearLayout>
 
+    <!--android:layout_marginBottom="10dp"-->
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="10dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:orientation="horizontal" >
@@ -121,6 +121,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="bottom"
             android:background="@drawable/xbbj_chexiao"
             android:button="@null"
             android:onClick="repealFeature" />
@@ -160,14 +161,19 @@
 
         <RadioButton
             android:id="@+id/attributButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:background="@drawable/xbbj_attribte"
+            android:text="图斑审计"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_width="75dp"
+            android:paddingTop="4dp"
+            android:layout_height="match_parent"
+            android:drawableTop="@drawable/xbbj_attribte"
+            android:drawablePadding="3dp"
             android:button="@null"
             android:onClick="attributeFeture">
         </RadioButton>
+        <!--android:background="@drawable/xbbj_attribte"-->
         
         <RadioButton
             android:id="@+id/selectButton"

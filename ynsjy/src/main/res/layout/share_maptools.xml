@@ -50,11 +50,13 @@
         android:src="@drawable/share_map_tools_clean" />
 
     <ImageButton
+        android:id="@+id/location_self"
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
         android:layout_marginBottom="10dp"
-        android:onClick="mylocation"
+
         android:src="@drawable/share_map_tools_dw" />
+    <!--android:onClick="mylocation"-->
 
 </LinearLayout>

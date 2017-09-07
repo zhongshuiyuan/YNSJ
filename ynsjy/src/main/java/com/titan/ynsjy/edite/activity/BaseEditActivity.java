@@ -53,11 +53,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
 
 /**
  * Created by li on 2017/6/16.
  * 属性编辑的基activity
  */
+@RuntimePermissions
 public abstract class BaseEditActivity extends Activity {
 
     protected static final String EXTRA_LINES = "EXTRA_LINES";
@@ -316,6 +318,7 @@ public abstract class BaseEditActivity extends Activity {
     }
 
     /** 图片浏览*/
+    @NeedsPermission({Manifest.permission.READ_EXTERNAL_STORAGE})
     public void lookpictures(Activity activity){
         List<String> lst = ResourcesManager.getImagesFiles(picPath,"id"+fid+"_"); //getImages(picPath);
         if(lst == null||lst.size()==0){

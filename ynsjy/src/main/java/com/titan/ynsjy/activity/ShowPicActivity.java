@@ -10,7 +10,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import java.util.List;
  * Created by Administrator on 2017/5/2/002.
  * 点击小班图片展示的图片展示大图
  */
-
 public class ShowPicActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
     Context mContext;
     ViewPager viewPager;//展示图片的ViewPager

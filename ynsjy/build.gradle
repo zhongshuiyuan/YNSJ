@@ -91,9 +91,9 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile("com.github.hotchemi:permissionsdispatcher:2.4.0") {
         // if you don't use android.app.Fragment you can exclude support for them
-        //exclude module: "support-v13"
+        exclude module: "support-v13"
     }
-
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:2.4.0"
     // Add ArcGIS Runtime SDK for Android dependency
     compile 'com.esri.arcgis.android:arcgis-android:10.2.9'
 }

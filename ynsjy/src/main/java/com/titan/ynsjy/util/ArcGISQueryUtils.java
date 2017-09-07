@@ -72,4 +72,18 @@ public class ArcGISQueryUtils {
         queryParams.setOutSpatialReference(BaseActivity.spatialReference);
         table.queryFeatures(queryParams,callbackListener);
     }
+
+    /**
+     * 获取表中所有feature
+     * @param table 查询表
+     * @param callbackListener 查询监听
+     */
+    public static void getQueryFeaturesAll(FeatureTable table,CallbackListener<FeatureResult> callbackListener){
+        QueryParameters queryParams = new QueryParameters();
+        queryParams.setOutFields(new String[]{"*"});
+        queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
+        queryParams.setWhere("1=1");
+        queryParams.setOutSpatialReference(BaseActivity.spatialReference);
+        table.queryFeatures(queryParams,callbackListener);
+    }
 }
