@@ -1,5 +1,7 @@
+/*
 package com.titan.ynsjy.util;
 
+*/
 /* Copyright 2014 ESRI
  *
  * All rights reserved under the copyright laws of the United States
@@ -11,7 +13,8 @@ package com.titan.ynsjy.util;
  *
  * See the sample code usage restrictions document for further information.
  *
- */
+ *//*
+
 
 import java.io.File;
 import java.util.Map;
@@ -27,6 +30,7 @@ import com.esri.android.map.MapView;
 import com.esri.core.ags.FeatureServiceInfo;
 import com.esri.core.geodatabase.Geodatabase;
 import com.esri.core.geodatabase.GeodatabaseFeatureTableEditErrors;
+import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.Polygon;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.tasks.geodatabase.GenerateGeodatabaseParameters;
@@ -56,9 +60,11 @@ public class GDBUtil {
 
 	private static String gdbFileName = "/offlinedata.geodatabase";
 
-	/**
+	*/
+/**
 	 * Checks whether the device is connected to a network
-	 */
+	 *//*
+
 	public static boolean hasInternet(Activity a) {
 		boolean hasConnectedWifi = false;
 		boolean hasConnectedMobile = false;
@@ -76,11 +82,13 @@ public class GDBUtil {
 		return hasConnectedWifi || hasConnectedMobile;
 	}
 
-	/**
+	*/
+/**
 	 * Download data into a geodatabase
 	 *
 	 * @param activity
-	 */
+	 *//*
+
 	public static void downloadData(final BaseActivity activity) {
 		Log.i(TAG, "downloadData");
 		String path = ResourcesManager.getInstance(activity).getFolderPath("/otms/同步数据");
@@ -129,13 +137,16 @@ public class GDBUtil {
 
 	}
 
-	/**
+	*/
+/**
 	 * Download the geodatabase from the server.
-	 */
-	private static void requestGdbFromServer(GeodatabaseSyncTask geodatabaseSyncTask,final BaseActivity activity,
+	 *//*
+
+	private static void requestGdbFromServer(GeodatabaseSyncTask geodatabaseSyncTask,Geometry extent,
 											 final MapView mapView, FeatureServiceInfo fsInfo,String gdbFilePath) {
 
-		Polygon extent = activity.syncfeatureLayer.getExtent();
+		//Polygon extent = activity.syncfeatureLayer.getExtent();
+		//ex extent=new Exten
 		GenerateGeodatabaseParameters params = new GenerateGeodatabaseParameters(fsInfo, extent,mapView.getSpatialReference(), null, true);
 		params.setOutSpatialRef(mapView.getSpatialReference());
 
@@ -203,11 +214,13 @@ public class GDBUtil {
 		});
 	}
 
-	/**
+	*/
+/**
 	 * Synchronizing the edits to the Map working on both online/offline mode
 	 *
 	 * @throws Exception
-	 */
+	 *//*
+
 	private static void doSyncAllInOne(final BaseActivity activity) {
 
 		try {
@@ -269,9 +282,11 @@ public class GDBUtil {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Checks whether the geodatabase is available locally
-	 */
+	 *//*
+
 	public static boolean isGeoDatabaseLocal(String gdbFilePath) {
 		File file = new File(gdbFilePath);
 		if(file.exists()){
@@ -304,3 +319,4 @@ public class GDBUtil {
 	}
 
 }
+*/

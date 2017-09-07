@@ -7,15 +7,15 @@ package com.titan.ynsjy.entity;
 
 public enum ActionMode {
     /** 空间统计-多斑测量面积 */
-    MODE_XBQD,
+    //MODE_XBQD,
     /** 空间统计-多斑测量面积 */
-    MODE_DBCEMJ,
+    //MODE_DBCEMJ,
     /** 空间统计 */
-    MODE_TONGJI,
+    //MODE_TONGJI,
     /** 小班查询 */
-    MODE_XBSEARCHZDY,
+    //MODE_XBSEARCHZDY,
     /** 小班查询 */
-    MODE_XBSEARCHJD,
+    //MODE_XBSEARCHJD,
     /** 小班属性编辑 */
     MODE_attribute_edit,
     /** 小班属性查询 */
@@ -49,13 +49,13 @@ public enum ActionMode {
     /** 切割 */
     MODE_QIEGE,
     /** 数据下载 */
-    MODE_DOWNLOAD,
+    //MODE_DOWNLOAD,
     /** 数据上传 */
-    MODE_DATAUP,
+    //MODE_DATAUP,
     /** 路径导航 */
-    MODE_NAVIGATION,
+    //MODE_NAVIGATION,
     /** 小班路径导航 */
-    MODE_XBNAVIGATION,
+    //MODE_XBNAVIGATION,
     /** 添加小地名 */
     MODE_ADD_ADDRESS,
     /** 点击地图取坐标 */

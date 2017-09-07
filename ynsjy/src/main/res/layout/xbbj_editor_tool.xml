@@ -60,7 +60,7 @@
             android:onClick="addFeature" >
         </RadioButton>
         
-        <RadioButton
+        <!--<RadioButton
             android:id="@+id/addfeaturegb"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -69,9 +69,9 @@
             android:background="@drawable/xbbj_addgb"
             android:button="@null"
             android:onClick="addFeatureGb" >
-        </RadioButton>
+        </RadioButton>-->
         
-        <RadioButton
+        <!--<RadioButton
             android:id="@+id/copyButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
             android:background="@drawable/xbbj_copy"
             android:button="@null"
             android:onClick="copyFeature" >
-        </RadioButton>
+        </RadioButton>-->
 
         <RadioButton
             android:layout_width="0dp"

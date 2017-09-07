@@ -5,12 +5,12 @@
     android:background="@android:color/transparent"
     android:orientation="vertical" >
     
-    <ImageButton
+   <!-- <ImageButton
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
         android:onClick="pointInMap"
-        android:src="@drawable/share_map_tools_xbdh" />
+        android:src="@drawable/share_map_tools_xbdh" />-->
 
     <ImageButton
         style="@style/imgbutton_style"

@@ -6,7 +6,7 @@ import com.baidu.location.LocationClient;
 import com.titan.ynsjy.BaseActivity;
 
 /**
- * Created by li on 2017/3/14.
+ * Created by li on 2017/3/14
  */
 
 public interface ILocationDao {

@@ -55,6 +55,7 @@
         <activity
             android:name=".activity.YzlActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

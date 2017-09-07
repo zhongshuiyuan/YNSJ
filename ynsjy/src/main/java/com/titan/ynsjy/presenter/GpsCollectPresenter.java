@@ -22,6 +22,7 @@ public class GpsCollectPresenter {
 
     private Context mContext;
     private IBaseView iBaseView;
+    // 0:采集轨迹 1:采集图斑
     public int collection_type = 0;
     private String copydbpath = "";
     private String copydbname = "";

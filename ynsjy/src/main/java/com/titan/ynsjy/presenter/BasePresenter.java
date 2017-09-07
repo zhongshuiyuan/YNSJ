@@ -212,9 +212,9 @@ public class BasePresenter {
         if(currentPoint == null || !currentPoint.isValid()){
             return;
         }
-        if (MyApplication.getInstance().hasNetWork()) {// 在线保存
-
-            String recodeTime = format.format(new Date());
+        String recodeTime = format.format(new Date());
+        if (MyApplication.getInstance().hasNetWork()) {
+            //有网络在线保存
             Webservice webservice = new Webservice(baseActivity);
             state = webservice.upPoint(MyApplication.macAddress,
                     currentPoint.getX() + "", currentPoint.getY() + "",
@@ -236,6 +236,10 @@ public class BasePresenter {
                         MyApplication.macAddress, currentPoint.getX(),
                         currentPoint.getY(), recodeTime, "0");
             }
+        } else {
+            DataBaseHelper.addPointGuiji(baseActivity,
+                    MyApplication.macAddress, currentPoint.getX(),
+                    currentPoint.getY(), recodeTime, "0");
         }
     }
 

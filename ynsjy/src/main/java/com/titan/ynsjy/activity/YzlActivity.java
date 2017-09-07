@@ -1,7 +1,5 @@
 package com.titan.ynsjy.activity;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
@@ -16,15 +14,13 @@ import com.titan.ynsjy.util.BussUtil;
 public class YzlActivity extends BaseActivity {
 	
 	private View parentView;
-
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		parentView = getLayoutInflater().inflate(R.layout.activity_yzl, null);
 		super.onCreate(savedInstanceState);
 		setContentView(parentView);
 
-		Context mContext = YzlActivity.this;
+		 mContext = YzlActivity.this;
 		//ImageView topview = (ImageView) parentView.findViewById(R.id.topview);
 		//topview.setBackground(mContext.getResources().getDrawable(R.drawable.share_top_yzl));
 		

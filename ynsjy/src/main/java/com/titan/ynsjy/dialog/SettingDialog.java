@@ -134,14 +134,14 @@ public class SettingDialog extends Dialog {
             }
         });
 
-        TextView removeOnlineLayers =(TextView) findViewById(R.id.remove_onlinelayer);
+        /*TextView removeOnlineLayers =(TextView) findViewById(R.id.remove_onlinelayer);
         removeOnlineLayers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mContext.removeOnlineLayers();
                 SettingDialog.this.dismiss();
             }
-        });
+        });*/
 
         TextView picup =(TextView) findViewById(R.id.uptopic);
         picup.setOnClickListener(new View.OnClickListener() {

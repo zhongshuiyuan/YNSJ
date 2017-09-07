@@ -1,11 +1,9 @@
 package com.titan.ynsjy;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.provider.Settings.Secure;
-import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.tencent.bugly.crashreport.CrashReport;
 import com.titan.baselibrary.crash.CrashHandler;
@@ -15,7 +13,6 @@ import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ConnectionChangeReceiver;
 import com.titan.ynsjy.util.NetUtil;
 import com.titan.ynsjy.util.ResourcesManager;
-import com.titan.ynsjy.util.SytemUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.ZIPUtil;
 
@@ -26,7 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
 	public static MyApplication mApplication;
 	public static ResourcesManager resourcesManager;
@@ -73,14 +70,16 @@ public class MyApplication extends Application {
 		}
 
 		/* 打开GPS */
-		SytemUtil.openGps(this);
+		//SytemUtil.openGps(this);
 		/** 获取设备信息 */
-		new MyAsyncTask().execute("getMbInfo");
+		getMbInfo();
+		//new MyAsyncTask().execute("getMbInfo");
 
 		/* 自动注册设备信息到数据库 */
-		if (netWorkTip()) {
+		/*if (netWorkTip()) {
 			new MyAsyncTask().execute("addMacAddress");
-		}
+		}*/
+
 
 		new MyAsyncTask().execute("copyDatabase");
 
@@ -89,11 +88,11 @@ public class MyApplication extends Application {
 		crashHandler.init(this);
 	}
 
-	@Override
+	/*@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
-		MultiDex.install(this);
-	}
+		//MultiDex.install(this);
+	}*/
 
 	/** 获取设备信息 */
 	public void getMbInfo() {
