@@ -18,6 +18,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * GPS采集数据
+ */
 public class GpsCollectPresenter {
 
     private Context mContext;

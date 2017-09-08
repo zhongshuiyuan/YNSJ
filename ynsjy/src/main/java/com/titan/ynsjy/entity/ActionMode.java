@@ -35,13 +35,13 @@ public enum ActionMode {
     /** 新增小班 */
     MODE_edit,
     /** 小班查询 */
-    MODE_searchXB,
+    //MODE_searchXB,
     /** 小地名查询 */
-    MODE_searchXDM,
+    //MODE_searchXDM,
     /** 轨迹 */
     MODE_GUIJI,
     /** 足迹 */
-    MODE_ZUJI,
+    //MODE_ZUJI,
     /** 选择小班 */
     MODE_SELECT,
     /** 修斑 */
@@ -57,9 +57,9 @@ public enum ActionMode {
     /** 小班路径导航 */
     //MODE_XBNAVIGATION,
     /** 添加小地名 */
-    MODE_ADD_ADDRESS,
+    //MODE_ADD_ADDRESS,
     /** 点击地图取坐标 */
-    MODE_ADD_CALLOUT,
+    //MODE_ADD_CALLOUT,
     /**属性标注*/
     MODE_ADD_LABLE,
     /** null */

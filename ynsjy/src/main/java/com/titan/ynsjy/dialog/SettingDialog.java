@@ -125,14 +125,14 @@ public class SettingDialog extends Dialog {
         ImageView close = (ImageView) findViewById(R.id.settings_close);
         close.setOnClickListener(new CancleListener(this));
 
-        TextView addOnlineLayers =(TextView) findViewById(R.id.add_onlinelayer);
+        /*TextView addOnlineLayers =(TextView) findViewById(R.id.add_onlinelayer);
         addOnlineLayers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mContext.addOnlineLayers();
                 SettingDialog.this.dismiss();
             }
-        });
+        });*/
 
         /*TextView removeOnlineLayers =(TextView) findViewById(R.id.remove_onlinelayer);
         removeOnlineLayers.setOnClickListener(new View.OnClickListener() {

@@ -20,6 +20,7 @@ import com.esri.core.geometry.Polygon;
 import com.esri.core.geometry.Polyline;
 import com.esri.core.map.Graphic;
 import com.esri.core.symbol.PictureMarkerSymbol;
+import com.titan.gis.GeometryUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
@@ -28,7 +29,6 @@ import com.titan.ynsjy.db.DataBaseHelper;
 import com.titan.ynsjy.entity.GjPoint;
 import com.titan.ynsjy.mview.IBaseView;
 import com.titan.ynsjy.timepaker.TimePopupWindow;
-import com.titan.ynsjy.util.GeometryUtil;
 import com.titan.ynsjy.util.ToastUtil;
 
 import java.text.DateFormat;
@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -52,7 +53,7 @@ public class TrajectoryPresenter {
 
     private BaseActivity mContext;
     private IBaseView iBaseView;
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINESE);
 
     public TrajectoryPresenter(BaseActivity context,IBaseView baseView){
         this.mContext = context;

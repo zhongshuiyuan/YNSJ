@@ -1,11 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/parent_cemian"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/transparent" >
+    android:divider="@drawable/divider"
+    android:showDividers="middle"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <Button
+        android:id="@+id/item_popupwindows_dbx"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="@string/select_dbx"
+        style="@style/SingleChose"
+        />
+    <!--android:background="@drawable/btn_nobgd"-->
+
+    <Button
+        android:id="@+id/item_popupwindows_zyqx"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="@string/select_zyqx"
+        style="@style/SingleChose" />
+
+    <Button
+        android:id="@+id/item_popupwindows_freeline"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="@string/select_freeline"
+        style="@style/SingleChose" />
+
+
+    <Button
+        android:id="@+id/btn_area_track"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="@string/track"
+        style="@style/SingleChose" />
+
+    <!--<LinearLayout
         android:id="@+id/ll_popup_cemian"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,10 +47,10 @@
         android:background="#ffffff"
         android:orientation="vertical" >
 
-        <!-- <TextView
+        &lt;!&ndash; <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/blue" /> -->
+            android:background="@color/blue" /> &ndash;&gt;
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,5 +108,5 @@
                 android:textSize="@dimen/larger_txtsize20" />
         </LinearLayout>
     </LinearLayout>
-
-</RelativeLayout>
+-->
+</LinearLayout>

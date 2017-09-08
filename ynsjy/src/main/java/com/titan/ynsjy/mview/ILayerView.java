@@ -17,7 +17,7 @@ public interface ILayerView extends IBaseView {
     //获取影像底图
     ArcGISLocalTiledLayer getImgTitleLayer();
     //获取地形图底图
-    ArcGISLocalTiledLayer getDxtTitleLayer();
+    //ArcGISLocalTiledLayer getDxtTitleLayer();
     //获取加载的小班图层列表
     List<MyLayer> getLayerList();
     //获取DrawTool

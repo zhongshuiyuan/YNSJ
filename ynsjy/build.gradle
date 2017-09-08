@@ -42,7 +42,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            output.outputFile = new File(output.outputFile.parent, "哀牢山平台" + "-v" +
+            output.outputFile = new File(output.outputFile.parent, "审计眼系统" + "-v" +
                     defaultConfig.versionName + "-" + defaultConfig.versionCode + ".apk");
         }
     }

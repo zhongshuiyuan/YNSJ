@@ -37,6 +37,7 @@ import com.esri.core.symbol.PictureMarkerSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.titan.baselibrary.util.DialogParamsUtil;
+import com.titan.gis.GeometryUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
@@ -45,7 +46,6 @@ import com.titan.ynsjy.db.DataBaseHelper;
 import com.titan.ynsjy.entity.GjPoint;
 import com.titan.ynsjy.mview.IDialogDao;
 import com.titan.ynsjy.timepaker.TimePopupWindow;
-import com.titan.ynsjy.util.GeometryUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.Util;
 

@@ -33,4 +33,5 @@ public class YzlActivity extends BaseActivity {
 		return parentView;
 	}
 
+
 }

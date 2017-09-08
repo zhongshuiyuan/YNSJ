@@ -109,8 +109,8 @@ public class RenderSetDialog extends Dialog {
             }
         });
 
-        TextView dxtSys = (TextView) findViewById(R.id.dxt_system);
-        dxtSys.setOnClickListener(new View.OnClickListener() {
+        //TextView dxtSys = (TextView) findViewById(R.id.dxt_system);
+        /*dxtSys.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
@@ -120,7 +120,7 @@ public class RenderSetDialog extends Dialog {
                 }
                 layerTmdSystem(iLayerView.getDxtTitleLayer());
             }
-        });
+        });*/
 
         ListView listView = (ListView) findViewById(R.id.layer_render_system);
         TcRenderAdapter adapter = new TcRenderAdapter(mContext, iLayerView.getLayerList(),this);

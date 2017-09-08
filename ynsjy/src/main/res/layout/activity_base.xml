@@ -119,14 +119,14 @@
         android:visibility="gone" />
 
     <!--其他机器轨迹查询-->
-    <include
+    <!--<include
         android:id="@+id/gjserchother_include"
         layout="@layout/view_guijiother"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
         android:layout_marginTop="80dp"
-        android:visibility="gone" />
+        android:visibility="gone" />-->
 
     <!--影像图层控制-->
     <include

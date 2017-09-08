@@ -93,7 +93,7 @@ public class LayerControlPresenter{
         ImageView tileView = (ImageView)childView.findViewById(R.id.tile_extent);
         tileView.setOnClickListener(onClickListener);
 
-        //地形图
+        /*//地形图
         CheckBox cb_dxt = (CheckBox) childView.findViewById(R.id.cb_dxt);
         if (controlView.getDxtLayer() != null) {
             cb_dxt.setChecked(controlView.getDxtLayer().isVisible());
@@ -110,7 +110,7 @@ public class LayerControlPresenter{
         });
         // 地形图 缩放到地图范围
         ImageView dxtTileView = (ImageView) childView.findViewById(R.id.dxt_extent);
-        dxtTileView.setOnClickListener(onClickListener);
+        dxtTileView.setOnClickListener(onClickListener);*/
 
         // 影像图
         CheckBox cb_yx = (CheckBox) childView.findViewById(R.id.cb_ys);
@@ -130,9 +130,9 @@ public class LayerControlPresenter{
                             ToastUtil.setToast(mContext, "影像数据文件不存在");
                             return;
                         }
-                        if(controlView.getDxtLayer() != null && controlView.getDxtLayer().isInitialized()){
+                       /* if(controlView.getDxtLayer() != null && controlView.getDxtLayer().isInitialized()){
                             controlView.getMapView().removeLayer(controlView.getDxtLayer());
-                        }
+                        }*/
                         if(controlView.getGraphicLayer() != null && controlView.getGraphicLayer().isInitialized()){
                             controlView.getMapView().removeLayer(controlView.getGraphicLayer());
                         }
@@ -145,9 +145,9 @@ public class LayerControlPresenter{
 
                         controlView.addImageLayer(fileList.get(0).getPath());
 
-                        if(controlView.getDxtLayer() != null){
+                       /* if(controlView.getDxtLayer() != null){
                             controlView.getMapView().addLayer(controlView.getDxtLayer());
-                        }
+                        }*/
 
                         if(controlView.getLayerNameList().size() > 0){
                             for(MyLayer myLayer :controlView.getLayerNameList()){
@@ -225,9 +225,10 @@ public class LayerControlPresenter{
                         ToastUtil.setToast(mContext, "影像数据文件不存在");
                         return;
                     }
-                    if(controlView.getDxtLayer() != null && controlView.getDxtLayer().isInitialized()){
+                   /* if(controlView.getDxtLayer() != null && controlView.getDxtLayer().isInitialized()){
                         controlView.getMapView().removeLayer(controlView.getTitleLayer());
-                    }
+                    }*/
+
                     if(controlView.getGraphicLayer() != null && controlView.getGraphicLayer().isInitialized()){
                         controlView.getMapView().removeLayer(controlView.getGraphicLayer());
                     }

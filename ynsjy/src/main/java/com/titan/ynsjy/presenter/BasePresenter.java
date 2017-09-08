@@ -1,14 +1,12 @@
 package com.titan.ynsjy.presenter;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.esri.android.map.FeatureLayer;
@@ -63,9 +59,9 @@ import com.titan.ynsjy.entity.XdmSearchHistory;
 import com.titan.ynsjy.mview.IBaseView;
 import com.titan.ynsjy.service.Webservice;
 import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.util.BitmapTool;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.CursorUtil;
-import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.SymbolUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
@@ -88,7 +84,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.titan.ynsjy.BaseActivity.myLayer;
+import butterknife.BindView;
+
 import static com.titan.ynsjy.BaseActivity.seflayerName;
 
 /**
@@ -96,36 +93,49 @@ import static com.titan.ynsjy.BaseActivity.seflayerName;
  * basePresenter 基础Presenter
  */
 public class BasePresenter {
+    //轨迹测量面积
+    @BindView(R.id.btn_area_track)
+    Button btnAreaTrack;
 
     private BaseActivity baseActivity;
     private MapView mapView;
     private IBaseView iBaseView;
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
 
-    public BasePresenter(BaseActivity ctx, IBaseView view){
+    public BasePresenter(BaseActivity ctx, IBaseView view) {
         this.baseActivity = ctx;
         this.mapView = view.getMapView();
         this.iBaseView = view;
     }
 
-    /**添加tpk文件地图*/
-    public ArcGISLocalTiledLayer addTitleLayer(String path){
+    /**
+     * 添加tpk文件地图
+     */
+    public ArcGISLocalTiledLayer addTitleLayer(String path) {
         if (new File(path).exists()) {
             ArcGISLocalTiledLayer tiledLayer = new ArcGISLocalTiledLayer(path);
             mapView.addLayer(tiledLayer);
             return tiledLayer;
-        }else{
+        } else {
             return new ArcGISLocalTiledLayer(path);
         }
     }
 
-    /**添加graphicLayer图层*/
-    public GraphicsLayer addGraphicLayer(){
+    /**
+     * 添加graphicLayer图层
+     */
+    public GraphicsLayer addGraphicLayer() {
         GraphicsLayer graphicsLayer = new GraphicsLayer(GraphicsLayer.RenderingMode.STATIC);
         mapView.addLayer(graphicsLayer);
         return graphicsLayer;
     }
-    /** 当前点数据展示 */
+    public void addGraphic2Layer(Graphic graphic){
+        iBaseView.getGraphicLayer().addGraphic(graphic);
+    }
+
+    /**
+     * 当前点数据展示
+     */
     public View loadCalloutView(final Point point) {
         DecimalFormat decimalFormat = new DecimalFormat(".000000");
         View view = LayoutInflater.from(baseActivity).inflate(R.layout.callout_mylocation, null);
@@ -155,11 +165,11 @@ public class BasePresenter {
 
             @Override
             public void onClick(View arg0) {
-                if(!point.isValid()){
+                if (!point.isValid()) {
                     ToastUtil.setToast(baseActivity, "未获取到当前位置坐标");
                     return;
                 }
-                ShouCangDialog dialog=new ShouCangDialog(baseActivity,point,ShouCangDialog.SqlType.ADD);
+                ShouCangDialog dialog = new ShouCangDialog(baseActivity, point, ShouCangDialog.SqlType.ADD);
                 BussUtil.setDialogParams(baseActivity, dialog, 0.7, 0.8);
             }
         });
@@ -206,10 +216,12 @@ public class BasePresenter {
         return view;
     }
 
-    /** 添加轨迹坐标点 */
+    /**
+     * 添加轨迹坐标点
+     */
     public void addGuijiPoint(Point currentPoint) {
         String state = "1";
-        if(currentPoint == null || !currentPoint.isValid()){
+        if (currentPoint == null || !currentPoint.isValid()) {
             return;
         }
         String recodeTime = format.format(new Date());
@@ -244,17 +256,17 @@ public class BasePresenter {
     }
 
     /** 从相册选取图片进行编辑 */
-    private static final int ALBUM = 0x000002;
+    /*private static final int ALBUM = 0x000002;
     public void fromAlum() {
         //系统相册
         Intent picture = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         //android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        //picture.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        //picture.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image*//*");
         baseActivity.startActivityForResult(picture, ALBUM);
-    }
+    }*/
 
     /** 拍照 */
-    private static final int TAKE_PHOTO = 0x000001;
+    /*private static final int TAKE_PHOTO = 0x000001;
     public String takephoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 指定存放拍摄照片的位置
@@ -265,10 +277,10 @@ public class BasePresenter {
             return file.getAbsolutePath();
         }
         return "";
-    }
+    }*/
 
     /** 存放文件位置 */
-    private File createImageFile() {
+    /*private File createImageFile() {
         String path = MyApplication.resourcesManager.getFolderPath("/phone");
         if(path.equals("文件夹可用地址")){
             try {
@@ -282,11 +294,13 @@ public class BasePresenter {
         }
         File image = new File(path+"/"+ String.valueOf(System.currentTimeMillis()) + ".jpg");
         return image;
-    }
+    }*/
 
-    /** 加载小班属性数据 */
+    /**
+     * 加载小班属性数据
+     */
     public View loadAttributeView(List<Field> fieldList, Map<String, Object> attributes) {
-        String xian="",xiang="";
+        String xian = "", xiang = "";
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         ArrayList<Field> list2 = new ArrayList<Field>();
         for (int i = 0; i < fieldList.size(); i++) {
@@ -297,25 +311,25 @@ public class BasePresenter {
             list2.add(fieldList.get(i));
             Map<String, String> map = new HashMap<String, String>();
             CodedValueDomain domain = (CodedValueDomain) fieldList.get(i).getDomain();
-            if(domain != null){
+            if (domain != null) {
                 Map<String, String> values = domain.getCodedValues();
                 String name = fieldList.get(i).getName();
-                for(String key : values.keySet()){
-                    if(key.equals(attributes.get(name))){
+                for (String key : values.keySet()) {
+                    if (key.equals(attributes.get(name))) {
                         map.put(alias, values.get(key));
                         break;
-                    }else{
+                    } else {
                         map.put(alias, fieldList.get(i).getName());
                     }
                 }
-            }else{
+            } else {
                 map.put(alias, fieldList.get(i).getName());
             }
             list.add(map);
         }
         final View view = LayoutInflater.from(baseActivity).inflate(R.layout.polygon_attributeinfo, null);
         ListView attribute_listview = (ListView) view.findViewById(R.id.attribute_listview);
-        AttributeAdapter adapter = new AttributeAdapter(list2, attributes,list, baseActivity, "当前图层");
+        AttributeAdapter adapter = new AttributeAdapter(list2, attributes, list, baseActivity, "当前图层");
         attribute_listview.setAdapter(adapter);
         ImageButton button = (ImageButton) view.findViewById(R.id.attributeclose);
         button.setOnClickListener(new View.OnClickListener() {
@@ -333,7 +347,7 @@ public class BasePresenter {
      */
     public ProjCoordinate meth(double lon, double lat, double al) {
         String x = MyApplication.sharedPreferences.getString("dx", "0");
-        double x1 = Double.parseDouble(x.equals("") ? "0": x);
+        double x1 = Double.parseDouble(x.equals("") ? "0" : x);
         String y = MyApplication.sharedPreferences.getString("dy", "0");
         double y1 = Double.parseDouble(y.equals("") ? "0" : y);
         String z = MyApplication.sharedPreferences.getString("dz", "0");
@@ -443,7 +457,7 @@ public class BasePresenter {
                 bundle.putSerializable("parent", "Base");
                 bundle.putSerializable("id", BaseActivity.selGeoFeature.getId() + "");
                 intent.putExtras(bundle);
-                baseActivity.startActivityForResult(intent,4);
+                baseActivity.startActivityForResult(intent, 4);
                 feture = null;
             }
         });
@@ -458,9 +472,8 @@ public class BasePresenter {
     public void initCmPopuwindow() {
 
         final PopupWindow pop = new PopupWindow(baseActivity);
-
         View view = baseActivity.getLayoutInflater().inflate(R.layout.item_cemian_popuwindows, null);
-        final LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup_cemian);
+        // final LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup_cemian);
         pop.setWidth(MyApplication.screen.getWidthPixels() / 3);//LayoutParams.MATCH_PARENT
         pop.setHeight(MyApplication.screen.getHeightPixels() / 2);
         pop.setBackgroundDrawable(new BitmapDrawable());
@@ -469,11 +482,12 @@ public class BasePresenter {
         pop.setContentView(view);
         pop.showAtLocation(baseActivity.childview, Gravity.CENTER, 0, 0);
 
-        RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent_cemian);
+        //RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent_cemian);
         Button bt1 = (Button) view.findViewById(R.id.item_popupwindows_dbx);
         Button bt2 = (Button) view.findViewById(R.id.item_popupwindows_zyqx);
         Button bt3 = (Button) view.findViewById(R.id.item_popupwindows_freeline);
-        parent.setOnClickListener(new View.OnClickListener() {
+        Button btn_area= (Button) view.findViewById(R.id.btn_area_track);
+       /* parent.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -481,11 +495,11 @@ public class BasePresenter {
                 ll_popup.clearAnimation();
                 baseActivity.restory();
             }
-        });
+        });*/
         bt1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 pop.dismiss();
-                ll_popup.clearAnimation();
+                //ll_popup.clearAnimation();
                 baseActivity.drawType = BaseActivity.POLYGON;
                 baseActivity.activate(baseActivity.drawType);
             }
@@ -493,7 +507,7 @@ public class BasePresenter {
         bt2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 pop.dismiss();
-                ll_popup.clearAnimation();
+                //ll_popup.clearAnimation();
                 baseActivity.drawType = BaseActivity.FREEHAND_POLYGON;
                 baseActivity.activate(baseActivity.drawType);
             }
@@ -503,17 +517,24 @@ public class BasePresenter {
             @Override
             public void onClick(View arg0) {
                 pop.dismiss();
-                ll_popup.clearAnimation();
+                //ll_popup.clearAnimation();
                 baseActivity.drawType = BaseActivity.FREEHAND_POLYLINE;
                 baseActivity.activate(baseActivity.drawType);
             }
         });
+        btn_area.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                baseActivity.getGpsCollectionView().setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
     /**
      * 初始化小地名查询控件
      */
-    public void initXdmView(final View xdmSearchInclude){
+    public void initXdmView(final View xdmSearchInclude) {
 
         final EditText searchTxt = (EditText) xdmSearchInclude.findViewById(R.id.xdm_searchText);
         CursorUtil.setEditTextLocation(searchTxt);
@@ -637,7 +658,7 @@ public class BasePresenter {
                 } else {
                     mapView.zoomTo(point, 14 - currentLevel);
                 }
-                showAddressPopup(list.get(position).getName(), point);
+                //showAddressPopup(list.get(position).getName(), point);
             }
         });
     }
@@ -645,7 +666,7 @@ public class BasePresenter {
     /**
      * 搜索结果点击显示导航
      */
-    private void showAddressPopup(String addressName, final Point point) {
+    /*private void showAddressPopup(String addressName, final Point point) {
         final View view = baseActivity.childview.findViewById(R.id.address_navigation_include);
         view.setVisibility(View.VISIBLE);
         ImageView imageView = (ImageView) view.findViewById(R.id.addressviewreturn);
@@ -674,7 +695,7 @@ public class BasePresenter {
                 baseActivity.navigationPresenter.drawLineToMap(point, polyline);
             }
         });
-    }
+    }*/
 
 //    /**
 //     * 加载数据所属数据
@@ -790,6 +811,8 @@ public class BasePresenter {
         baseActivity.mapRemove(new View(baseActivity));
     }
 
+
+
     /**
      * 图形更新，
      * 勾绘后的geom
@@ -805,7 +828,7 @@ public class BasePresenter {
             }
             FeatureTable featureTable = myLayer.getTable();
             featureTable.updateFeature(feature.getId(), graphic);
-			/* 添加小班后 记录添加小班的id 备撤销时删除 */
+            /* 添加小班后 记录添加小班的id 备撤销时删除 */
             recordXb(feature.getId(), "update", feature.getAttributes(), feature.getGeometry(), myLayer.getLayer());
         } catch (TableException e) {
             ToastUtil.setToast(baseActivity, e.getMessage());
@@ -831,13 +854,14 @@ public class BasePresenter {
 
     /**
      * 记录变化的 以备撤销使用
-     * @param id             小班id
-     * @param type           修改类型 添加 更新 删除
-     * @param attr           变动小班的属性信息
-     * @param geom           变动小班
-     * @param layer          变动小班所在图层
+     *
+     * @param id    小班id
+     * @param type  修改类型 添加 更新 删除
+     * @param attr  变动小班的属性信息
+     * @param geom  变动小班
+     * @param layer 变动小班所在图层
      */
-    public void recordXb(long id, String type, Map<String, Object> attr,Geometry geom, FeatureLayer layer) {
+    public void recordXb(long id, String type, Map<String, Object> attr, Geometry geom, FeatureLayer layer) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("type", type);
@@ -864,7 +888,7 @@ public class BasePresenter {
                 return;
             }
 
-            GeodatabaseFeatureTable table =  BaseActivity.myLayer.getTable();
+            GeodatabaseFeatureTable table = BaseActivity.myLayer.getTable();
             GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
             Symbol symbol = BaseActivity.myLayer.getRenderer().getSymbol(g);
             // symbol为null也可以 why？
@@ -883,7 +907,7 @@ public class BasePresenter {
             long id = table.addFeature(addedGraphic);
 
             Feature feature = table.getFeature(id);
-           Geometry geometry = feature.getGeometry();
+            Geometry geometry = feature.getGeometry();
             if (geometry.isEmpty() || !geometry.isValid()) {
                 table.deleteFeature(id);
             } else {
@@ -925,7 +949,7 @@ public class BasePresenter {
             }
 //            GeodatabaseFeatureTable table = BaseActivity.myLayer.getTable();
 //            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
-            Feature g =  BaseActivity.selGeoFeature;
+            Feature g = BaseActivity.selGeoFeature;
             Symbol symbol = BaseActivity.myLayer.getRenderer().getSymbol(g);
             // symbol为null也可以 why？
 //            if (selectFeatureAts == null) {
@@ -1022,4 +1046,24 @@ public class BasePresenter {
         return true;
     }
 
+
+
+    /**
+     * 为图形添加标注
+     *
+     */
+    public void addGraphicLabel(Context context,Geometry geometry, String info) {
+        TextView labeltext=new TextView(context);
+        labeltext.setText(info);
+        labeltext.setTextSize(20);
+        labeltext.setTextColor(Color.BLUE);
+        PictureMarkerSymbol pictureMarkerSymbol=new PictureMarkerSymbol(BitmapTool.tv2Bitmap(labeltext));
+        Envelope env = new Envelope();
+        geometry.queryEnvelope(env);
+        Graphic graphic = new Graphic(env.getCenter(), pictureMarkerSymbol);
+        //Graphic graphic = new Graphic(feature.getGeometry(), pictureMarkerSymbol);
+        iBaseView.getGraphicLayer().addGraphic(graphic);
+
+
+    }
 }

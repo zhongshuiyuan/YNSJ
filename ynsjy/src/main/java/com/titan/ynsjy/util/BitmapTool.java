@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -100,6 +104,22 @@ public class BitmapTool {
 								   int screenHeight) throws FileNotFoundException {
 		return BitmapTool.getBitmapByPath(path, BitmapTool.getOptions(path),
 				screenWidth, screenHeight);
+	}
+
+    /**
+     * Textview转Bitmap
+     * @param view
+     * @return
+     */
+
+	public static Drawable tv2Bitmap(TextView view){
+
+		view.setDrawingCacheEnabled(true);
+		view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+		view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+		Bitmap bitmap = view.getDrawingCache();
+
+		return new BitmapDrawable(bitmap);
 	}
 
 }

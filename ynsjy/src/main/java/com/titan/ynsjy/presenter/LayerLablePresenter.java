@@ -1,11 +1,7 @@
 package com.titan.ynsjy.presenter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,6 +19,7 @@ import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.mview.ILayerView;
 import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.util.BitmapTool;
 import com.titan.ynsjy.util.ToastUtil;
 
 import java.util.HashMap;
@@ -131,7 +128,7 @@ public class LayerLablePresenter {
             labeltext.setText(text);
             labeltext.setTextSize(20);
             labeltext.setTextColor(Color.BLUE);
-            PictureMarkerSymbol pictureMarkerSymbol=new PictureMarkerSymbol(tv2Bitmap(labeltext));
+            PictureMarkerSymbol pictureMarkerSymbol=new PictureMarkerSymbol(BitmapTool.tv2Bitmap(labeltext));
             Envelope env = new Envelope();
             feature.getGeometry().queryEnvelope(env);
             Graphic graphic = new Graphic(env.getCenter(), pictureMarkerSymbol);
@@ -140,14 +137,5 @@ public class LayerLablePresenter {
         }
     }
 
-    private Drawable tv2Bitmap(TextView view){
-
-        view.setDrawingCacheEnabled(true);
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        Bitmap bitmap = view.getDrawingCache();
-
-        return new BitmapDrawable(bitmap);
-    }
 
 }

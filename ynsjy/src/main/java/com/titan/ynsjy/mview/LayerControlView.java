@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by li on 2017/5/5.
+ * Created by li on 2017/5/5
  */
 
 public interface LayerControlView extends IBaseView{
@@ -21,7 +21,7 @@ public interface LayerControlView extends IBaseView{
 
     ArcGISLocalTiledLayer getTitleLayer();
 
-    ArcGISLocalTiledLayer getDxtLayer();
+    //ArcGISLocalTiledLayer getDxtLayer();
 
     ArcGISLocalTiledLayer getImgLayer();
 
