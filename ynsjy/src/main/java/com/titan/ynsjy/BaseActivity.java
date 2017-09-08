@@ -1785,6 +1785,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             } else {
                 basePresenter.showListFeatureResult(data);
             }
+            attributButton.setChecked(false);
         } else {
             attributButton.setChecked(false);
             ToastUtil.setToast(mContext, "未选中任何图斑");

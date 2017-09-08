@@ -3,14 +3,22 @@ package com.titan.ynsjy.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.esri.core.map.Feature;
+import com.esri.core.map.Graphic;
+import com.esri.core.table.FeatureTable;
+import com.esri.core.table.TableException;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.util.ToastUtil;
+import com.titan.ynsjy.util.UtilTime;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -43,6 +51,7 @@ public class AuditHistoryInfoFragment extends Fragment {
     EditText auditMark;
     Unbinder unbinder;
     private View view;
+    private long id;
 
     @Nullable
     @Override
@@ -53,27 +62,58 @@ public class AuditHistoryInfoFragment extends Fragment {
     }
 
 
-    public void refresh(Map<String, Object> map) {
+    public void refresh(Map<String, Object> map1, Feature feature) {
+        id = feature.getId();
+        Log.e("tag","feature:"+feature+","+id);
+        Map<String,Object> map = feature.getAttributes();
         //Map<String, Object> map = feature.getAttributes();
-        auditPeople.setText(map.get("").toString());
-        auditPeople.setText(map.get("").toString());
-        auditTime.setText(map.get("").toString());
-        auditLatlon.setText(map.get("").toString());
-        textView.setText(map.get("").toString());
-        auditReason.setText(map.get("").toString());
-        auditInfo.setText(map.get("").toString());
-        auditEditBefore.setText(map.get("").toString());
-        auditEditAfter.setText(map.get("").toString());
-        auditMark.setText(map.get("").toString());
-        auditPeople.setEnabled(false);
-        auditTime.setEnabled(false);
-        auditLatlon.setEnabled(false);
-        textView.setEnabled(false);
-        auditReason.setEnabled(false);
-        auditInfo.setEnabled(false);
-        auditEditBefore.setEnabled(false);
-        auditEditAfter.setEnabled(false);
-        auditMark.setEnabled(false);
+        //auditPeople.setText(map.get("").toString());
+        auditTime.setText(map.get("MODIFYTIME").toString());
+        //auditLatlon.setText(map.get("").toString());
+        auditReason.setText(map.get("MODIFYINFO").toString());
+        auditInfo.setText(map.get("INFO").toString());
+        auditEditBefore.setText(map.get("BEFOREINFO").toString());
+        auditEditAfter.setText(map.get("AFTERINFO").toString());
+        auditMark.setText(map.get("REMARK").toString());
+//        auditPeople.setEnabled(false);
+//        auditTime.setEnabled(false);
+//        auditLatlon.setEnabled(false);
+//        auditReason.setEnabled(false);
+//        auditInfo.setEnabled(false);
+//        auditEditBefore.setEnabled(false);
+//        auditEditAfter.setEnabled(false);
+//        auditMark.setEnabled(false);
+    }
+
+    public void editMode(boolean type){
+            //auditPeople.setEnabled(type);
+            //auditTime.setEnabled(type);
+            //auditLatlon.setEnabled(type);
+            auditReason.setEnabled(type);
+            auditInfo.setEnabled(type);
+            auditEditBefore.setEnabled(type);
+            auditEditAfter.setEnabled(type);
+            auditMark.setEnabled(type);
+    }
+
+    public void save(FeatureTable table){
+        Map<String,Object> map = new HashMap<>();
+        //map.put("",auditPeople.getText().toString());
+        map.put("MODIFYTIME", UtilTime.getSystemtime2());
+        //map.put("",auditLatlon.getText().toString());
+        map.put("MODIFYINFO",auditReason.getText().toString());
+        map.put("INFO",auditInfo.getText().toString());
+        map.put("BEFOREINFO",auditEditBefore.getText().toString());
+        map.put("AFTERINFO",auditEditAfter.getText().toString());
+        map.put("REMARK",auditMark.getText().toString());
+        Graphic graphic = new Graphic(null,null,map);
+        try {
+            table.updateFeature(id,graphic);
+            ToastUtil.setToast(getActivity(),"数据保存成功");
+        } catch (TableException e) {
+            e.printStackTrace();
+            ToastUtil.setToast(getActivity(),"数据保存失败");
+        }
     }
 
     @Override

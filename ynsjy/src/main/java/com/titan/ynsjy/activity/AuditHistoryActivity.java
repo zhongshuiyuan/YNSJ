@@ -6,8 +6,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.esri.core.map.CallbackListener;
@@ -17,6 +18,7 @@ import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.fragment.AuditCatalogFragment;
+import com.titan.ynsjy.fragment.AuditHistoryInfoFragment;
 import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ToastUtil;
@@ -30,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+
 /**
  * Created by hanyw on 2017/9/7/007.
  * 审计详细信息展示
@@ -38,24 +41,38 @@ import butterknife.OnClick;
 public class AuditHistoryActivity extends AppCompatActivity {
     @BindView(R.id.audit_add_close)
     TextView auditAddClose;
-
+    @BindView(R.id.audit_add_edit)
+    TextView auditAddEdit;
+    @BindView(R.id.audit_add_save)
+    TextView auditAddSave;
+    @BindView(R.id.audit_add_compare)
+    TextView auditAddCompare;
+    @BindView(R.id.audit_add_cancel)
+    TextView auditAddCancel;
     private Context mContext;
+    private View view;
+    private FrameLayout compareFragment;
     private MyLayer myLayer;
     private List<Feature> featureList;
-    private Map<String, List<Feature>> map;
-    private List<String> fk_uidList;
-    private static final int QUERY_FINISH = 1;
+    private Map<String, List<Feature>> map;//编辑id对应图斑集合
+    private List<String> fk_uidList;//编辑id列表
+    private static final int QUERY_FINISH = 1;//查询完成
+    private static final int QUERY_NODATA = 2;//没有查询到数据
+    private static final int MODE_EDIT = 3;//编辑模式
+    private static final int SAVE_DATA = 4;//编辑模式
+    private Map<String, Boolean> cbMap;//checkbox状态
+    AuditCatalogFragment catalogFragment;
+    AuditHistoryInfoFragment infoFragment;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_FINISH:
-//                    AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(AuditHistoryActivity.this, fk_uidList, map);
-//                    Log.e("tag", fk_uidList + "," + map);
-//                    adapter.notifyDataSetChanged();
-                    AuditCatalogFragment fragment = (AuditCatalogFragment) getFragmentManager().findFragmentById(R.id.audit_catalog);
-                    fragment.exRefresh(mContext,fk_uidList,map);
+                    catalogFragment.exRefresh(mContext, fk_uidList, map, cbMap, false);
+                    break;
+                case QUERY_NODATA:
+                    ToastUtil.setToast(mContext, "没有查询到数据");
                     break;
                 default:
                     break;
@@ -68,7 +85,8 @@ public class AuditHistoryActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mContext = this;
-        setContentView(R.layout.audit_history_all);
+        view = LayoutInflater.from(this).inflate(R.layout.audit_history_all, null);
+        setContentView(view);
         ButterKnife.bind(this);
         init();
     }
@@ -76,41 +94,44 @@ public class AuditHistoryActivity extends AppCompatActivity {
     private void init() {
         getData();
         queryData();
+        catalogFragment = (AuditCatalogFragment) getFragmentManager().findFragmentById(R.id.audit_catalog);
+        infoFragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_history_all_info);
+        compareFragment = (FrameLayout) view.findViewById(R.id.audit_compare_fragment);
     }
 
-    @OnClick(R.id.audit_add_close)
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.audit_add_close:
-                this.finish();
-                break;
-        }
-    }
 
+    /**
+     * 获取编辑表
+     */
     private void getData() {
         myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
     }
 
+    /**
+     * 查询审计记录
+     */
     private void queryData() {
         ArcGISQueryUtils.getQueryFeaturesAll(myLayer.getTable(), new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult objects) {
-                Log.e("tag", objects.featureCount() + ":");
-                if (objects.featureCount() <= 0) {
-                    ToastUtil.setToast(mContext, "没有查询到数据");
+                Message message = new Message();
+                long size = objects.featureCount();
+                if (size <= 0) {
+                    message.what = QUERY_NODATA;
+                    handler.sendMessage(message);
                     return;
                 }
-                Log.e("tag", objects.featureCount() + ":");
                 featureList = new ArrayList<>();
+                cbMap = new HashMap<>();
                 for (Object object : objects) {
                     Feature feature = (Feature) object;
                     featureList.add(feature);
+                    cbMap.put(String.valueOf(feature.getId()), false);
                 }
                 map = featureSort();
-                Message message = new Message();
+
                 message.what = QUERY_FINISH;
                 handler.sendMessage(message);
-                Log.e("tag", "end");
             }
 
             @Override
@@ -120,8 +141,10 @@ public class AuditHistoryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * @return 按照编辑id对应分类好的map集合
+     */
     private Map<String, List<Feature>> featureSort() {
-        Log.e("tag", "sort:");
         Map<String, List<Feature>> map = new HashMap<>();
         List<Feature> cList;
         fk_uidList = new ArrayList<>();
@@ -146,5 +169,42 @@ public class AuditHistoryActivity extends AppCompatActivity {
             map.put(uid, cList);
         }
         return map;
+    }
+
+    @OnClick({R.id.audit_add_close, R.id.audit_add_edit, R.id.audit_add_save, R.id.audit_add_compare,R.id.audit_add_cancel})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.audit_add_close:
+                this.finish();
+                break;
+            case R.id.audit_add_edit:
+                infoFragment.editMode(true);
+                compareFragment.setVisibility(View.GONE);
+                auditAddSave.setVisibility(View.VISIBLE);
+                auditAddEdit.setVisibility(View.GONE);
+                auditAddCompare.setVisibility(View.GONE);
+                auditAddCancel.setVisibility(View.VISIBLE);
+                break;
+            case R.id.audit_add_save:
+                infoFragment.save(myLayer.getTable());
+                break;
+            case R.id.audit_add_compare:
+                catalogFragment.exRefresh(mContext, fk_uidList, map, cbMap, true);
+                compareFragment.setVisibility(View.VISIBLE);
+                auditAddSave.setVisibility(View.GONE);
+                auditAddEdit.setVisibility(View.GONE);
+                auditAddCompare.setVisibility(View.GONE);
+                auditAddCancel.setVisibility(View.VISIBLE);
+                break;
+            case R.id.audit_add_cancel:
+                infoFragment.editMode(false);
+                catalogFragment.exRefresh(mContext, fk_uidList, map, cbMap, false);
+                compareFragment.setVisibility(View.GONE);
+                auditAddSave.setVisibility(View.GONE);
+                auditAddEdit.setVisibility(View.VISIBLE);
+                auditAddCompare.setVisibility(View.VISIBLE);
+                auditAddCancel.setVisibility(View.GONE);
+                break;
+        }
     }
 }

@@ -12,19 +12,40 @@
             android:id="@+id/audit_add_close"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/blue_btn_select"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
             android:text="返回"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:layout_margin="5dp"
-            android:gravity="center" />
+            style="@style/textview_btn_style" />
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="审计历史"
             style="@style/title_style" />
+        <TextView
+            android:id="@+id/audit_add_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="编辑"
+            style="@style/textview_btn_style" />
+        <TextView
+            android:id="@+id/audit_add_compare"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="比较"
+            style="@style/textview_btn_style" />
+        <TextView
+            android:id="@+id/audit_add_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="取消"
+            style="@style/textview_btn_style"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/audit_add_save"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="保存"
+            style="@style/textview_btn_style"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout

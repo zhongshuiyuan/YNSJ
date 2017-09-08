@@ -81,7 +81,6 @@
         <activity android:name=".activity.ShowPicActivity"/>
         <activity android:name=".activity.AuditHistoryActivity"
             android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".activity.AuditCatalogFragmentActivity"/>
         <activity android:name=".activity.AuditInfoFragmentActivity"
             android:windowSoftInputMode="stateHidden"/>
         <activity

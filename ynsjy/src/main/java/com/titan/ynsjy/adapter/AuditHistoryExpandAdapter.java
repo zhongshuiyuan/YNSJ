@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.esri.core.map.Feature;
@@ -16,17 +17,23 @@ import java.util.Map;
 
 /**
  * Created by hanyw on 2017/9/7/007.
+ * 审计历史列表适配器
  */
 
 public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
     private Context mContext;
     private List<String> list;
     private Map<String, List<Feature>> map;
+    private Map<String,Boolean> cbMap;
+    private boolean type;
 
-    public AuditHistoryExpandAdapter(Context context, List<String> list, Map<String, List<Feature>> map) {
+    public AuditHistoryExpandAdapter(Context context, List<String> list, boolean type,
+                                     Map<String, List<Feature>> map,Map<String,Boolean> cbMap) {
         this.mContext = context;
         this.list = list;
         this.map = map;
+        this.cbMap = cbMap;
+        this.type = type;
     }
 
     @Override
@@ -80,22 +87,31 @@ public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.audit_history_all_item, parent, false);
         }
-        TextView tv_people = ViewHolderUtil.get(convertView, R.id.audit_people);
-        TextView tv_time = ViewHolderUtil.get(convertView, R.id.audit_time);
-        TextView tv_latlon = ViewHolderUtil.get(convertView, R.id.audit_latlon);
-        TextView tv_modify = ViewHolderUtil.get(convertView, R.id.audit_modify);
-        TextView tv_before = ViewHolderUtil.get(convertView, R.id.audit_before);
-        TextView tv_after = ViewHolderUtil.get(convertView, R.id.audit_after);
-        TextView tv_info = ViewHolderUtil.get(convertView, R.id.audit_info);
-        TextView tv_mark = ViewHolderUtil.get(convertView, R.id.audit_mark);
-        //tv_people.setText(getAttrValue("",groupPosition,childPosition));
-        tv_time.setText(  getAttrValue("MODIFYTIME",groupPosition,childPosition));
-        //tv_latlon.setText(getAttrValue("",groupPosition,childPosition));
-        tv_modify.setText(getAttrValue("MODIFYINFO",groupPosition,childPosition));
-        tv_before.setText(getAttrValue("BEFOREINFO",groupPosition,childPosition));
-        tv_after.setText( getAttrValue("AFTERINFO",groupPosition,childPosition));
-        tv_info.setText(  getAttrValue("INFO",groupPosition,childPosition));
-        tv_mark.setText(  getAttrValue("REMARK",groupPosition,childPosition));
+        CheckBox cb_people = ViewHolderUtil.get(convertView, R.id.audit_item_check);
+        TextView tv_value = ViewHolderUtil.get(convertView, R.id.audit_item_value);
+//        TextView tv_time = ViewHolderUtil.get(convertView, R.id.audit_time);
+//        TextView tv_latlon = ViewHolderUtil.get(convertView, R.id.audit_latlon);
+//        TextView tv_modify = ViewHolderUtil.get(convertView, R.id.audit_modify);
+//        TextView tv_before = ViewHolderUtil.get(convertView, R.id.audit_before);
+//        TextView tv_after = ViewHolderUtil.get(convertView, R.id.audit_after);
+//        TextView tv_info = ViewHolderUtil.get(convertView, R.id.audit_info);
+//        TextView tv_mark = ViewHolderUtil.get(convertView, R.id.audit_mark);
+        String id = getAttrValue("OBJECTID",groupPosition,childPosition);
+        tv_value.setText(id);
+        if (type){
+            cb_people.setChecked(cbMap.get(id));
+            cb_people.setVisibility(View.VISIBLE);
+        }else {
+            cb_people.setVisibility(View.GONE);
+        }
+
+//        tv_time.setText(  getAttrValue("MODIFYTIME",groupPosition,childPosition));
+//        //tv_latlon.setText(getAttrValue("",groupPosition,childPosition));
+//        tv_modify.setText(getAttrValue("MODIFYINFO",groupPosition,childPosition));
+//        tv_before.setText(getAttrValue("BEFOREINFO",groupPosition,childPosition));
+//        tv_after.setText( getAttrValue("AFTERINFO",groupPosition,childPosition));
+//        tv_info.setText(  getAttrValue("INFO",groupPosition,childPosition));
+//        tv_mark.setText(  getAttrValue("REMARK",groupPosition,childPosition));
         return convertView;
     }
 

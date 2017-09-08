@@ -2,218 +2,171 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
+    android:layout_marginBottom="5dp"
+    android:divider="@drawable/divider_list"
     android:orientation="vertical"
     android:paddingEnd="5dp"
-    android:paddingStart="5dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="审计信息"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/white" />
+    android:paddingStart="5dp"
+    android:showDividers="middle">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:layout_marginBottom="5dp">
+        android:gravity="center">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            style="@style/audit_text_style"
+            android:text="审计人员" />
+
+        <EditText
+            android:id="@+id/audit_people"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            style="@style/audit_text_style"
+            android:text="审计时间" />
+
+        <EditText
+            android:id="@+id/audit_time"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            style="@style/audit_text_style"
+            android:text="审计地址" />
+
+        <EditText
+            android:id="@+id/audit_latlon"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/textView"
+            style="@style/audit_text_style"
+            android:text="修改原因" />
+
+        <EditText
+            android:id="@+id/audit_reason"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            style="@style/audit_text_style"
+            android:text="描述信息" />
+
+        <EditText
+            android:id="@+id/audit_info"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            style="@style/audit_text_style"
+            android:text="修改前状况" />
+
+        <EditText
+            android:id="@+id/audit_edit_before"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            style="@style/audit_text_style"
+            android:text="修改后状况" />
+
+        <EditText
+            android:id="@+id/audit_edit_after"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            style="@style/audit_text_style"
+            android:text="备    注" />
+
+        <EditText
+            android:id="@+id/audit_mark"
+            android:enabled="false"
+            style="@style/audit_editview_style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/audit_sure"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:gravity="center">
+            android:background="@drawable/blue_btn_select"
+            android:gravity="center"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
 
-            <TextView
-                style="@style/audit_text_style"
-                android:text="审计人员" />
-
-            <EditText
-                android:id="@+id/audit_people"
-                style="@style/audit_editview_style" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/audit_cancel"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                style="@style/audit_text_style"
-                android:text="审计时间" />
-
-            <EditText
-                android:id="@+id/audit_time"
-                style="@style/audit_editview_style" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                style="@style/audit_text_style"
-                android:text="审计地址" />
-
-            <EditText
-                android:id="@+id/audit_latlon"
-                style="@style/audit_editview_style" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/textView"
-                style="@style/audit_text_style"
-                android:text="修改原因" />
-
-            <EditText
-                android:id="@+id/audit_reason"
-                style="@style/audit_editview_style" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                style="@style/audit_text_style"
-                android:text="描述信息" />
-
-            <EditText
-                android:id="@+id/audit_info"
-                style="@style/audit_editview_style" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                style="@style/audit_text_style"
-                android:text="修改前状况" />
-
-            <EditText
-                android:id="@+id/audit_edit_before"
-                style="@style/audit_editview_style" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                style="@style/audit_text_style"
-                android:text="修改后状况" />
-
-            <EditText
-                android:id="@+id/audit_edit_after"
-                style="@style/audit_editview_style" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/blue" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                style="@style/audit_text_style"
-                android:text="备    注" />
-
-            <EditText
-                android:id="@+id/audit_mark"
-                style="@style/audit_editview_style" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/audit_sure"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/blue_btn_select"
-                android:gravity="center"
-                android:text="确定"
-                android:textColor="@color/white"
-                android:textSize="22sp" />
-
-            <TextView
-                android:id="@+id/audit_cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/blue_btn_select"
-                android:gravity="center"
-                android:text="取消"
-                android:textColor="@color/white"
-                android:textSize="22sp" />
-        </LinearLayout>
+            android:background="@drawable/blue_btn_select"
+            android:gravity="center"
+            android:text="取消"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
     </LinearLayout>
 </LinearLayout>
