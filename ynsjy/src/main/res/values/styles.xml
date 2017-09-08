@@ -242,4 +242,25 @@
         <item name="android:layout_marginStart">20dp</item>
     </style>
 
+    <style name="audit_editview_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:textColor">@color/balck</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:background">@drawable/edit_bg</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="audit_text_style">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>

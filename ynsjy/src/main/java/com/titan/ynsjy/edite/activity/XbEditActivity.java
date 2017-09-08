@@ -26,6 +26,7 @@ import com.esri.core.table.TableException;
 import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.activity.AuditActivity;
 import com.titan.ynsjy.activity.AuditHistoryActivity;
 import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.MyLayer;
@@ -173,7 +174,9 @@ public class XbEditActivity extends BaseEditActivity{
 					break;
 				case R.id.ld_audit_history:
 					/*审计历史*/
-					auditAddOrCompare(true);
+					//auditAddOrCompare(true);
+					Intent intent = new Intent(XbEditActivity.this, AuditHistoryActivity.class);
+					startActivity(intent);
 					break;
 				case R.id.ld_audit:
 					/* 审计 */
@@ -191,12 +194,10 @@ public class XbEditActivity extends BaseEditActivity{
 	}
 
 	private void auditAddOrCompare(boolean type) {
-//		Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
-//		intent.putExtra("fid", fid);
-//		intent.putExtra("picPath",picPath);
-//		intent.putExtra("auditType",type);
-//		startActivity(intent);
-		Intent intent = new Intent(XbEditActivity.this, AuditHistoryActivity.class);
+		Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
+		intent.putExtra("fid", fid);
+		intent.putExtra("picPath",picPath);
+		intent.putExtra("auditType",type);
 		startActivity(intent);
 	}
 

@@ -2,8 +2,11 @@ package com.titan.ynsjy.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -30,6 +33,7 @@ import butterknife.OnClick;
 
 /**
  * Created by hanyw on 2017/9/7/007.
+ * 审计详细信息展示
  */
 
 public class AuditHistoryActivity extends AppCompatActivity {
@@ -43,7 +47,24 @@ public class AuditHistoryActivity extends AppCompatActivity {
     private List<Feature> featureList;
     private Map<String, List<Feature>> map;
     private List<String> fk_uidList;
-    //private Handler handler =
+    private static final int QUERY_FINISH = 1;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case QUERY_FINISH:
+                    AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(AuditHistoryActivity.this, fk_uidList, map);
+                    Log.e("tag", fk_uidList + "," + map);
+                    auditHistoryAll.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,8 +78,6 @@ public class AuditHistoryActivity extends AppCompatActivity {
     private void init() {
         getData();
         queryData();
-        AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(this,fk_uidList,map);
-        auditHistoryAll.setAdapter(adapter);
     }
 
     @OnClick(R.id.audit_add_close)
@@ -78,16 +97,22 @@ public class AuditHistoryActivity extends AppCompatActivity {
         ArcGISQueryUtils.getQueryFeaturesAll(myLayer.getTable(), new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult objects) {
+                Log.e("tag", objects.featureCount() + ":");
                 if (objects.featureCount() <= 0) {
                     ToastUtil.setToast(mContext, "没有查询到数据");
                     return;
                 }
+                Log.e("tag", objects.featureCount() + ":");
                 featureList = new ArrayList<>();
                 for (Object object : objects) {
                     Feature feature = (Feature) object;
                     featureList.add(feature);
                 }
                 map = featureSort();
+                Message message = new Message();
+                message.what = QUERY_FINISH;
+                handler.sendMessage(message);
+                Log.e("tag", "end");
             }
 
             @Override
@@ -98,6 +123,7 @@ public class AuditHistoryActivity extends AppCompatActivity {
     }
 
     private Map<String, List<Feature>> featureSort() {
+        Log.e("tag", "sort:");
         Map<String, List<Feature>> map = new HashMap<>();
         List<Feature> cList;
         fk_uidList = new ArrayList<>();
@@ -116,7 +142,7 @@ public class AuditHistoryActivity extends AppCompatActivity {
                 if (f.getAttributeValue("FK_EDIT_UID").toString().equals(fk_uid)) {
                     uid = fk_uid;
                     cList.add(f);
-                    featureList.remove(f);
+                    //featureList.remove(f);需要Iterator
                 }
             }
             map.put(uid, cList);

@@ -110,7 +110,6 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		Log.e("tag","asd");
 		return childs.get(groupPosition)
 				.get(groups.get(groupPosition).getName()).size();
 	}

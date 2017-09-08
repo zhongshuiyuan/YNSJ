@@ -53,7 +53,6 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.RuntimePermissions;
 
-import static android.R.attr.id;
 import static com.titan.ynsjy.edite.activity.BaseEditActivity.TAKE_PICTURE;
 import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
 
@@ -306,7 +305,7 @@ public class AuditActivity extends AppCompatActivity {
     @NeedsPermission({Manifest.permission.CAMERA})
     void photograph() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        imagePath = picPath + "/" + getPicName(String.valueOf(id));
+        imagePath = picPath + "/" + getPicName(String.valueOf(fid));
         Uri uri = Uri.fromFile(new File(imagePath));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, TAKE_PICTURE);
@@ -369,7 +368,7 @@ public class AuditActivity extends AppCompatActivity {
      */
     private Map<String, Object> setData() {
         Map<String, Object> map = new HashMap<>();
-        map.put("FK_EDIT_UID", id);
+        map.put("FK_EDIT_UID", fid);
         map.put("MODIFYINFO", auditReason.getText().toString());
         map.put("MODIFYTIME", UtilTime.getSystemtime2());
         map.put("BEFOREINFO", auditEditBefore.getText().toString());
