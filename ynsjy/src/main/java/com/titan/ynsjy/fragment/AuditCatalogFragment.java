@@ -23,6 +23,7 @@ import butterknife.Unbinder;
 
 /**
  * Created by hanyw on 2017/9/7/007.
+ * 审计历史记录表
  */
 
 public class AuditCatalogFragment extends Fragment {
@@ -50,12 +51,12 @@ public class AuditCatalogFragment extends Fragment {
         auditHistoryAll.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Map<String,Object> attrMap = map.get(list.get(groupPosition)).get(childPosition).getAttributes();
-                if (isTwoPane){
+                Map<String, Object> attrMap = map.get(list.get(groupPosition)).get(childPosition).getAttributes();
+                if (isTwoPane) {
                     AuditHistoryInfoFragment fragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_history_info);
                     fragment.refresh(attrMap);
-                }else {
-                    AuditInfoFragmentActivity.actionStart(mContext,attrMap);
+                } else {
+                    AuditInfoFragmentActivity.actionStart(mContext, attrMap);
                 }
                 return false;
             }
@@ -65,7 +66,7 @@ public class AuditCatalogFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        isTwoPane = getActivity().findViewById(R.id.audit_info_fragment) != null;
     }
 
 

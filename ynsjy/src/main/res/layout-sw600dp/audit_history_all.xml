@@ -92,8 +92,19 @@
         <fragment
             android:id="@+id/audit_catalog"
             android:name="com.titan.ynsjy.fragment.AuditCatalogFragment"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            />
+            android:layout_weight="1"/>
+        <FrameLayout
+            android:id="@+id/audit_info_fragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <fragment
+                android:id="@+id/audit_info"
+                android:name="com.titan.ynsjy.fragment.AuditHistoryInfoFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>
