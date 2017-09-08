@@ -119,7 +119,6 @@ public class LayerLablePresenter {
             GeodatabaseFeature feature = (GeodatabaseFeature) myLayer.getLayer().getFeature(id);
             Object obj = feature.getAttributeValue(fields.get(position));
             String text;
-            Log.e("tag","obj"+obj);
             if (obj != null&&!obj.equals("")) {
                 text = obj.toString();
             } else {

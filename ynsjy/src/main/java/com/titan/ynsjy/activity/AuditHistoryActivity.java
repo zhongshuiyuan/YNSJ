@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.esri.core.map.CallbackListener;
@@ -16,8 +15,8 @@ import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.adapter.AuditHistoryExpandAdapter;
 import com.titan.ynsjy.entity.MyLayer;
+import com.titan.ynsjy.fragment.AuditCatalogFragment;
 import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ToastUtil;
@@ -39,8 +38,6 @@ import butterknife.OnClick;
 public class AuditHistoryActivity extends AppCompatActivity {
     @BindView(R.id.audit_add_close)
     TextView auditAddClose;
-    @BindView(R.id.audit_history_all)
-    ExpandableListView auditHistoryAll;
 
     private Context mContext;
     private MyLayer myLayer;
@@ -54,10 +51,11 @@ public class AuditHistoryActivity extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_FINISH:
-                    AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(AuditHistoryActivity.this, fk_uidList, map);
-                    Log.e("tag", fk_uidList + "," + map);
-                    auditHistoryAll.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+//                    AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(AuditHistoryActivity.this, fk_uidList, map);
+//                    Log.e("tag", fk_uidList + "," + map);
+//                    adapter.notifyDataSetChanged();
+                    AuditCatalogFragment fragment = (AuditCatalogFragment) getFragmentManager().findFragmentById(R.id.audit_catalog);
+                    fragment.exRefresh(mContext,fk_uidList,map);
                     break;
                 default:
                     break;

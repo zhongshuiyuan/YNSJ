@@ -233,7 +233,6 @@ public class AuditActivity extends AppCompatActivity {
                     auditEditBefore.setText(getAttrValue(map,"BEFOREINFO"));
                     auditEditAfter.setText(getAttrValue(map,"AFTERINFO"));
                     auditMark.setText(getAttrValue(map,"REMARK"));
-                    Log.e("tag",":"+map);
                     if (selectList.size()==2){
                         Map<String, Object> map2 = selectList.get(1).getAttributes();
                         auditReason2.setText(getAttrValue(map2,"MODIFYINFO"));

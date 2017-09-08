@@ -884,7 +884,6 @@ public class BasePresenter {
 
             Feature feature = table.getFeature(id);
            Geometry geometry = feature.getGeometry();
-            Log.e("tag",myLayer.toString());
             if (geometry.isEmpty() || !geometry.isValid()) {
                 table.deleteFeature(id);
             } else {

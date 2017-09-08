@@ -406,7 +406,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      */
     @NeedsPermission({Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE})
      void initPresenter() {
-        Log.e("tag","presenter");
         basePresenter = new BasePresenter(BaseActivity.this, this);
         //xbqueryPresenter = new XbqueryPresenter(mContext,this);
         trajectoryPresenter = new TrajectoryPresenter(BaseActivity.this,this);
@@ -424,7 +423,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      * 地图控件初始化
      */
     private void initView() {
-        Log.e("tag","view");
         childview = getParentView();
         initMapView();
 
@@ -538,7 +536,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      */
     @NeedsPermission({Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION})
     public void addLayer() {
-        Log.e("tag","layer");
 		/* 基础底图 */
         String titlePath = MyApplication.resourcesManager.getTitlePath();
         tiledLayer = basePresenter.addTitleLayer(titlePath);
@@ -2762,7 +2759,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                         geodatabaseFeature = (GeodatabaseFeature)iterator.next();
                         selGeoFeaturesList.add(geodatabaseFeature);
                         selMap.put(geodatabaseFeature, layer.getCname());
-                        Log.e("tag",geodatabaseFeature+","+selGeoFeaturesList);
                     }
                 }else{
                     runOnUiThread(new Runnable() {
@@ -2805,7 +2801,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         try {
             //selGeoFeature = (GeodatabaseFeature) myLayer.getTable().getFeature(id);
             selGeoFeature=feature;
-            Log.e("tag",selGeoFeature+"");
             selectGeometry = feature.getGeometry();
             selectFeatureAts = feature.getAttributes();
             //selectfiledList = myLayer.getTable().getFields();

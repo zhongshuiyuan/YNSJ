@@ -79,7 +79,11 @@
             android:configChanges="screenSize|keyboardHidden|orientation"/>
         <activity android:name=".activity.PicSampActivity"/>
         <activity android:name=".activity.ShowPicActivity"/>
-        <activity android:name=".activity.AuditHistoryActivity"/>
+        <activity android:name=".activity.AuditHistoryActivity"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".activity.AuditCatalogFragmentActivity"/>
+        <activity android:name=".activity.AuditInfoFragmentActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".supertreeview.Image2Activity"
             android:configChanges="screenSize|keyboardHidden|orientation" />

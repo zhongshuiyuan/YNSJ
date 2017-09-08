@@ -143,7 +143,6 @@ public abstract class BaseEditActivity extends Activity {
         ArrayList<Line> lines = new ArrayList<Line>();
         String xianD = "",xiangD= "";
         boolean flag = false;
-        Log.e("tag",LINE_NUM+"，"+fieldList);
         for (int i = 0; i < LINE_NUM; i++) {
             flag = false;
             Field field = fieldList.get(i);

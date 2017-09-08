@@ -69,7 +69,6 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        Log.e("tag","1");
         return map.size();
     }
 
@@ -80,7 +79,6 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        Log.e("tag","2");
         return mapMap.get(pList.get(groupPosition).getName());
     }
 
@@ -91,7 +89,6 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        Log.e("tag","3");
         return childPosition;
     }
 
@@ -113,7 +110,6 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        Log.e("tag","4");
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.tckz_child_item, parent, false);
         }
@@ -200,7 +196,6 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
             TextView tv_child = ViewHolderUtil.get(convertView, R.id.id_child_txt);
             CheckBox checkBox = ViewHolderUtil.get(convertView, R.id.cb_child);
             ImageView img = ViewHolderUtil.get(convertView, R.id.featurelayer_extent);
-            Log.e("tag",": "+cPList+","+map);
             tv_child.setText(map.get(cPList.get(groupPosition)).get(childPosition));
             return convertView;
         }
