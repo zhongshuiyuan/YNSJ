@@ -13,7 +13,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,11 +53,10 @@ import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.RuntimePermissions;
 
 import static com.titan.ynsjy.edite.activity.BaseEditActivity.TAKE_PICTURE;
-import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
 
 /**
  * Created by hanyw on 2017/9/2/002.
- * 审计
+ * 新增审计
  */
 @RuntimePermissions
 public class AuditActivity extends AppCompatActivity {
@@ -218,6 +216,9 @@ public class AuditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 所有审计记录的弹窗
+     */
     public void showAuditHistoryDialog() {
         try {
             final Dialog dialog = new Dialog(mContext, R.style.Dialog);
@@ -278,6 +279,12 @@ public class AuditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 将空字段转为“空”
+     * @param map 审计记录属性集合
+     * @param attr 属性字段
+     * @return 属性字段值
+     */
     private String getAttrValue(Map<String, Object> map,String attr){
         String value = map.get(attr).toString();
         if (value.isEmpty()||value.equals("")){
@@ -301,10 +308,13 @@ public class AuditActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * 拍照
+     */
     @NeedsPermission({Manifest.permission.CAMERA})
     void photograph() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        imagePath = picPath + "/" + getPicName(String.valueOf(fid));
+        imagePath = picPath + "/" + ResourcesManager.getPicName(String.valueOf(fid));
         Uri uri = Uri.fromFile(new File(imagePath));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, TAKE_PICTURE);

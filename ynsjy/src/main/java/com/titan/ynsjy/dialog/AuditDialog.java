@@ -25,6 +25,7 @@ import com.titan.ynsjy.R;
 import com.titan.ynsjy.edite.activity.ImageActivity;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
@@ -39,11 +40,10 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static com.titan.ynsjy.edite.activity.BaseEditActivity.TAKE_PICTURE;
-import static com.titan.ynsjy.edite.activity.XbEditActivity.getPicName;
 
 /**
  * Created by hanyw on 2017/9/1/001.
- * 审计
+ * 新增审计页面
  */
 
 public class AuditDialog extends DialogFragment{
@@ -58,13 +58,13 @@ public class AuditDialog extends DialogFragment{
     @BindView(R.id.audit_mark)
     EditText auditMark;//备注
     @BindView(R.id.audit_pic_browse)
-    TextView auditPicBrowse;
+    TextView auditPicBrowse;//图片浏览
     @BindView(R.id.audit_take_pic)
-    TextView auditTakePic;
+    TextView auditTakePic;//拍照
     @BindView(R.id.audit_sure)
-    TextView auditSure;
+    TextView auditSure;//确定
     @BindView(R.id.audit_cancel)
-    TextView auditCancel;
+    TextView auditCancel;//取消
     Unbinder unbinder;
     private View view;
     private Context mContext;
@@ -116,9 +116,12 @@ public class AuditDialog extends DialogFragment{
         }
     }
 
+    /**
+     * 拍照
+     */
     private void photograph() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        imagePath = picPath+"/"+getPicName(String.valueOf(id));
+        imagePath = picPath+"/"+ ResourcesManager.getPicName(String.valueOf(id));
         Uri uri = Uri.fromFile(new File(imagePath));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, TAKE_PICTURE);

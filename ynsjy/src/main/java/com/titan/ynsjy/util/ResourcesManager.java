@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 
@@ -22,9 +23,12 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ResourcesManager implements Serializable {
@@ -536,7 +540,7 @@ public class ResourcesManager implements Serializable {
 		List<String> fileList = new ArrayList<>();
 		for (File f : filePath) {
 			String imgName = StringUtils.substringAfterLast(f.getPath(),File.separator);
-			Boolean flag = imgName.startsWith(name)&&imgName.endsWith(".jpg");
+			Boolean flag = imgName.startsWith(name)&&(imgName.endsWith(".jpg")||imgName.endsWith(".mp4"));
 			if (!f.isFile() || !flag) {
 				continue;
 			}
@@ -565,6 +569,66 @@ public class ResourcesManager implements Serializable {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * @param id 小班id
+	 * @return 包含id号的图片名称
+	 */
+	public static String getPicName(String id) {
+		Date date = new Date(System.currentTimeMillis());
+		SimpleDateFormat sdf = new SimpleDateFormat("'id'"+id+"_yyyyMMddHHmmss", Locale.CHINA);
+		return sdf.format(date) + ".jpg";
+	}
+
+	/**
+	 * @param id 小班id
+	 * @return 包含id号的录像名称
+	 */
+	public static String getVideoName(String id) {
+		Date date = new Date(System.currentTimeMillis());
+		SimpleDateFormat sdf = new SimpleDateFormat("'id'"+id+"_yyyyMMddHHmmss", Locale.CHINA);
+		return sdf.format(date) + ".mp4";
+	}
+
+	/**
+	 * @param path 工程地址
+	 * @return images文件夹地址
+	 */
+	public static String getImagePath(String path){
+		File file = new File(path);
+		String path1 = file.getParent()+ "/images";
+		File file2 = new File(path1);
+		boolean flag = file2.exists();
+		if(!flag){
+			file2.mkdirs();
+		}
+		return path1;
+	}
+
+	/**
+	 * @param filePath 视频文件地址
+	 * @return 视频文件第一个关键帧的bitmap
+	 */
+	public static Bitmap getVideoThumbnail(String filePath) {
+		Bitmap bitmap = null;
+		MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+		try {
+			File file = new File(filePath);
+			retriever.setDataSource(file.getAbsolutePath());
+			bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				retriever.release();
+			}
+			catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+		}
+		return bitmap;
 	}
 
 	/** 读取本地文件夹下图片bitmap */

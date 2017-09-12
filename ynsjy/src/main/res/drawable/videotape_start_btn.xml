@@ -1,0 +1,8 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/videotape_start" android:state_enabled="true" android:state_focused="true" android:state_pressed="false"/>
+    <item android:drawable="@drawable/videotape_stop" android:state_enabled="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/videotape_stop" android:state_checked="true" android:state_enabled="true"/>
+    <item android:drawable="@drawable/videotape_start"/>
+
+</selector>

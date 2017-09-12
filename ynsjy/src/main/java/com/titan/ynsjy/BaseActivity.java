@@ -75,6 +75,7 @@ import com.titan.baselibrary.util.DialogParamsUtil;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.gis.GeometryUtil;
 import com.titan.gis.MeasureUtil;
+import com.titan.ynsjy.activity.AuditHistoryActivity;
 import com.titan.ynsjy.adapter.FeatureResultAdapter;
 import com.titan.ynsjy.custom.MorePopWindow;
 import com.titan.ynsjy.daoImpl.LocationDaoImpl;
@@ -441,6 +442,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         /*图层控制按钮*/
         ImageView tckzImgView = (ImageView) childview.findViewById(R.id.tckz_imageview);
         tckzImgView.setOnClickListener(this);
+        /*审计记录*/
+        ImageView sjjlImgView = (ImageView) childview.findViewById(R.id.sjjl_imageview);
+        sjjlImgView.setOnClickListener(this);
 
         /*轨迹查询*/
         gjsearchImgview = (ImageView) childview.findViewById(R.id.share_gjcx);
@@ -486,9 +490,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         mylocationValue = (TextView) childview.findViewById(R.id.mylocationValue);
         /*显示当前比例尺view*/
         mapscaleValue = (TextView) childview.findViewById(R.id.mapScaleValue);
-        /*空间统计*/
-        /*tcxrImgview = (ImageView) childview.findViewById(R.id.share_tcxr);
-        tcxrImgview.setOnClickListener(this);*/
+        /*图层渲染*/
+        tcxrImgview = (ImageView) childview.findViewById(R.id.share_tcxr);
+        tcxrImgview.setOnClickListener(this);
         //属性标注
         ImageView shuxingLable = (ImageView) childview.findViewById(R.id.shuxing_lable);
         shuxingLable.setOnClickListener(this);
@@ -1428,6 +1432,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 tckzInclude.setVisibility(View.VISIBLE);
                 layerControlPresenter.initOtmsData();
                 break;
+            case R.id.sjjl_imageview:
+                /* 审计记录*/
+                if (BaseUtil.checkFeaturelayerExist("edit",layerNameList)){
+                    Intent intent = new Intent(BaseActivity.this, AuditHistoryActivity.class);
+                    startActivity(intent);
+                    return;
+                }
+                ToastUtil.setToast(mContext,"没有加载图层，请先加载图层数据");
+                break;
             case R.id.share_gjcx:
                 /* 轨迹查询 */
 //                guijiPopwindow = new MorePopWindow(this, R.layout.popup_share_gujichaxun);
@@ -1438,7 +1451,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 //                minegjsearchInclude.setVisibility(View.VISIBLE);
 //                trajectoryPresenter.initMyTrajectorySearch(minegjsearchInclude);
                 new DialogImpl().showGjcxView(BaseActivity.this, minegjsearchInclude, mapView, graphicsLayer);
-
                 break;
             case R.id.mine_guiji:
                 /* 轨迹查询--自身轨迹查询 */
@@ -1464,7 +1476,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 			    /* 坐标定位 */
                 showZbdwDialog();
                 break;
-
             case R.id.shuxing_lable:
                 /*属性标注*/
                 showFeatureLayer(ActionMode.MODE_ADD_LABLE,layerNameList);

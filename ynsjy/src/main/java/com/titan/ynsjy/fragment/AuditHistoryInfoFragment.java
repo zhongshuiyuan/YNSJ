@@ -1,16 +1,13 @@
 package com.titan.ynsjy.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.esri.core.map.Feature;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
@@ -32,26 +29,24 @@ import butterknife.Unbinder;
 
 public class AuditHistoryInfoFragment extends Fragment {
     @BindView(R.id.audit_people)
-    EditText auditPeople;
+    EditText auditPeople;//审计人员
     @BindView(R.id.audit_time)
-    EditText auditTime;
+    EditText auditTime;//审计时间
     @BindView(R.id.audit_latlon)
-    EditText auditLatlon;
-    @BindView(R.id.textView)
-    TextView textView;
+    EditText auditLatlon;//审计地点
     @BindView(R.id.audit_reason)
-    EditText auditReason;
+    EditText auditReason;//审计原因
     @BindView(R.id.audit_info)
-    EditText auditInfo;
+    EditText auditInfo;//描述信息
     @BindView(R.id.audit_edit_before)
-    EditText auditEditBefore;
+    EditText auditEditBefore;//修改前状况
     @BindView(R.id.audit_edit_after)
-    EditText auditEditAfter;
+    EditText auditEditAfter;//修改后状况
     @BindView(R.id.audit_mark)
-    EditText auditMark;
+    EditText auditMark;//备注
     Unbinder unbinder;
     private View view;
-    private long id;
+    private long id;//审计记录的OBJECTID
 
     @Nullable
     @Override
@@ -62,10 +57,12 @@ public class AuditHistoryInfoFragment extends Fragment {
     }
 
 
-    public void refresh(Map<String, Object> map1, Feature feature) {
-        id = feature.getId();
-        Log.e("tag","feature:"+feature+","+id);
-        Map<String,Object> map = feature.getAttributes();
+    /**
+     * @param map 审计记录属性集合
+     */
+    public void refresh(Map<String, Object> map) {
+        id = Long.valueOf(map.get("OBJECTID").toString());
+//        Map<String,Object> map = feature.getAttributes();
         //Map<String, Object> map = feature.getAttributes();
         //auditPeople.setText(map.get("").toString());
         auditTime.setText(map.get("MODIFYTIME").toString());
@@ -85,6 +82,9 @@ public class AuditHistoryInfoFragment extends Fragment {
 //        auditMark.setEnabled(false);
     }
 
+    /**
+     * @param type 设置是否为编辑模式，true为编辑模式，false为默认模式
+     */
     public void editMode(boolean type){
             //auditPeople.setEnabled(type);
             //auditTime.setEnabled(type);
@@ -96,6 +96,10 @@ public class AuditHistoryInfoFragment extends Fragment {
             auditMark.setEnabled(type);
     }
 
+    /**
+     * 编辑之后保存数据
+     * @param table 编辑表
+     */
     public void save(FeatureTable table){
         Map<String,Object> map = new HashMap<>();
         //map.put("",auditPeople.getText().toString());

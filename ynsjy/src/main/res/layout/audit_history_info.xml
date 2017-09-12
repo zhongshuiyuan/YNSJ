@@ -64,7 +64,6 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/textView"
             style="@style/audit_text_style"
             android:text="修改原因" />
 

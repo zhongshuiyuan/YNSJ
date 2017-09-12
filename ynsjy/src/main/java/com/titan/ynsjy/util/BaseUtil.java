@@ -64,6 +64,19 @@ public class BaseUtil {
         return myLayer;
     }
 
+    public static boolean checkFeaturelayerExist(String tableName, List<MyLayer> layerNameList){
+        boolean flag = false;
+        for (MyLayer layer : layerNameList) {
+            String name = layer.getTable().getTableName();
+            //String tbname = ;//要ShapefileFeature的名字，记得改
+            if (name.equals(tableName)) {
+                flag = true;
+                //SytemUtil.getEditSymbo((BaseActivity) mContext, layer.getLayer());
+                break;
+            }
+        }
+        return flag;
+    }
     /**
      * 动态设置控件的高度
      */

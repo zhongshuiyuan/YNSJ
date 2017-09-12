@@ -43,10 +43,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.titan.ynsjy.util.ResourcesManager.getVideoThumbnail;
+
 
 /**
  * Created by hanyw on 2017/4/28/028.
- * 小班多媒体信息采集主要是图片
+ * 小班多媒体信息浏览
  */
 public class PicSampActivity extends AppCompatActivity implements View.OnClickListener {
     TextView cancel;//取消全选
@@ -237,6 +239,16 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * @param path 视频地址
+     */
+    private void showVideo(String path){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri uri = Uri.parse(path);
+        intent.setDataAndType(uri,"video/mp4");
+        startActivity(intent);
+    }
+
     /*弹出图片放大显示*/
     private void showPic(String path, long fid,String picPath) {
         Intent intent = new Intent(PicSampActivity.this, ShowPicActivity.class);
@@ -360,6 +372,7 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
             }
             //设置图片
             setImageView(viewHolder.picView, path);
+            //viewHolder.picView.setImageBitmap(getVideoThumbnail(path));
             //设置图片显示模式
             viewHolder.picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             viewHolder.picBox.setChecked(isSelectList.get(String.valueOf(position)));
@@ -376,17 +389,22 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
             viewHolder.picView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //打开大图
-                    showPic(pathList.get(position), fid,picPath);
-
+                    if (path.endsWith(".jpg")){
+                        //打开大图
+                        showPic(pathList.get(position), fid,picPath);
+                    }else {
+                        //打开视频
+                        showVideo(path);
+                    }
                 }
             });
             return convertView;
         }
 
+
         /*给ImageView设置图片*/
         private void setImageView(ImageView imageView, String path) {
-            Bitmap bitmap = getBitmap(path);
+            Bitmap bitmap = getVideoThumbnail(path); //getBitmap(path);
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
             } else {

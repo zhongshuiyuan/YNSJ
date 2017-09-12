@@ -97,6 +97,8 @@ public abstract class BaseEditActivity extends Activity {
     protected EditText zpeditText;
     /**图片保存地址*/
     protected String picPath = "";
+    /**录像保存地址*/
+    protected String videoPath = "";
     public static final int TAKE_PICTURE = 0x000001;
     /** 记录小班的唯一编号 当前小班的小班号*/
     protected String currentxbh="";
@@ -120,6 +122,7 @@ public abstract class BaseEditActivity extends Activity {
 
         selGeoFeature = myFeture.getFeature();
         fid = selGeoFeature.getId();
+        Log.e("tag","idbase:"+fid);
         featureLayer = myFeture.getMyLayer().getLayer();
         fieldList = selGeoFeature.getTable().getFields();//featureLayer.getFeatureTable().getFields();
         LINE_NUM = selGeoFeature.getAttributes().size();

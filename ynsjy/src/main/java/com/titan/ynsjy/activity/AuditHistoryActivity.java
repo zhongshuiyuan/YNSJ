@@ -35,34 +35,32 @@ import butterknife.OnClick;
 
 /**
  * Created by hanyw on 2017/9/7/007.
- * 审计详细信息展示
+ * 审计历史页面
  */
 
 public class AuditHistoryActivity extends AppCompatActivity {
     @BindView(R.id.audit_add_close)
-    TextView auditAddClose;
+    TextView auditAddClose;//返回
     @BindView(R.id.audit_add_edit)
-    TextView auditAddEdit;
+    TextView auditAddEdit;//编辑
     @BindView(R.id.audit_add_save)
-    TextView auditAddSave;
+    TextView auditAddSave;//保存
     @BindView(R.id.audit_add_compare)
-    TextView auditAddCompare;
+    TextView auditAddCompare;//比较
     @BindView(R.id.audit_add_cancel)
-    TextView auditAddCancel;
+    TextView auditAddCancel;//取消
     private Context mContext;
     private View view;
-    private FrameLayout compareFragment;
+    private FrameLayout compareFragment;//审计历史比较页面
     private MyLayer myLayer;
-    private List<Feature> featureList;
+    private List<Feature> featureList;//审计记录列表
     private Map<String, List<Feature>> map;//编辑id对应图斑集合
     private List<String> fk_uidList;//编辑id列表
     private static final int QUERY_FINISH = 1;//查询完成
     private static final int QUERY_NODATA = 2;//没有查询到数据
-    private static final int MODE_EDIT = 3;//编辑模式
-    private static final int SAVE_DATA = 4;//编辑模式
     private Map<String, Boolean> cbMap;//checkbox状态
-    AuditCatalogFragment catalogFragment;
-    AuditHistoryInfoFragment infoFragment;
+    AuditCatalogFragment catalogFragment;//所有审计历史记录显示页面
+    AuditHistoryInfoFragment infoFragment;//单个审计记录详细信息显示页面
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -91,6 +89,9 @@ public class AuditHistoryActivity extends AppCompatActivity {
         init();
     }
 
+    /**
+     * 初始化页面和数据
+     */
     private void init() {
         getData();
         queryData();
@@ -174,10 +175,10 @@ public class AuditHistoryActivity extends AppCompatActivity {
     @OnClick({R.id.audit_add_close, R.id.audit_add_edit, R.id.audit_add_save, R.id.audit_add_compare,R.id.audit_add_cancel})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.audit_add_close:
+            case R.id.audit_add_close://返回
                 this.finish();
                 break;
-            case R.id.audit_add_edit:
+            case R.id.audit_add_edit://编辑
                 infoFragment.editMode(true);
                 compareFragment.setVisibility(View.GONE);
                 auditAddSave.setVisibility(View.VISIBLE);
@@ -185,10 +186,11 @@ public class AuditHistoryActivity extends AppCompatActivity {
                 auditAddCompare.setVisibility(View.GONE);
                 auditAddCancel.setVisibility(View.VISIBLE);
                 break;
-            case R.id.audit_add_save:
+            case R.id.audit_add_save://保存
                 infoFragment.save(myLayer.getTable());
+                queryData();
                 break;
-            case R.id.audit_add_compare:
+            case R.id.audit_add_compare://比较
                 catalogFragment.exRefresh(mContext, fk_uidList, map, cbMap, true);
                 compareFragment.setVisibility(View.VISIBLE);
                 auditAddSave.setVisibility(View.GONE);
@@ -196,7 +198,7 @@ public class AuditHistoryActivity extends AppCompatActivity {
                 auditAddCompare.setVisibility(View.GONE);
                 auditAddCancel.setVisibility(View.VISIBLE);
                 break;
-            case R.id.audit_add_cancel:
+            case R.id.audit_add_cancel://取消
                 infoFragment.editMode(false);
                 catalogFragment.exRefresh(mContext, fk_uidList, map, cbMap, false);
                 compareFragment.setVisibility(View.GONE);

@@ -33,6 +33,7 @@ import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.listviewinedittxt.Line;
 import com.titan.ynsjy.listviewinedittxt.LineAdapter;
+import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 
 import java.io.File;
@@ -42,13 +43,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
@@ -64,7 +62,7 @@ import permissions.dispatcher.RuntimePermissions;
 public class XbEditActivity extends BaseEditActivity{
 
 	/**图片字段*/
-	private TextView btnreturn,photograph,seepicture,tvyddcb,xbarea,yddlb,tv_audit,tv_auditHistory;
+	private TextView btnreturn,photograph,seepicture,tvyddcb,xbarea,yddlb,tv_audit,tv_auditHistory,tv_videotape;
 	private DecimalFormat df = new DecimalFormat("0.00");
 	/**小班识别字段*/
 	public List<Row> gcmc = null;
@@ -114,6 +112,8 @@ public class XbEditActivity extends BaseEditActivity{
 		tv_audit.setOnClickListener(new MyListener());
 		tv_auditHistory = (TextView) findViewById(R.id.ld_audit_history);//审计历史
 		tv_auditHistory.setOnClickListener(new MyListener());
+		tv_videotape = (TextView) findViewById(R.id.fragment_videotape);//录像
+		tv_videotape.setOnClickListener(new MyListener());
 
 		xbarea = (TextView) findViewById(R.id.tv_xbarea);
 		double area = selGeoFeature.getGeometry().calculateArea2D();
@@ -123,7 +123,7 @@ public class XbEditActivity extends BaseEditActivity{
 
 		//getXbhData(pname);
 
-		picPath = getImagePath(path);
+		picPath = ResourcesManager.getImagePath(path);
 		cpoyZhaop();
 		//new MyAsyncTask().execute("getImagePath");
 
@@ -187,12 +187,33 @@ public class XbEditActivity extends BaseEditActivity{
 					//takephoto(mLines.get(5),zpeditText);
 					//photograph();
 					XbEditActivityPermissionsDispatcher.photographWithCheck(XbEditActivity.this);
+					break;
+				case R.id.fragment_videotape:
+					/* 录像 */
+					videotape();
+					break;
 				default:
 					break;
 			}
 		}
 	}
 
+	/**
+	 * 录像
+	 */
+	private void videotape() {
+		Intent intent = new Intent();
+		intent.setAction("android.media.action.VIDEO_CAPTURE");
+		intent.addCategory("android.intent.category.DEFAULT");
+		File file = new File(ResourcesManager.getImagePath(path)+"/"+ ResourcesManager.getVideoName(String.valueOf(fid)));
+		Uri uri = Uri.fromFile(file);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		startActivity(intent);
+	}
+
+	/**
+	 * @param type 审计类型 false为新增审计
+	 */
 	private void auditAddOrCompare(boolean type) {
 		Intent intent = new Intent(XbEditActivity.this, AuditActivity.class);
 		intent.putExtra("fid", fid);
@@ -204,7 +225,7 @@ public class XbEditActivity extends BaseEditActivity{
 	@NeedsPermission({Manifest.permission.CAMERA})
 	void photograph() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		imagePath = getImagePath(myFeture.getPath())+"/"+getPicName(String.valueOf(fid));
+		imagePath = ResourcesManager.getImagePath(path)+"/"+ ResourcesManager.getPicName(String.valueOf(fid));
 		Uri uri = Uri.fromFile(new File(imagePath));
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 		startActivityForResult(intent, TAKE_PICTURE);
@@ -214,35 +235,6 @@ public class XbEditActivity extends BaseEditActivity{
     void showRecordDenied(){
         ToastUtil.setToast(mContext,"拒绝后将无法da打开相机，您可以在手机中手动授予权限");
     }
-
-	public static String getPicName(String id) {
-		Date date = new Date(System.currentTimeMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("'id'"+id+"_yyyyMMddHHmmss", Locale.CHINA);
-		return sdf.format(date) + ".jpg";
-	}
-
-
-	/** 获取图片保存地址*/
-	public String getImagePath(String path){
-		File file = new File(path);
-		String path1 = file.getParent()+ "/images";
-		File file2 = new File(path1);
-		boolean flag = file2.exists();
-		if(!flag){
-			file2.mkdirs();
-		}
-		//if(currentxbh==null || currentxbh.equals("")){
-			picPath = path1;
-//		}else{
-//			String path2 = file2.getPath()+"/"+currentxbh;
-//			File file3 = new File(path2);
-//			if(!file3.exists()){
-//				file3.mkdirs();
-//			}
-//			picPath = file3.getPath();
-//		}
-		return picPath;
-	}
 
 	/**更新照片编号*/
 	public void updateZp(String pctext,Line line,String bfText){

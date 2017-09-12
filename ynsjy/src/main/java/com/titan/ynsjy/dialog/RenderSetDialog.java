@@ -331,10 +331,10 @@ public class RenderSetDialog extends Dialog {
         dialog.setCanceledOnTouchOutside(true);
 
         final SeekBar seekBar = (SeekBar) dialog.findViewById(R.id.symbol_seekbar);
-        seekBar.setProgress(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tmd", 100));
+        seekBar.setProgress(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tmd", 50));
 
         final TextView textView = (TextView) dialog.findViewById(R.id.toumingdu);
-        int sektxt = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tmd", 0);
+        int sektxt = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tmd", 50);
         textView.setText(sektxt + "");
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
