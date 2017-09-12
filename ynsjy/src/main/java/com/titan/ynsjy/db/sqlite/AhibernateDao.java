@@ -35,7 +35,7 @@ public class AhibernateDao<T> {
 
 	public List<T> queryList(Class<?> clazz, Map<String, String> where) {
 		String sql = new Select(clazz, where).toStatementString();
-		Log.d(this.TAG, "query sql:" + sql);
+		Log.e(this.TAG, "query sql:" + sql);
 		Cursor cursor = this.db.rawQuery(sql, null);
 		EntityBuilder<T> builder = new EntityBuilder<T>(clazz, cursor);
 		List<T> queryList = (List<T>) builder.buildQueryList();

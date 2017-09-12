@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.esri.core.map.Feature;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.fragment.AuditHistoryInfoFragment;
 
@@ -47,7 +46,7 @@ public class AuditInfoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Bundle bundle = getIntent().getExtras();
         map = (Map<String, Object>) bundle.getSerializable("featureMap");
-        AuditHistoryInfoFragment fragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_history_info);
+        AuditHistoryInfoFragment fragment = (AuditHistoryInfoFragment) getSupportFragmentManager().findFragmentById(R.id.audit_history_info);
         fragment.refresh(map);
     }
 

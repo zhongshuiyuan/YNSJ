@@ -103,7 +103,8 @@
             android:gravity="center"
             android:text="新增审计"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/ld_audit_history"

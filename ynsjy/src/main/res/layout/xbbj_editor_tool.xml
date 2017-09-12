@@ -162,13 +162,47 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
             android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/auditButton"
+                android:layout_width="51dp"
+                android:layout_height="51dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/background_xbbj_btn"
+                android:button="@null"
+                android:drawablePadding="3dp"
+                android:drawableTop="@drawable/xbbj_attribte"
+                android:gravity="center"
+                android:paddingTop="7dp"
+                android:textColor="@color/white"
+                android:textSize="14sp">
+            </RadioButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="1dp"
+                android:text="新增审计"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp">
             <RadioButton
                 android:id="@+id/attributButton"
                 android:background="@drawable/background_xbbj_btn"
                 android:textSize="14sp"
                 android:textColor="@color/white"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:layout_width="51dp"
                 android:paddingTop="7dp"
                 android:layout_marginTop="5dp"
@@ -181,8 +215,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="图斑审计"
+                android:text="属性编辑"
                 android:textSize="14sp"
+                android:layout_gravity="center"
                 android:textColor="@color/white"
                 android:layout_marginTop="1dp"/>
         </LinearLayout>

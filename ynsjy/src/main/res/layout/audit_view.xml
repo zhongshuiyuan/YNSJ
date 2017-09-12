@@ -1,173 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/audit_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/test"
-        android:padding="5dp"
-        android:background="@color/blue"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:visibility="gone"/>
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:divider="@drawable/divider"
+              android:orientation="vertical"
+              android:showDividers="middle">
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:layout_weight="1"
-        android:gravity="center">
+        style="@style/audit_view_linear_style">
 
         <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:gravity="center"
-            android:text="修改原因"
-            android:textSize="20sp" />
+            style="@style/audit_view_tv_style"
+            android:text="审计人员"/>
+
+        <EditText
+            android:id="@+id/audit_people"
+            style="@style/audit_view_ed_style"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/audit_view_linear_style">
+
+        <TextView
+            style="@style/audit_view_tv_style"
+            android:text="修改原因"/>
 
         <EditText
             android:id="@+id/audit_reason"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:textColor="@color/balck"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/edit_bg"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:layout_weight="1" />
+            style="@style/audit_view_ed_style"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/blue" />
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:layout_weight="1"
-        android:gravity="center">
+        style="@style/audit_view_linear_style">
+
         <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="描述信息"
-            android:gravity="center"
-            android:textSize="20sp" />
+            style="@style/audit_view_tv_style"
+            android:text="描述信息"/>
 
         <EditText
             android:id="@+id/audit_info"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:textColor="@color/balck"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:background="@drawable/edit_bg"
-            android:layout_weight="1" />
+            style="@style/audit_view_ed_style"/>
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/blue" />
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:layout_weight="1"
-        android:gravity="center">
+        style="@style/audit_view_linear_style">
 
         <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="修改前状况"
-            android:gravity="center"
-            android:textSize="20sp" />
+            style="@style/audit_view_tv_style"
+            android:text="修改前状况"/>
 
         <EditText
             android:id="@+id/audit_edit_before"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:textColor="@color/balck"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:background="@drawable/edit_bg"
-            android:layout_weight="1" />
+            style="@style/audit_view_ed_style"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/blue" />
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:layout_weight="1"
-        android:gravity="center">
+        style="@style/audit_view_linear_style">
 
         <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="修改后状况"
-            android:gravity="center"
-            android:textSize="20sp" />
+            style="@style/audit_view_tv_style"
+            android:text="修改后状况"/>
 
         <EditText
             android:id="@+id/audit_edit_after"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:textColor="@color/balck"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:background="@drawable/edit_bg"
-            android:layout_weight="1" />
+            style="@style/audit_view_ed_style"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/blue" />
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:layout_weight="1"
-        android:gravity="center">
+        style="@style/audit_view_linear_style">
 
         <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="备    注"
-            android:gravity="center"
-            android:textSize="20sp" />
+            style="@style/audit_view_tv_style"
+            android:text="备    注"/>
 
         <EditText
             android:id="@+id/audit_mark"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:textColor="@color/balck"
-            android:textSize="18sp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:background="@drawable/edit_bg"
-            android:layout_weight="1" />
+            style="@style/audit_view_ed_style"/>
     </LinearLayout>
 </LinearLayout>

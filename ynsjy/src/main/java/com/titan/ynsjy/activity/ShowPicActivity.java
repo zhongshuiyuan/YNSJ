@@ -82,7 +82,7 @@ public class ShowPicActivity extends AppCompatActivity implements View.OnClickLi
         isPath = intent.getStringExtra("path");
         long fid = intent.getLongExtra("fid",0);
         String picPath = intent.getStringExtra("picPath");
-        pathList = ResourcesManager.getImagesFiles(picPath,"id"+fid+"_");
+        pathList = ResourcesManager.getImagesFiles(picPath,String.valueOf(fid));
     }
 
     @Override

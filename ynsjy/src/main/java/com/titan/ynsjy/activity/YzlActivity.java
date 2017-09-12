@@ -1,10 +1,14 @@
 package com.titan.ynsjy.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.RadioButton;
 
 import com.esri.core.geometry.Geometry;
 import com.esri.core.symbol.SimpleFillSymbol;
@@ -14,8 +18,10 @@ import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.MyLayer;
+import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.BitmapTool;
 import com.titan.ynsjy.util.BussUtil;
+import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 
 /**
@@ -25,47 +31,88 @@ import com.titan.ynsjy.util.ToastUtil;
 public class YzlActivity extends BaseActivity {
 	
 	private View parentView;
+	private static final int DRAW_BITMAP_FINISH = 1;
+	Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			if (msg.what==DRAW_BITMAP_FINISH){
+				//auditAdd();
+				auditAddOrCompare(false);
+			}
+		}
+	};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		parentView = getLayoutInflater().inflate(R.layout.activity_yzl, null);
 		super.onCreate(savedInstanceState);
 		setContentView(parentView);
-		 mContext = YzlActivity.this;
+		 mContext = this;
 		//ImageView topview = (ImageView) parentView.findViewById(R.id.topview);
 		//topview.setBackground(mContext.getResources().getDrawable(R.drawable.share_top_yzl));
 		activitytype = getIntent().getStringExtra("name");
         //根据配置文件获取文件
 		proData = BussUtil.getConfigXml(mContext,"yzl");
-        Button btn= (Button) findViewById(R.id.btn_save);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startAudit(selGeoFeaturesList.get(0).getGeometry());
-            }
-        });
+		auditButton = (RadioButton) parentView.findViewById(R.id.auditButton);
+		auditButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (imgTiledLayer==null){
+					ToastUtil.setToast(mContext,"没有加载影像图");
+					return;
+				}
+				if (!BaseUtil.checkFeaturelayerExist("edit",layerNameList)){
+					ToastUtil.setToast(mContext,"没有加载图层数据");
+					return;
+				}
+				if (selGeoFeaturesList.size()<0){
+					ToastUtil.setToast(mContext,"没有选择小班");
+					return;
+				}
+				if (selGeoFeaturesList.size()==1){
+					getSelParams(selGeoFeaturesList,0);
+					startAudit(selGeoFeature.getGeometry());
+				} else {
+					basePresenter.showListFeatureResult(selGeoFeaturesList,0);
+				}
+			}
+		});
 	}
 
 	/**
 	 * 新增审计
 	 */
-	public void startAudit(Geometry geometry){
+	public void startAudit(final Geometry geometry){
 
-
-		mapView.setExtent(geometry);
+		mapView.setExtent(geometry,0,false);
 
         for(MyLayer layer:layerNameList){
             if(layer.getLayer().getGeometryType()== Geometry.Type.POLYGON )
             layer.getLayer().setRenderer(RendererUtil.getSimpleRenderer(new SimpleFillSymbol(Color.TRANSPARENT)));
         }
-        Bitmap bitmap=GisUtil.getDrawingMapCache(geometry,mapView);
-        try{
-            //String path=myLayer.getPath()+"/images/T_imgs";
-            String path=MyApplication.resourcesManager.getImagePath();
-            BitmapTool.saveBitmap(path,bitmap);
-            ToastUtil.setToast(mContext,"获取影像范围成功");
-        }catch(Exception e) {
-            ToastUtil.setToast(mContext,"获取影像数据异常"+e);
-        }
+		new Handler().postDelayed(new Runnable(){
+			public void run() {
+				final Bitmap bitmap=GisUtil.getDrawingMapCache(geometry,mapView);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try{
+							//String path=myLayer.getPath()+"/images/T_imgs";
+							String path=MyApplication.resourcesManager.getImagePath(selGeoFeature.getId());
+							BitmapTool.saveBitmap(path,bitmap);
+							ToastUtil.setToast(mContext,"获取影像范围成功");
+							Message message = new Message();
+							message.what = DRAW_BITMAP_FINISH;
+							handler.sendMessage(message);
+						}catch(Exception e) {
+							ToastUtil.setToast(mContext,"获取影像数据异常"+e);
+							Log.e("tag",e.toString());
+						}
+					}
+				}).start();
+			}
+		}, 2000);
+
 	}
 
 	@Override
@@ -73,5 +120,19 @@ public class YzlActivity extends BaseActivity {
 		return parentView;
 	}
 
+	/**
+	 * @param type 审计类型 false为新增审计,true为审计历史
+	 */
+	public void auditAddOrCompare(boolean type) {
+		Intent intent = new Intent(mContext, AuditActivity.class);
+		intent.putExtra("fid", selGeoFeature.getId());
+		intent.putExtra("picPath", ResourcesManager.getImagePath(myLayer.getPath()));
+		intent.putExtra("auditType",type);
+		mContext.startActivity(intent);
+	}
 
+	@Override
+	public void startAddAudit() {
+		startAudit(selGeoFeature.getGeometry());
+	}
 }

@@ -37,6 +37,8 @@ public interface IBaseView {
     MapView getMapView();
 
     Envelope getCurrentEnvelope();
+    //开启审计
+    void startAddAudit();
     //添加图形到绘制层
     //void addGraphic(Graphic graphic);
 }

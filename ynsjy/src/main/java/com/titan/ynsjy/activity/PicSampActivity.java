@@ -132,7 +132,7 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
     /*读取小班对应的图片*/
     private void initData() {
         String path = picPath;
-        picPathList = ResourcesManager.getImagesFiles(path,"id"+fid+"_");
+        picPathList = ResourcesManager.getImagesFiles(path,String.valueOf(fid));
         for (int i = 0; i < picPathList.size(); i++) {
             isSelectList.put(String.valueOf(i), false);
         }

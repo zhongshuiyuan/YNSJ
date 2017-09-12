@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Xml;
@@ -134,6 +135,8 @@ import static com.titan.ynsjy.R.xml.call;
 @RuntimePermissions
 public abstract class BaseActivity extends AppCompatActivity implements LayerSelectDialog.SetOnItemClickListener,
         View.OnClickListener, DrawEventListener, IYzlView, LayerControlView,ILayerView,IBaseView {
+    //营造林activity
+    //public YzlActivity yzlActivity = new YzlActivity();
     /*系统投影坐标系*/
     public static SpatialReference spatialReference;
     //坐标
@@ -324,13 +327,24 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     public ImageView sjtbImgview, gjsearchImgview, dmMangerImgview, personCenter, xbbjImgview, tcxrImgview, xbsearchImgview;
     /*小班编辑RadioButton*/
     public RadioButton addFeatureBtn, addFeatureGbBtn, selectButton, qiegeButton, hebingButton, xiubanButton,
-            repealButton, attributButton, deleteButton, copyButton;
+            repealButton, attributButton, deleteButton, copyButton,auditButton;
     //当前位置
     public ImageButton location_self;
     /*小班搜索结果展示头部*/
     //public View toplayou;
     /*Myapplication*/
     //public MyApplication app = new MyApplication();
+    public static final int CREAT_BITMAP_FINISH = 1;
+    public Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case CREAT_BITMAP_FINISH:
+
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -372,12 +386,18 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     @NeedsPermission({Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,
     })
     void init(){
+        /*初始化数据*/
        //BaseActivityPermissionsDispatcher.initDataWithCheck(this);
+        /* 定位设置 */
         BaseActivityPermissionsDispatcher.initLocationWithCheck(this);
+        /* 地图控件初始化 */
         initView();
+        /*初始化presenter*/
         BaseActivityPermissionsDispatcher.initPresenterWithCheck(this);
+		/* 添加地图 */
         BaseActivityPermissionsDispatcher.addLayerWithCheck(this);
         mapviewStatusChange();
+		/* 定义样式 */
         initSymbol();
         layerNameList.clear();
     }
@@ -477,6 +497,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         xiubanButton = (RadioButton) childview.findViewById(R.id.xiubanButton);
         repealButton = (RadioButton) childview.findViewById(R.id.repealButton);
         attributButton = (RadioButton) childview.findViewById(R.id.attributButton);
+        auditButton = (RadioButton) childview.findViewById(R.id.auditButton);
+        auditButton.setOnClickListener(this);
         deleteButton = (RadioButton) childview.findViewById(R.id.deleteButton);
         //copyButton = (RadioButton) childview.findViewById(R.id.copyButton);
         addFeatureBtn = (RadioButton) childview.findViewById(R.id.addfeature);
@@ -1437,6 +1459,22 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 }
                 ToastUtil.setToast(mContext,"没有加载图层，请先加载图层数据");
                 break;
+            case R.id.auditButton:
+                /* 新增审计*/
+//                if (imgTiledLayer!=null&&BaseUtil.checkFeaturelayerExist("edit",layerNameList)&&selGeoFeaturesList.size()>0){
+//                    if (selGeoFeaturesList.size()==1){
+//                        //selGeoFeature = selGeoFeaturesList.get(0);
+//                        getSelParams(selGeoFeaturesList,0);
+//                        Log.e("tag",":"+selGeoFeature);
+//                        new YzlActivity().startAudit(selGeoFeature.getGeometry());
+//                        basePresenter.auditAddOrCompare(false);
+//                    } else {
+//                        basePresenter.showListFeatureResult(selGeoFeaturesList,0);
+//                    }
+//                    return;
+//                }
+//                ToastUtil.setToast(mContext,"没有加载图层，请先加载图层数据");
+                break;
             case R.id.share_gjcx:
                 /* 轨迹查询 */
 //                guijiPopwindow = new MorePopWindow(this, R.layout.popup_share_gujichaxun);
@@ -1480,7 +1518,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 break;
         }
     }
-
 
     /**
      * 小班查询选择  简单查询和自定义查询
@@ -1790,7 +1827,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             if (size == 1) {
                 toFeatureResult(data);
             } else {
-                basePresenter.showListFeatureResult(data);
+                basePresenter.showListFeatureResult(data,1);
             }
             attributButton.setChecked(false);
         } else {
@@ -2266,6 +2303,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         }else{
             LayerSelectDialog selectDialog = new LayerSelectDialog(mContext,R.style.Dialog,layerList,mode);
             selectDialog.setLayerOnItemClickListener(this);
+            selectDialog.setCancelable(false);
             BussUtil.setDialogParams(mContext, selectDialog, 0.5, 0.5);
         }
     }

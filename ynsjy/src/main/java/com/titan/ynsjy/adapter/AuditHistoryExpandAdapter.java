@@ -22,38 +22,38 @@ import java.util.Map;
 
 public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
     private Context mContext;
-    private List<String> list;
-    private Map<String, List<Feature>> map;
+    private List<String> parentList;
+    private List<List<Feature>> childList;
     private Map<String,Boolean> cbMap;
-    private boolean type;
+    private int type;
 
-    public AuditHistoryExpandAdapter(Context context, List<String> list, boolean type,
-                                     Map<String, List<Feature>> map,Map<String,Boolean> cbMap) {
+    public AuditHistoryExpandAdapter(Context context, List<String> parentList, int type,
+                                     List<List<Feature>> childList,Map<String,Boolean> cbMap) {
         this.mContext = context;
-        this.list = list;
-        this.map = map;
+        this.parentList = parentList;
+        this.childList = childList;
         this.cbMap = cbMap;
         this.type = type;
     }
 
     @Override
     public int getGroupCount() {
-        return list.size();
+        return parentList.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return map.get(list.get(groupPosition)).size();
+        return childList.get(groupPosition).size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return list.get(groupPosition);
+        return parentList.get(groupPosition);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return map.get(list.get(groupPosition)).get(childPosition);
+        return childList.get(groupPosition).get(childPosition);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_textview, parent, false);
         }
         TextView tvSxzd = ViewHolderUtil.get(convertView, R.id.tv1);
-        String strSx = list.get(groupPosition);
+        String strSx = parentList.get(groupPosition);
         tvSxzd.setText(strSx);
         return convertView;
     }
@@ -98,7 +98,7 @@ public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
 //        TextView tv_mark = ViewHolderUtil.get(convertView, R.id.audit_mark);
         String id = getAttrValue("OBJECTID",groupPosition,childPosition);
         tv_value.setText(id);
-        if (type){
+        if (type==1){
             cb_people.setChecked(cbMap.get(id));
             cb_people.setVisibility(View.VISIBLE);
         }else {
@@ -116,7 +116,7 @@ public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
     }
 
     private String getAttrValue(String attr,int groupPosition,int childPosition){
-        return map.get(list.get(groupPosition)).get(childPosition).getAttributeValue(attr).toString();
+        return childList.get(groupPosition).get(childPosition).getAttributeValue(attr).toString();
     }
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {

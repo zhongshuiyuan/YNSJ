@@ -64,6 +64,11 @@ public class BaseUtil {
         return myLayer;
     }
 
+    /**
+     * @param tableName 表名
+     * @param layerNameList 表的集合
+     * @return 集合中是否存在该名字的表，true表示存在，false表示不存在
+     */
     public static boolean checkFeaturelayerExist(String tableName, List<MyLayer> layerNameList){
         boolean flag = false;
         for (MyLayer layer : layerNameList) {

@@ -322,7 +322,7 @@ public abstract class BaseEditActivity extends Activity {
     /** 图片浏览*/
     @NeedsPermission({Manifest.permission.READ_EXTERNAL_STORAGE})
     public void lookpictures(Activity activity){
-        List<String> lst = ResourcesManager.getImagesFiles(picPath,"id"+fid+"_"); //getImages(picPath);
+        List<String> lst = ResourcesManager.getImagesFiles(picPath,String.valueOf(fid)); //getImages(picPath);
         if(lst == null||lst.size()==0){
             ToastUtil.setToast(mContext, "没有图片");
             return;

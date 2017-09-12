@@ -43,12 +43,12 @@ public class EntityBuilder<T>
 
                 if (field.getType().getSimpleName().equals("Long"))
                   field.set(
-                    t, 
-                    Long.valueOf(this.cursor.getLong(this.cursor
-                    .getColumnIndexOrThrow(((columnName != null) && 
-                    (!columnName .equals(""))) ? 
-                    columnName : field
-                    .getName()))));
+                    t, this.cursor.getLong(this.cursor
+                                  .getColumnIndexOrThrow(((columnName != null) &&
+                                          (!columnName .equals(""))) ?
+                                          columnName : field
+                                          .getName())));
+                    //Long.valueOf();
                 else if (field.getType().getSimpleName().equals("String")) {
                   field.set(
                     t, 

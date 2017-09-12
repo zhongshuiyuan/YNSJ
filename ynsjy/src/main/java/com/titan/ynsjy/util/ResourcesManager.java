@@ -286,9 +286,9 @@ public class ResourcesManager implements Serializable {
      * 获取影像截图存储路径
      * @return
      */
-    public String getImagePath() {
+    public String getImagePath(long id) {
         //String str = getFolderPath(otms) + "/审计眼/images/T_img.jpg";
-        return  getFolderPath(otms) + "/审计眼/images/T_img.jpg";
+        return  getFolderPath(otms) + "/审计眼/images/id"+id +"_img.jpg";
 
     }
 
@@ -568,7 +568,7 @@ public class ResourcesManager implements Serializable {
 		List<String> fileList = new ArrayList<>();
 		for (File f : filePath) {
 			String imgName = StringUtils.substringAfterLast(f.getPath(),File.separator);
-			Boolean flag = imgName.startsWith(name)&&(imgName.endsWith(".jpg")||imgName.endsWith(".mp4"));
+			Boolean flag = imgName.startsWith("id"+name+"_")&&(imgName.endsWith(".jpg")||imgName.endsWith(".mp4"));
 			if (!f.isFile() || !flag) {
 				continue;
 			}

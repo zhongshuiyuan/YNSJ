@@ -62,8 +62,6 @@ public class AuditHistoryInfoFragment extends Fragment {
      */
     public void refresh(Map<String, Object> map) {
         id = Long.valueOf(map.get("OBJECTID").toString());
-//        Map<String,Object> map = feature.getAttributes();
-        //Map<String, Object> map = feature.getAttributes();
         //auditPeople.setText(map.get("").toString());
         auditTime.setText(map.get("MODIFYTIME").toString());
         //auditLatlon.setText(map.get("").toString());

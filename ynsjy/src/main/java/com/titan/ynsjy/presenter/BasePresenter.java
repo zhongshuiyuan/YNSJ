@@ -43,6 +43,7 @@ import com.esri.core.table.TableException;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.activity.AuditActivity;
 import com.titan.ynsjy.adapter.AttributeAdapter;
 import com.titan.ynsjy.adapter.FeatureResultAdapter;
 import com.titan.ynsjy.adapter.SearchXdmAdapter;
@@ -62,6 +63,7 @@ import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.BitmapTool;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.CursorUtil;
+import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.SymbolUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
@@ -86,7 +88,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 
+import static com.titan.ynsjy.BaseActivity.myLayer;
 import static com.titan.ynsjy.BaseActivity.seflayerName;
+import static com.titan.ynsjy.BaseActivity.selGeoFeature;
 
 /**
  * Created by li on 2017/5/9.
@@ -416,8 +420,10 @@ public class BasePresenter {
 
     /**
      * 弹出结果展示窗口
+     * @param list    勾选的小班
+     * @param type    跳转类型，0表示新增审计，1表示属性编辑
      */
-    public void showListFeatureResult(final List<GeodatabaseFeature> list) {
+    public void showListFeatureResult(final List<GeodatabaseFeature> list, final int type) {
         final Dialog dialog = new Dialog(baseActivity, R.style.Dialog);
         dialog.setContentView(R.layout.featureresult_view);
         dialog.setCanceledOnTouchOutside(true);
@@ -438,32 +444,47 @@ public class BasePresenter {
                 baseActivity.getSelParams(list, position);
 
                 Intent intent = null;
-                if (BaseActivity.selectGeometry.getType().equals(Geometry.Type.POINT)) {
-                    intent = new Intent(baseActivity, PointEditActivity.class);
-                } else if (BaseActivity.selectGeometry.getType().equals(Geometry.Type.POLYLINE)) {
-                    intent = new Intent(baseActivity, LineEditActivity.class);
-                } else if (BaseActivity.selectGeometry.getType().equals(Geometry.Type.POLYGON)) {
-                    intent = new Intent(baseActivity, XbEditActivity.class);
-                } else {
-                    intent = new Intent(baseActivity, XbEditActivity.class);
-                }
+                if (type == 1){
+                    if (BaseActivity.selectGeometry.getType().equals(Geometry.Type.POINT)) {
+                        intent = new Intent(baseActivity, PointEditActivity.class);
+                    } else if (BaseActivity.selectGeometry.getType().equals(Geometry.Type.POLYLINE)) {
+                        intent = new Intent(baseActivity, LineEditActivity.class);
+                    } else if (BaseActivity.selectGeometry.getType().equals(Geometry.Type.POLYGON)) {
+                        intent = new Intent(baseActivity, XbEditActivity.class);
+                    } else {
+                        intent = new Intent(baseActivity, XbEditActivity.class);
+                    }
 
-                String pname = BaseActivity.myLayer.getPname();// 工程名称
-                String path = BaseActivity.myLayer.getPath();
-                String cname = BaseActivity.myLayer.getCname();
-                MyFeture feture = new MyFeture(pname, path, cname, BaseActivity.selGeoFeature, BaseActivity.myLayer);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("myfeture", feture);
-                bundle.putSerializable("parent", "Base");
-                bundle.putSerializable("id", BaseActivity.selGeoFeature.getId() + "");
-                intent.putExtras(bundle);
-                baseActivity.startActivityForResult(intent, 4);
-                feture = null;
+                    String pname = myLayer.getPname();// 工程名称
+                    String path = myLayer.getPath();
+                    String cname = myLayer.getCname();
+                    MyFeture feture = new MyFeture(pname, path, cname, selGeoFeature, myLayer);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("myfeture", feture);
+                    bundle.putSerializable("parent", "Base");
+                    bundle.putSerializable("id", selGeoFeature.getId() + "");
+                    intent.putExtras(bundle);
+                    baseActivity.startActivityForResult(intent, 4);
+                    feture = null;
+                }else {
+                    dialog.dismiss();
+                    iBaseView.startAddAudit();
+                }
             }
         });
-
         adapter.notifyDataSetChanged();
         BussUtil.setDialogParams(baseActivity, dialog, 0.55, 0.55);
+    }
+
+    /**
+     * @param type 审计类型 false为新增审计,true为审计历史
+     */
+    public void auditAddOrCompare(boolean type) {
+        Intent intent = new Intent(baseActivity, AuditActivity.class);
+        intent.putExtra("fid", selGeoFeature.getId());
+        intent.putExtra("picPath", ResourcesManager.getImagePath(myLayer.getPath()));
+        intent.putExtra("auditType",type);
+        baseActivity.startActivity(intent);
     }
 
     /**
@@ -539,28 +560,30 @@ public class BasePresenter {
         final EditText searchTxt = (EditText) xdmSearchInclude.findViewById(R.id.xdm_searchText);
         CursorUtil.setEditTextLocation(searchTxt);
         final ListView listResult = (ListView) xdmSearchInclude.findViewById(R.id.listView_xdm_search);
-        final DbHelperService<XdmSearchHistory> service = new DbHelperService<XdmSearchHistory>(baseActivity, XdmSearchHistory.class);
-        final List<XdmSearchHistory> list = service.getObjectsByWhere(null);
-        final SearchXdmAdapter<XdmSearchHistory> adapter = new SearchXdmAdapter<>(list, baseActivity);
+
+        final DbHelperService<XdmSearchHistory> historyService = new DbHelperService<>(baseActivity, XdmSearchHistory.class);
+        final List<XdmSearchHistory> historyList = historyService.getObjectsByWhere(null);
+        final SearchXdmAdapter<XdmSearchHistory> adapter = new SearchXdmAdapter<>(historyList, baseActivity);
         listResult.setAdapter(adapter);
-        listResult.setVisibility(View.GONE);
+        listResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                                    int arg2, long arg3) {
+                String txt = historyList.get(arg2).getName();
+                searchTxt.setText(txt);
+                CursorUtil.setEditTextLocation(searchTxt);
+            }
+        });
+        //listResult.setVisibility(View.GONE);
         searchTxt.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 adapter.notifyDataSetChanged();
-                listResult.setVisibility(View.VISIBLE);
+                //listResult.setVisibility(View.VISIBLE);
 
-                listResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                    @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1,
-                                            int arg2, long arg3) {
-                        String txt = list.get(arg2).getName();
-                        searchTxt.setText(txt);
-                        CursorUtil.setEditTextLocation(searchTxt);
-                    }
-                });
             }
         });
 
@@ -574,13 +597,13 @@ public class BasePresenter {
                     return;
                 }
                 String searchValue = searchTxt.getText().toString();
-                ArrayList<String> lst = new ArrayList<>();
-                if (!lst.contains(searchValue)) {
+//                ArrayList<String> lst = new ArrayList<>();
+//                if (!lst.contains(searchValue)) {
                     XdmSearchHistory t = new XdmSearchHistory();
                     t.setName(searchTxt.getText().toString());
                     t.setTime(UtilTime.getSystemtime2());
-                    boolean flag = service.add(t);
-                }
+                    boolean flag = historyService.add(t);
+//                }
                 searchXdmMethod(searchValue, listResult);
             }
         });
@@ -599,10 +622,10 @@ public class BasePresenter {
      */
     private void searchXdmMethod(final String searchTxt, final ListView listResult) {
 
-        DbHelperService<Station> service = new DbHelperService<>(baseActivity, Station.class);
+        DbHelperService<Station> stationService = new DbHelperService<>(baseActivity, Station.class);
         HashMap<String, String> where = new HashMap<>();
         where.put("name like", "%" + searchTxt + "%");
-        final List<Station> list = service.getObjectsByWhere(where);
+        final List<Station> list = stationService.getObjectsByWhere(where);
 
         //final List<HashMap<String, Object>> list = DataBaseHelper.getAddressInfo(mContext, searchTxt);
         if (list.size() == 0) {
@@ -754,9 +777,9 @@ public class BasePresenter {
      * 加载图层为一个图层时默认选择这个图层，获取这个图层的数据
      */
     public void getMylayer() {
-        BaseActivity.myLayer = BaseActivity.layerNameList.get(0);
-        baseActivity.layerType = BaseActivity.myLayer.getLayer().getGeometryType();
-        String layername = BaseActivity.myLayer.getLname();
+        myLayer = BaseActivity.layerNameList.get(0);
+        baseActivity.layerType = myLayer.getLayer().getGeometryType();
+        String layername = myLayer.getLname();
 
         ToastUtil.setToast(baseActivity, layername);
         //SytemUtil.getEditSymbo(baseActivity, BaseActivity.myLayer.getLayer());
@@ -888,9 +911,9 @@ public class BasePresenter {
                 return;
             }
 
-            GeodatabaseFeatureTable table = BaseActivity.myLayer.getTable();
+            GeodatabaseFeatureTable table = myLayer.getTable();
             GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
-            Symbol symbol = BaseActivity.myLayer.getRenderer().getSymbol(g);
+            Symbol symbol = myLayer.getRenderer().getSymbol(g);
             // symbol为null也可以 why？
             Map<String, Object> editAttributes = null;
             if (selFeatureAts == null) {
@@ -912,7 +935,7 @@ public class BasePresenter {
                 table.deleteFeature(id);
             } else {
 				/* 添加小班后 记录添加小班的id 备撤销时删除 */
-                recordXb(id, "add", editAttributes, geom, BaseActivity.myLayer.getLayer());
+                recordXb(id, "add", editAttributes, geom, myLayer.getLayer());
             }
         } catch (TableException e) {
             e.printStackTrace();
@@ -949,8 +972,8 @@ public class BasePresenter {
             }
 //            GeodatabaseFeatureTable table = BaseActivity.myLayer.getTable();
 //            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
-            Feature g = BaseActivity.selGeoFeature;
-            Symbol symbol = BaseActivity.myLayer.getRenderer().getSymbol(g);
+            Feature g = selGeoFeature;
+            Symbol symbol = myLayer.getRenderer().getSymbol(g);
             // symbol为null也可以 why？
 //            if (selectFeatureAts == null) {
 //                selectFeatureAts = g.getAttributes();
@@ -971,12 +994,12 @@ public class BasePresenter {
                 geometry = GeometryEngine.difference(geometry, geometry2, BaseActivity.spatialReference);
             }
 
-            FeatureTable featureTable = BaseActivity.myLayer.getTable();
+            FeatureTable featureTable = myLayer.getTable();
             Graphic addedGraphic = new Graphic(geometry, symbol, selectFeatureAts);
             long id = featureTable.addFeature(addedGraphic);
 
 			/* 添加小班后 记录添加小班的id 备撤销时删除 */
-            recordXb(id, "add", selectFeatureAts, geometry, BaseActivity.myLayer.getLayer());
+            recordXb(id, "add", selectFeatureAts, geometry, myLayer.getLayer());
         } catch (TableException e) {
             e.printStackTrace();
             ToastUtil.setToast(baseActivity, e.getMessage());
@@ -995,12 +1018,12 @@ public class BasePresenter {
             return;
         }
 
-        String pname = BaseActivity.myLayer.getPname();
+        String pname = myLayer.getPname();
         try {
             DecimalFormat format = new DecimalFormat("0.000000");
 //            GeodatabaseFeatureTable table =(GeodatabaseFeatureTable) BaseActivity.myLayer.getTable();
 //            GeodatabaseFeature g = table.createFeatureWithTemplate(BaseActivity.layerTemplate, geom);
-            List<Field> pointFields = BaseActivity.myLayer.getTable().getFields();
+            List<Field> pointFields = myLayer.getTable().getFields();
             for (Field field : pointFields) {
                 if (field.getAlias().contains("横坐标") || field.getAlias().contains("经度")) {
                     baseActivity.layerFeatureAts.put(field.getName(), format.format(point_all.getX()));

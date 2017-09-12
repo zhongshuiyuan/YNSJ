@@ -1,8 +1,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/tubanshenji_normal" android:state_enabled="true" android:state_focused="true" android:state_pressed="false"/>
-    <item android:drawable="@drawable/tubanshenji_print" android:state_enabled="true" android:state_pressed="true"/>
-    <item android:drawable="@drawable/tubanshenji_print" android:state_checked="true" android:state_enabled="true"/>
-    <item android:drawable="@drawable/tubanshenji_normal"/>
+    <item android:drawable="@drawable/ic_shenji_attr_normal" android:state_enabled="true" android:state_focused="true" android:state_pressed="false"/>
+    <item android:drawable="@drawable/ic_shenji_attr_print" android:state_enabled="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/ic_shenji_attr_print" android:state_checked="true" android:state_enabled="true"/>
+    <item android:drawable="@drawable/ic_shenji_attr_normal"/>
 
 </selector>

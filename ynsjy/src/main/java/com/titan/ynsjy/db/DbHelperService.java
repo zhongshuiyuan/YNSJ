@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.db.sqlite.AhibernateDao;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,8 +41,6 @@ public class DbHelperService<T> {
         this.mContext = context;
         try {
             dbpath = MyApplication.resourcesManager.getDataBase("db.sqlite");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
