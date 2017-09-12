@@ -1,4 +1,4 @@
-package com.titan.ynsjy.fragment;
+package com.titan.ynsjy.AuditHistory;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
+import com.titan.model.AuditInfo;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.activity.AuditInfoActivity;
@@ -35,8 +36,8 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
- * Created by hanyw on 2017/9/7/007.
- * 审计历史记录表
+ * Created by hanyw on 2017/9/7/007
+ * 审计历史记录目录界面
  */
 
 public class AuditCatalogFragment extends Fragment {
@@ -48,6 +49,13 @@ public class AuditCatalogFragment extends Fragment {
     private Context mContext;
     private View view;
     private MyLayer myLayer;
+
+    public List<Map<String, Object>> getSelectList() {
+        return selectList;
+    }
+
+
+
     private List<Map<String, Object>> selectList = new ArrayList<>();//已选择的历史记录
     private Map<String, Object> attrMap;//选择的审计记录属性集合
     private boolean isTwoPane;//是否双页
@@ -74,6 +82,24 @@ public class AuditCatalogFragment extends Fragment {
             }
         }
     };
+    //存储选择的审计信息
+    private List<AuditInfo> auditInfos;
+
+    //private onItemSelectListener mListener;
+
+    private static AuditCatalogFragment singleton;
+
+
+
+
+
+    public static AuditCatalogFragment newInstance(){
+        if(singleton==null){
+            singleton=new AuditCatalogFragment();
+        }
+        return singleton;
+    }
+
 
     @Nullable
     @Override
@@ -171,33 +197,33 @@ public class AuditCatalogFragment extends Fragment {
     /**
      * @param context   上下文
      * @param list      编辑id
-     * @param childList 编辑id对应图斑
      * @param cbMap     checkbox状态
      * @param type      页面显示状态，false为默认模式，true为比较模式
      */
-    public void exRefresh(Context context, final List<String> list, final List<List<Feature>> childList,
+    public void exRefresh(Context context, final List<String> list, final List<List<Feature>> listfeature,
                           final Map<String, Boolean> cbMap, final int type) {
         //选择布局模式
-        if (type==0) {
+        if (type==1) {
             auditCatalogSure.setVisibility(View.GONE);
-        } else {
+        }else {
             auditCatalogSure.setVisibility(View.VISIBLE);
         }
-        final AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(context, list, type, childList, cbMap);
+        final AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(context, list, type,listfeature, cbMap);
         auditHistoryAll.setAdapter(adapter);
         auditHistoryAll.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
-                attrMap = childList.get(groupPosition).get(childPosition).getAttributes();
-                Feature feature = childList.get(groupPosition).get(childPosition);
+                attrMap = listfeature.get(groupPosition).get(childPosition).getAttributes();
+                Feature feature = listfeature.get(groupPosition).get(childPosition);
                 //选择布局模式
-                if (type==0) {
+                if (type==1) {
                     setLayout(attrMap);
-                } else if (type==1){
+                }
+                else {
                     //审计历史记录比较时双选
                     String featureId = String.valueOf(feature.getId());
-                    Feature selFeature = childList.get(groupPosition).get(childPosition);
+                    Feature selFeature = listfeature.get(groupPosition).get(childPosition);
                     if (cbMap.get(featureId)) {
                         cbMap.put(featureId, false);
                         selectList.remove(selFeature.getAttributes());
@@ -205,22 +231,18 @@ public class AuditCatalogFragment extends Fragment {
                         selectList.add(selFeature.getAttributes());
                         cbMap.put(featureId, true);
                     } else {
-                        Map<String, Object> s = selectList.get(0);
-                        selectList.remove(s);
-                        cbMap.put(String.valueOf(s.get("OBJECTID")), false);
-                        selectList.add(selFeature.getAttributes());
-                        cbMap.put(featureId, true);
-                    }
-                    adapter.notifyDataSetChanged();
-                }else if (type==2){
-                    String featureId = String.valueOf(feature.getId());
-                    Feature selFeature = childList.get(groupPosition).get(childPosition);
-                    if (cbMap.get(featureId)) {
-                        cbMap.put(featureId, false);
-                        selectList.remove(selFeature.getAttributes());
-                    }else {
-                        selectList.add(selFeature.getAttributes());
-                        cbMap.put(featureId, true);
+                        if(type==3){
+                            //多选模式
+                            selectList.add(selFeature.getAttributes());
+                            cbMap.put(featureId, true);
+                        }else {
+                            Map<String, Object> s = selectList.get(0);
+                            selectList.remove(s);
+                            cbMap.put(String.valueOf(s.get("OBJECTID")), false);
+                            selectList.add(selFeature.getAttributes());
+                            cbMap.put(featureId, true);
+                        }
+
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -233,7 +255,7 @@ public class AuditCatalogFragment extends Fragment {
      * 显示选择的两个历史记录的详细信息
      */
     private void showCompare(Map<String, Object> map) {
-        AuditHistoryInfoFragment compareFragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_history_all_compare);
+        AuditHistoryInfoFragment compareFragment =  (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_detail_frame);
         compareFragment.refresh(selectList.get(0));
         setLayout(map);
     }
@@ -243,18 +265,19 @@ public class AuditCatalogFragment extends Fragment {
      */
     private void setLayout(Map<String, Object> map) {
         if (isTwoPane) {
-            AuditHistoryInfoFragment fragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_history_all_info);
+
+            AuditHistoryInfoFragment fragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_index_frame);
             fragment.refresh(map);
             fragment.editMode(false);
-        } else {
-            AuditInfoActivity.actionStart(mContext, map);
+        }else {
+            AuditInfoActivity.actionStart(mContext,map);
         }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isTwoPane = getActivity().findViewById(R.id.audit_info_fragment) != null;
+        isTwoPane = getActivity().findViewById(R.id.audit_detail_frame) != null;
     }
 
 
@@ -269,10 +292,11 @@ public class AuditCatalogFragment extends Fragment {
      */
     @OnClick(R.id.audit_catalog_sure)
     public void onViewClicked() {
-        if (selectList.size() == 2) {
+
+        if (selectList.size()==2){
             showCompare(attrMap);
             return;
         }
-        ToastUtil.setToast(mContext, "请选择两个记录");
+        ToastUtil.setToast(mContext,"请选择两个记录");
     }
 }

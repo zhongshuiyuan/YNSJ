@@ -448,8 +448,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
         /*小地名搜索*/
         xdmSearchInclude = childview.findViewById(R.id.xdmsearch_include);
-        /*GPS采集工具栏*/
-        gpsCaijiInclude = childview.findViewById(R.id.gpscaiji_include);
+
         /*图层标注view*/
         layerLableInclude = childview.findViewById(R.id.shuxinglable_include);
         /*侧边工具栏*/
@@ -515,6 +514,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         ImageView shuxingLable = (ImageView) childview.findViewById(R.id.shuxing_lable);
         shuxingLable.setOnClickListener(this);
         /*gps采集工具栏*/
+        gpsCaijiInclude = childview.findViewById(R.id.gpscaiji_include);
         gpstart = (Button) childview.findViewById(R.id.share_gps_start);
         gpspend = (Button) childview.findViewById(R.id.share_gps_suspend);
         gpsstop = (Button) childview.findViewById(R.id.share_gps_stop);
@@ -755,10 +755,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             gpsstop.setEnabled(true);
             return;
         }*/
-        if (layerNameList.size() <= 0) {
+        /*if (layerNameList.size() <= 0) {
             ToastUtil.setToast(mContext, "未加载空间数据,请在图层控制中加载数据");
             return;
-        }
+        }*/
 
         gps_start_flag = true;
         //设置UI状态
@@ -826,6 +826,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         } else {
             ToastUtil.setToast(mContext, "轨迹数据不符合构建面规则");
         }
+        gpsCaijiInclude.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -839,14 +840,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 /* 保存GPS坐标数据 */
                 basePresenter.addGuijiPoint(currentPoint);
 
-            }  /*else if (params[0].equals("xzqy")) {
-
-                basePresenter.uploadxzqyData();
-
-            } else if (params[0].equals("jdxz")) {
-
-                basePresenter.uploadjdxzData();
-            }*/
+            }
             return null;
         }
     }
@@ -1717,7 +1711,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     }
 
     /**
-     * 地图复位
+     * 地图平移
      */
     public void mapRemove(View view) {
         initTouch();
@@ -2304,6 +2298,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             LayerSelectDialog selectDialog = new LayerSelectDialog(mContext,R.style.Dialog,layerList,mode);
             selectDialog.setLayerOnItemClickListener(this);
             selectDialog.setCancelable(false);
+            selectDialog.setCanceledOnTouchOutside(false);
             BussUtil.setDialogParams(mContext, selectDialog, 0.5, 0.5);
         }
     }
@@ -2619,14 +2614,14 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      */
     public GeodatabaseFeature getSelParams(List<GeodatabaseFeature> list, int position) {
 
-        GeodatabaseFeature feature = list.get(position);
-        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(feature.getTable().getTableName(),layerNameList);
+        selGeoFeature = list.get(position);
+        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(selGeoFeature.getTable().getTableName(),layerNameList);
         if (myLayer == null) {
             ToastUtil.setToast(mContext, "数据图层已经移除，请重新选择小班");
             return null;
         }
-        long id = feature.getId();
-        try {
+        //long id = feature.getId();
+       /* try {
             //selGeoFeature = (GeodatabaseFeature) myLayer.getTable().getFeature(id);
             selGeoFeature=feature;
             selectGeometry = feature.getGeometry();
@@ -2634,7 +2629,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             //selectfiledList = myLayer.getTable().getFields();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         return selGeoFeature;
     }
 

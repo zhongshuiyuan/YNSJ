@@ -546,6 +546,7 @@ public class BasePresenter {
         btn_area.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pop.dismiss();
                 baseActivity.getGpsCollectionView().setVisibility(View.VISIBLE);
             }
         });

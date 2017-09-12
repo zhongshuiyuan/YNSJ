@@ -46,6 +46,9 @@ android {
                     defaultConfig.versionName + "-" + defaultConfig.versionCode + ".apk");
         }
     }
+    dataBinding{
+        enabled true
+    }
 
     lintOptions {
         checkReleaseBuilds false

@@ -1,4 +1,4 @@
-package com.titan.ynsjy.fragment;
+package com.titan.ynsjy.AuditHistory;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +12,7 @@ import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.databinding.AuditHistoryInfoBinding;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
@@ -19,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
@@ -48,14 +48,39 @@ public class AuditHistoryInfoFragment extends Fragment {
     private View view;
     private long id;//审计记录的OBJECTID
 
+    private AuditHistoryInfoBinding binding;
+
+    private static AuditHistoryInfoFragment singleton;
+
+    public static AuditHistoryInfoFragment newInstance(){
+        if(singleton==null){
+            singleton=new AuditHistoryInfoFragment();
+        }
+        return singleton;
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.audit_history_info, container, false);
-        unbinder = ButterKnife.bind(this, view);
-        return view;
+        binding= AuditHistoryInfoBinding.inflate(inflater,container,false);
+        return binding.getRoot();
+        //view = inflater.inflate(R.layout.audit_history_info, container, false);
+        //unbinder = ButterKnife.bind(this, view);
+        //return view;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
 
     /**
      * @param map 审计记录属性集合
@@ -123,4 +148,6 @@ public class AuditHistoryInfoFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+
 }

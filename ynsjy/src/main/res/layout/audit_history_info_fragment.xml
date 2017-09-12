@@ -27,7 +27,7 @@
     </LinearLayout>
     <fragment
         android:id="@+id/audit_history_info"
-        android:name="com.titan.ynsjy.fragment.AuditHistoryInfoFragment"
+        android:name="com.titan.ynsjy.AuditHistory.AuditHistoryInfoFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>

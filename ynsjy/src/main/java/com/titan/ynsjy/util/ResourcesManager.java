@@ -49,6 +49,7 @@ public class ResourcesManager implements Serializable {
 	private static final String yindwzt = "/引点位置图";
 	private static final String ydtp = "/样地图片";
 	private static final String ymtp = "/样木图片";
+	private static final String export = "/导出数据";
 	private static ResourcesManager resourcesManager;
 	public static final String NAME = "NAME"; // 图片名字键
 	public static final String BITMAP = "BITMAP"; // 图片BITMAP键
@@ -143,6 +144,19 @@ public class ResourcesManager implements Serializable {
 			}
 		}
 		return dataPath;
+	}
+
+	/**
+	 * 获取导出文件目录
+	 */
+	public  String getExportPath(String date){
+        File file=new File(getFilePath(export)+"/"+date);
+        if(file.exists()){
+            file.delete();
+        }else {
+            file.mkdirs();
+        }
+		return  file.getPath();
 	}
 
     /** 取文件可用地址 */

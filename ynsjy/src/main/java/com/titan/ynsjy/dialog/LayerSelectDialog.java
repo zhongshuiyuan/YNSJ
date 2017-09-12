@@ -51,7 +51,7 @@ public class LayerSelectDialog extends Dialog implements ListView.OnItemClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_featureselect);
-        setCanceledOnTouchOutside(true);
+        setCanceledOnTouchOutside(false);
 
         ListView listview = (ListView) findViewById(R.id.listview_layers);
         LayerAdapter adapter = new LayerAdapter(layerList, mContext);

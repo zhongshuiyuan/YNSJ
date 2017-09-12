@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.fragment.AuditHistoryInfoFragment;
+import com.titan.ynsjy.AuditHistory.AuditHistoryInfoFragment;
 
 import java.io.Serializable;
 import java.util.Map;

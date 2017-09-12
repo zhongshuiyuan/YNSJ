@@ -32,6 +32,7 @@
             android:layout_height="match_parent"
             android:text="编辑"
             style="@style/textview_btn_style" />
+
         <TextView
             android:id="@+id/audit_add_compare"
             android:layout_width="wrap_content"
@@ -116,34 +117,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <fragment
+        <!--审计目录-->
+        <FrameLayout
+            android:id="@+id/audit_index_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+        <!--<android.support.v4.app.Fragment
             android:id="@+id/audit_catalog"
-            android:name="com.titan.ynsjy.fragment.AuditCatalogFragment"
-            android:layout_width="0dp"
+            android:name="com.titan.ynsjy.AuditHistory.AuditCatalogFragment"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
-        <FrameLayout
-            android:id="@+id/audit_info_fragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2">
-            <fragment
-                android:id="@+id/audit_history_all_info"
-                android:name="com.titan.ynsjy.fragment.AuditHistoryInfoFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </FrameLayout>
-        <FrameLayout
-            android:id="@+id/audit_compare_fragment"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-            <fragment
-                android:id="@+id/audit_history_all_compare"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:name="com.titan.ynsjy.fragment.AuditHistoryInfoFragment" />
-        </FrameLayout>
+            />-->
     </LinearLayout>
 </LinearLayout>

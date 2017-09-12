@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.RadioButton;
 
 import com.esri.core.geometry.Geometry;
+import com.esri.core.map.Feature;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.titan.gis.GisUtil;
 import com.titan.gis.RendererUtil;
@@ -29,7 +30,8 @@ import com.titan.ynsjy.util.ToastUtil;
  * 营造林页面
  */
 public class YzlActivity extends BaseActivity {
-	
+
+	private static final int DRAW_BITMAP_FIELD = 2;
 	private View parentView;
 	private static final int DRAW_BITMAP_FINISH = 1;
 	Handler handler = new Handler(){
@@ -39,6 +41,11 @@ public class YzlActivity extends BaseActivity {
 			if (msg.what==DRAW_BITMAP_FINISH){
 				//auditAdd();
 				auditAddOrCompare(false);
+			}
+			if (msg.what==DRAW_BITMAP_FIELD){
+				ToastUtil.setToast(mContext,"获取影像截图失败"+msg.obj);
+				//auditAdd();
+				//auditAddOrCompare(false);
 			}
 		}
 	};
@@ -71,7 +78,7 @@ public class YzlActivity extends BaseActivity {
 				}
 				if (selGeoFeaturesList.size()==1){
 					getSelParams(selGeoFeaturesList,0);
-					startAudit(selGeoFeature.getGeometry());
+					startAudit(selGeoFeature);
 				} else {
 					basePresenter.showListFeatureResult(selGeoFeaturesList,0);
 				}
@@ -82,9 +89,9 @@ public class YzlActivity extends BaseActivity {
 	/**
 	 * 新增审计
 	 */
-	public void startAudit(final Geometry geometry){
+	public void startAudit(final Feature feature){
 
-		mapView.setExtent(geometry,0,false);
+		mapView.setExtent(feature.getGeometry(),0,false);
 
         for(MyLayer layer:layerNameList){
             if(layer.getLayer().getGeometryType()== Geometry.Type.POLYGON )
@@ -92,21 +99,24 @@ public class YzlActivity extends BaseActivity {
         }
 		new Handler().postDelayed(new Runnable(){
 			public void run() {
-				final Bitmap bitmap=GisUtil.getDrawingMapCache(geometry,mapView);
+				final Bitmap bitmap=GisUtil.getDrawingMapCache(feature.getGeometry(),mapView);
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
+						Message message = new Message();
 						try{
 							//String path=myLayer.getPath()+"/images/T_imgs";
-							String path=MyApplication.resourcesManager.getImagePath(selGeoFeature.getId());
+							String path=MyApplication.resourcesManager.getImagePath(feature.getId());
 							BitmapTool.saveBitmap(path,bitmap);
-							ToastUtil.setToast(mContext,"获取影像范围成功");
-							Message message = new Message();
+							///ToastUtil.setToast(mContext,"获取影像范围成功");
 							message.what = DRAW_BITMAP_FINISH;
 							handler.sendMessage(message);
 						}catch(Exception e) {
-							ToastUtil.setToast(mContext,"获取影像数据异常"+e);
+							//ToastUtil.setToast(mContext,"获取影像数据异常"+e);
 							Log.e("tag",e.toString());
+							message.what = DRAW_BITMAP_FIELD;
+							message.obj=e;
+							handler.sendMessage(message);
 						}
 					}
 				}).start();
@@ -133,6 +143,6 @@ public class YzlActivity extends BaseActivity {
 
 	@Override
 	public void startAddAudit() {
-		startAudit(selGeoFeature.getGeometry());
+		startAudit(selGeoFeature);
 	}
 }
