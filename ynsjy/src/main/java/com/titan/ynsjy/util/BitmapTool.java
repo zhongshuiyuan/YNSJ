@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -120,6 +121,23 @@ public class BitmapTool {
 		Bitmap bitmap = view.getDrawingCache();
 
 		return new BitmapDrawable(bitmap);
+	}
+
+
+	/**
+	 * 保存图片
+	 */
+	public static void saveBitmap(String path, Bitmap bitmap) throws IOException {
+		File f = new File(path);
+		if (f.exists()) {
+			f.delete();
+		}
+        FileOutputStream out = new FileOutputStream(f);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+        out.flush();
+        out.close();
+
+
 	}
 
 }

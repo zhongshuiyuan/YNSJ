@@ -145,6 +145,20 @@ public class ResourcesManager implements Serializable {
 		return dataPath;
 	}
 
+    /** 取文件可用地址 */
+   /* public String getFilePath(String path) {
+        String dataPath = "文件可用地址";
+        String[] memoryPath = getMemoryPath();
+        for (int i = 0; i < memoryPath.length; i++) {
+            File file = new File(memoryPath[i] + ROOT_MAPS + path);
+            if (file.exists() && file.isFile()) {
+                dataPath = memoryPath[i] + ROOT_MAPS + path;
+                break;
+            }
+        }
+        return dataPath;
+    }*/
+
 	/**获取excel文件保存地址*/
 	public String getExcelPath() {
 		String excelPath = "";
@@ -267,6 +281,16 @@ public class ResourcesManager implements Serializable {
 		arcGISLocalTiledLayerPath = getFilePath(str);
 		return arcGISLocalTiledLayerPath;
 	}
+
+    /**
+     * 获取影像截图存储路径
+     * @return
+     */
+    public String getImagePath() {
+        //String str = getFolderPath(otms) + "/审计眼/images/T_img.jpg";
+        return  getFolderPath(otms) + "/审计眼/images/T_img.jpg";
+
+    }
 
 	/** 获取贵阳市影像图 */
 	public String getArcGISLocalImageLayerPath() {
@@ -454,6 +478,10 @@ public class ResourcesManager implements Serializable {
 		File[] files = new File(getFilePath(mapPath)).listFiles();
 		return files;
 	}
+	/*public File[] getImagePath(String path) {
+		//String mapPath = "/image/" + path;
+		return mapPath = "/image/";
+	}*/
 
 	public void saveJSon(Context context, String json) {
 

@@ -23,9 +23,9 @@ public enum ActionMode {
     /** 小班添加 */
     MODE_EDIT_ADD,
     /** 添加共边小班 */
-    MODE_EDIT_ADD_GB,
+    //MODE_EDIT_ADD_GB,
     /** 复制小班 */
-    MODE_EDIT_COPY,
+    //MODE_EDIT_COPY,
     /** GPS勾绘添加小班 */
     MODE_EDIT_ADD_GPS,
     /** 测距 */
@@ -57,7 +57,7 @@ public enum ActionMode {
     /** 小班路径导航 */
     //MODE_XBNAVIGATION,
     /** 添加小地名 */
-    //MODE_ADD_ADDRESS,
+    MODE_ADD_ADDRESS,
     /** 点击地图取坐标 */
     //MODE_ADD_CALLOUT,
     /**属性标注*/

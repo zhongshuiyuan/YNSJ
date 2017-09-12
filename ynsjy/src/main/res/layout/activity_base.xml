@@ -168,23 +168,23 @@
         android:visibility="visible" />
 
     <!--自定义小班查询-->
-    <include
+   <!-- <include
         android:id="@+id/xbsearchzdy_include"
         layout="@layout/share_search_xb_zdy"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
         android:layout_marginTop="80dp"
-        android:visibility="gone" />
+        android:visibility="gone" />-->
 
     <!--小班简单查询-->
-    <include
+    <!--<include
         android:id="@+id/xbsearchjd_include"
         layout="@layout/share_search_xb_jd"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:layout_marginTop="80dp"
-        android:visibility="gone" />
+        android:visibility="gone" />-->
 
 </FrameLayout>

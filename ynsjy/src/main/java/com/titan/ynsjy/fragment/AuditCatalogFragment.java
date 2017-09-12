@@ -27,7 +27,7 @@ import butterknife.Unbinder;
 
 /**
  * Created by hanyw on 2017/9/7/007.
- * 审计历史页面左侧历史记录部分
+ * 审计历史记录表
  */
 
 public class AuditCatalogFragment extends Fragment {
@@ -76,7 +76,7 @@ public class AuditCatalogFragment extends Fragment {
                 Feature feature = map.get(list.get(groupPosition)).get(childPosition);
                 //选择布局模式
                 if (!type) {
-                    setLayout(attrMap);
+                    //setLayout(attrMap, feature);
                 }else {
                     //审计历史记录比较时双选
                     String featureId = String.valueOf(feature.getId());

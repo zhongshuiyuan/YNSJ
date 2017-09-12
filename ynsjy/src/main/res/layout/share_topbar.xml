@@ -78,7 +78,7 @@
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
             android:src="@drawable/share_dm_manger"
-            android:visibility="gone" />
+             />
 
         <ImageView
             android:id="@+id/share_xbcx"

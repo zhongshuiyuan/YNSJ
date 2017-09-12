@@ -21,6 +21,7 @@ import com.titan.ynsjy.fragment.AuditCatalogFragment;
 import com.titan.ynsjy.fragment.AuditHistoryInfoFragment;
 import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.util.ExcelUtil;
 import com.titan.ynsjy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -35,10 +36,10 @@ import butterknife.OnClick;
 
 /**
  * Created by hanyw on 2017/9/7/007.
- * 审计历史页面
+ * 审计历史界面
  */
 
-public class AuditHistoryActivity extends AppCompatActivity {
+public class AuditHistoryActivity extends AppCompatActivity implements AuditCatalogFragment.onItemSelectListener{
     @BindView(R.id.audit_add_close)
     TextView auditAddClose;//返回
     @BindView(R.id.audit_add_edit)
@@ -77,6 +78,9 @@ public class AuditHistoryActivity extends AppCompatActivity {
             }
         }
     };
+    //导出excel表头
+    private static String[] title = { "编号","姓名","性别","年龄","班级","数学","英语","语文" };
+
 
 
     @Override
@@ -95,7 +99,7 @@ public class AuditHistoryActivity extends AppCompatActivity {
     private void init() {
         getData();
         queryData();
-        catalogFragment = (AuditCatalogFragment) getFragmentManager().findFragmentById(R.id.audit_catalog);
+        //catalogFragment = (AuditCatalogFragment) getFragmentManager().findFragmentById(R.id.audit_catalog);
         infoFragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_history_all_info);
         compareFragment = (FrameLayout) view.findViewById(R.id.audit_compare_fragment);
     }
@@ -172,7 +176,7 @@ public class AuditHistoryActivity extends AppCompatActivity {
         return map;
     }
 
-    @OnClick({R.id.audit_add_close, R.id.audit_add_edit, R.id.audit_add_save, R.id.audit_add_compare,R.id.audit_add_cancel})
+    @OnClick({R.id.audit_add_close, R.id.audit_add_edit, R.id.audit_add_save, R.id.audit_add_compare, R.id.audit_add_cancel,R.id.audit_export})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.audit_add_close://返回
@@ -207,6 +211,22 @@ public class AuditHistoryActivity extends AppCompatActivity {
                 auditAddCompare.setVisibility(View.VISIBLE);
                 auditAddCancel.setVisibility(View.GONE);
                 break;
+
+            case R.id.audit_export:
+                //导出excel文件
+                //file = new File(getSDPath() + "/Record");
+                //makeDir(file);
+                String path="";
+                ExcelUtil.initExcel(path + "/导出数据.xls", title);
+                //fileName = getSDPath() + "/Record/成绩表.xls";
+                //ExcelUtil.writeObjListToExcel(getRecordData(), fileName, this);
+                break;
         }
+    }
+
+
+    @Override
+    public void getListInfo(List<Feature> selectList) {
+
     }
 }

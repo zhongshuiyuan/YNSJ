@@ -150,5 +150,6 @@
     <string name="title_gyl">公益林空间数据统计</string>
     <string name="title_lq">林权宗地空间数据统计</string>
     <string name="track">轨迹测量</string>
+    <string name="export">导出数据</string>
 
 </resources>

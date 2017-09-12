@@ -21,11 +21,18 @@
             android:text="审计历史"
             style="@style/title_style" />
         <TextView
+            android:id="@+id/audit_export"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/export"
+            style="@style/textview_btn_style"/>
+        <TextView
             android:id="@+id/audit_add_edit"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="编辑"
             style="@style/textview_btn_style" />
+
         <TextView
             android:id="@+id/audit_add_compare"
             android:layout_width="wrap_content"
