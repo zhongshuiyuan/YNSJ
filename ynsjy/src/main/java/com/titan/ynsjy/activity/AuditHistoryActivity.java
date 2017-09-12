@@ -9,16 +9,17 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.fragment.AuditCatalogFragment;
 import com.titan.ynsjy.fragment.AuditHistoryInfoFragment;
+import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ExcelUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.titan.ynsjy.BaseActivity.myLayer;
 
 
 /**
@@ -39,6 +40,7 @@ public class AuditHistoryActivity extends AppCompatActivity {
     TextView auditAddCancel;//取消
     private Context mContext;
     private View view;
+    private MyLayer myLayer;
     private FrameLayout compareFragment;//审计历史比较页面
     AuditCatalogFragment catalogFragment;//所有审计历史记录显示页面
     AuditHistoryInfoFragment infoFragment;//单个审计记录详细信息显示页面
@@ -53,6 +55,7 @@ public class AuditHistoryActivity extends AppCompatActivity {
         setContentView(view);
         ButterKnife.bind(this);
         init();
+        getData();
     }
 
     /**
@@ -65,6 +68,13 @@ public class AuditHistoryActivity extends AppCompatActivity {
         infoFragment = (AuditHistoryInfoFragment) getSupportFragmentManager().findFragmentById(R.id.audit_history_all_info);
         //两个审计历史记录对比页面
         compareFragment = (FrameLayout) view.findViewById(R.id.audit_compare_fragment);
+    }
+
+    /**
+     * 获取编辑表
+     */
+    private void getData() {
+        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
     }
 
     @OnClick({R.id.audit_add_close, R.id.audit_add_edit, R.id.audit_add_save, R.id.audit_add_compare, R.id.audit_add_cancel,R.id.audit_export})

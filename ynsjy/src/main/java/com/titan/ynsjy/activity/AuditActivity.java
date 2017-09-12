@@ -59,10 +59,6 @@ public class AuditActivity extends AppCompatActivity {
     TextView auditSure;
     @BindView(R.id.audit_cancel)//取消
     TextView auditCancel;
-    @BindView(R.id.audit_title)//审计标题
-    TextView auditTitle;
-    @BindView(R.id.audit_history)//审计历史
-    TextView auditHistory;
     @BindView(R.id.audit_people)
     EditText auditPeople;
     @BindView(R.id.audit_reason)
@@ -116,7 +112,7 @@ public class AuditActivity extends AppCompatActivity {
         AuditActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
-    @OnClick({R.id.audit_pic_browse, R.id.audit_take_pic, R.id.audit_sure, R.id.audit_cancel, R.id.audit_history})
+    @OnClick({R.id.audit_pic_browse, R.id.audit_take_pic, R.id.audit_sure, R.id.audit_cancel})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.audit_pic_browse:
