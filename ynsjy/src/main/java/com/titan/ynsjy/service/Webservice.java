@@ -62,8 +62,8 @@ public class Webservice {
 		soapAction = "http://tempuri.org/" + methodName;
 
 		SoapObject soapObject = new SoapObject(nameSpace, methodName);
-		soapObject.addProperty("username", name);
-		soapObject.addProperty("password", password);
+		soapObject.addProperty("ic_username", name);
+		soapObject.addProperty("ic_password", password);
 		return getResult(soapObject, "CheckLoginResult");
 	}
 

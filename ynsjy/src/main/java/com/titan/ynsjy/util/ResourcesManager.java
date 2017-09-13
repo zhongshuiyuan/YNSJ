@@ -411,6 +411,20 @@ public class ResourcesManager implements Serializable {
 		}
 		return groups;
 	}
+	/** 获取otms文件夹下的文件夹名 */
+	public List<String> getOtmsFolderName() {
+		String path = otms;
+		File[] files = new File(getFolderPath(path)).listFiles();
+		List<String> groups = new ArrayList<>();
+		int files_lenght = files.length;
+		for (int i = 0; i < files_lenght; i++) {
+			if (!files[i].isDirectory()) {
+				continue;
+			}
+			groups.add(files[i].getName());
+		}
+		return groups;
+	}
 
 	/** 获取otms中每个文件夹下的.otms或者.geodatabase数据 */
 	public List<Map<String, List<File>>> getChildeData(Context ctx,

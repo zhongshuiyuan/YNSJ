@@ -1,6 +1,7 @@
 package com.titan.ynsjy.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.esri.android.map.FeatureLayer;
+import com.esri.core.geodatabase.Geodatabase;
+import com.esri.core.geodatabase.GeodatabaseFeatureTable;
 import com.esri.core.map.Feature;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.model.AuditInfo;
@@ -30,6 +34,7 @@ import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +67,7 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
     private View view;
     //private FrameLayout compareFragment;//审计历史比较页面
 
-    private MyLayer myLayer;
+    public static MyLayer myLayer;
     private List<Feature> featureList;//审计记录列表
     private List<List<Feature>> map;//编辑id对应图斑集合
     private List<String> fk_uidList;//编辑id列表
@@ -93,12 +98,6 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case QUERY_FINISH:
-                    mAuditCatalogFragment.exRefresh(mContext, fk_uidList, map, cbMap, Type);
-                    break;
-                case QUERY_NODATA:
-                    ToastUtil.setToast(mContext, "没有查询到数据");
-                    break;
                 case EXPORT_FIELD:
                     //导出数据失败
                     ProgressDialogUtil.stopProgressDialog(mContext);
@@ -122,7 +121,7 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audithistory);
         this.mContext = this;
-
+        getData();
         mAuditCatalogFragment=findOrCreateAuditCatalogFragment();
         //mAuditCatalogFragment = (AuditCatalogFragment) getSupportFragmentManager().findFragmentById(R.id.audit_catalog);
         infoFragment = findOrCreateInfoFragmentFragment();
@@ -134,7 +133,7 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
         //mFragment.setViewModel(mViewModel);
         ButterKnife.bind(this);
         init();
-        getData();
+
     }
 
     @NonNull
@@ -194,7 +193,48 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
      * 获取编辑表
      */
     private void getData() {
-        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
+        Intent intent = getIntent();
+        int type = intent.getIntExtra("functionType",1);
+        if (type==0){
+            myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
+        }else {
+            List<String> list = ResourcesManager.getInstance(mContext).getOtmsFolderName();
+            if (list.contains("审计眼")){
+                String path = ResourcesManager.getInstance(mContext).getFolderPath("/otms")+"/审计眼/test.geodatabase";
+                try {
+                    Log.e("tag",path);
+                    Geodatabase geodatabase = new Geodatabase(path);
+                    List<GeodatabaseFeatureTable> tableList = geodatabase.getGeodatabaseTables();
+                    for (GeodatabaseFeatureTable gdbFeatureTable : tableList) {
+                        if (!gdbFeatureTable.hasGeometry()) {
+                            ToastUtil.setToast(mContext,"没有数据");
+                            continue;
+                        }
+                        if (gdbFeatureTable.getTableName().equals("edit")){
+                            FeatureLayer layer = new FeatureLayer(gdbFeatureTable);
+                            setMyLayer("审计眼","test",path,layer,gdbFeatureTable);
+                        }
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                ToastUtil.setToast(mContext,"没有数据");
+            }
+        }
+    }
+
+    //设置MyLayer的相关信息
+    private void setMyLayer(String gname,String cname,String path,FeatureLayer layer,GeodatabaseFeatureTable featureTable){
+        myLayer = new MyLayer();
+        myLayer.setPname(gname);
+        myLayer.setCname(cname);
+        myLayer.setPath(path);
+        myLayer.setLname(layer.getName());
+        myLayer.setSelectColor(layer.getSelectionColor());
+        myLayer.setRenderer(layer.getRenderer());
+        myLayer.setLayer(layer);
+        myLayer.setTable(featureTable);
     }
 
     @OnClick({R.id.audit_add_close, R.id.audit_add_edit, R.id.audit_add_save, R.id.audit_add_compare, R.id.audit_add_cancel,R.id.audit_export})
@@ -231,7 +271,7 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
             case R.id.audit_add_cancel:
                 //取消
                 infoFragment.editMode(false);
-                mAuditCatalogFragment.exRefresh(mContext, fk_uidList, map, cbMap, 1);
+                mAuditCatalogFragment.modeChoice(1);
                 //compareFragment.setVisibility(View.GONE);
                 auditAddSave.setVisibility(View.GONE);
                 auditAddEdit.setVisibility(View.VISIBLE);

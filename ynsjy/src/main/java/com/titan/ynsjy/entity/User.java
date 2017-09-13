@@ -11,7 +11,7 @@ public class User {
 	private Long id;
 	@Column(name = "name")
 	private String name;
-	@Column(name = "password")
+	@Column(name = "ic_password")
 	private String psw;
 	
 	public User() {

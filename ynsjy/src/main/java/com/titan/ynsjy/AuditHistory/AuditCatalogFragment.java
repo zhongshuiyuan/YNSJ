@@ -141,7 +141,8 @@ public class AuditCatalogFragment extends Fragment {
      * 获取编辑表
      */
     private void getData() {
-        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
+        //myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
+        myLayer = AuditHistoryActivity.myLayer;
     }
 
     /**
