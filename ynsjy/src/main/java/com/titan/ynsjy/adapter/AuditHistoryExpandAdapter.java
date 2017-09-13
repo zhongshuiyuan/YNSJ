@@ -89,29 +89,15 @@ public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
         }
         CheckBox cb_people = ViewHolderUtil.get(convertView, R.id.audit_item_check);
         TextView tv_value = ViewHolderUtil.get(convertView, R.id.audit_item_value);
-//        TextView tv_time = ViewHolderUtil.get(convertView, R.id.audit_time);
-//        TextView tv_latlon = ViewHolderUtil.get(convertView, R.id.audit_latlon);
-//        TextView tv_modify = ViewHolderUtil.get(convertView, R.id.audit_modify);
-//        TextView tv_before = ViewHolderUtil.get(convertView, R.id.audit_before);
-//        TextView tv_after = ViewHolderUtil.get(convertView, R.id.audit_after);
-//        TextView tv_info = ViewHolderUtil.get(convertView, R.id.audit_info);
-//        TextView tv_mark = ViewHolderUtil.get(convertView, R.id.audit_mark);
         String id = getAttrValue("OBJECTID",groupPosition,childPosition);
         tv_value.setText(id);
-        if (type==1){
+        if (type==1||type==2){
             cb_people.setChecked(cbMap.get(id));
             cb_people.setVisibility(View.VISIBLE);
         }else {
             cb_people.setVisibility(View.GONE);
         }
 
-//        tv_time.setText(  getAttrValue("MODIFYTIME",groupPosition,childPosition));
-//        //tv_latlon.setText(getAttrValue("",groupPosition,childPosition));
-//        tv_modify.setText(getAttrValue("MODIFYINFO",groupPosition,childPosition));
-//        tv_before.setText(getAttrValue("BEFOREINFO",groupPosition,childPosition));
-//        tv_after.setText( getAttrValue("AFTERINFO",groupPosition,childPosition));
-//        tv_info.setText(  getAttrValue("INFO",groupPosition,childPosition));
-//        tv_mark.setText(  getAttrValue("REMARK",groupPosition,childPosition));
         return convertView;
     }
 

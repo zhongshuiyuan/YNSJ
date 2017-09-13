@@ -1,7 +1,6 @@
 package com.titan.ynsjy.util;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,7 +103,7 @@ public class ExcelUtil {
         }
     }
 
-    public static <T> void writeObjListToExcel(List<T> objList, String fileName, Context c) {
+    public static <T> boolean writeObjListToExcel(List<T> objList, String fileName, Context c) {
         if (objList != null && objList.size() > 0) {
             WritableWorkbook writebook = null;
             InputStream in = null;
@@ -122,6 +121,9 @@ public class ExcelUtil {
                 for (int j = 0; j < objList.size(); j++) {
                     ArrayList<String> list = (ArrayList<String>) objList.get(j);
                     for (int i = 0; i < list.size(); i++) {
+                        /*if(list.get(i)==null){
+                            continue;
+                        }*/
                         sheet.addCell(new Label(i, j + 1, list.get(i),arial12format));
                         if (list.get(i).length() <= 5){
                             sheet.setColumnView(i,list.get(i).length()+8); //设置列宽
@@ -133,9 +135,11 @@ public class ExcelUtil {
                 }
 
                 writebook.write();
-                Toast.makeText(c, "导出到手机存储中文件夹Record成功", Toast.LENGTH_SHORT).show();
+                return true;
+                //Toast.makeText(c, "导出到手机存储中文件夹Record成功", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
             } finally {
                 if (writebook != null) {
                     try {
@@ -152,9 +156,11 @@ public class ExcelUtil {
                         e.printStackTrace();
                     }
                 }
+                return false;
             }
 
         }
+        return false;
     }
 
 }

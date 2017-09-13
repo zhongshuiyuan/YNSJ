@@ -63,5 +63,5 @@ public enum ActionMode {
     /**属性标注*/
     MODE_ADD_LABLE,
     /** null */
-    MODE_NULL
+    //MODE_NULL
 }

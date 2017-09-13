@@ -10,11 +10,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 
+import com.esri.android.map.CalloutStyle;
+import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geometry.Geometry;
+import com.esri.core.geometry.Point;
 import com.esri.core.map.Feature;
+import com.esri.core.map.Field;
 import com.esri.core.symbol.SimpleFillSymbol;
+import com.titan.gis.GeometryUtil;
 import com.titan.gis.GisUtil;
 import com.titan.gis.RendererUtil;
+import com.titan.gis.callout.CalloutUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
@@ -25,15 +31,19 @@ import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 
+import java.util.List;
+
 /**
  * Created by li on 2016/5/26.
  * 营造林页面
  */
 public class YzlActivity extends BaseActivity {
 
+    //截取影像失败
 	private static final int DRAW_BITMAP_FIELD = 2;
 	private View parentView;
-	private static final int DRAW_BITMAP_FINISH = 1;
+    //截取影像成功
+    private static final int DRAW_BITMAP_FINISH = 1;
 	Handler handler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
@@ -49,8 +59,10 @@ public class YzlActivity extends BaseActivity {
 			}
 		}
 	};
+	//private ActivityYzlBinding binding;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+        //binding= DataBindingUtil.setContentView(this,R.layout.activity_yzl);
 		parentView = getLayoutInflater().inflate(R.layout.activity_yzl, null);
 		super.onCreate(savedInstanceState);
 		setContentView(parentView);
@@ -86,7 +98,9 @@ public class YzlActivity extends BaseActivity {
 		});
 	}
 
-	/**
+
+
+    /**
 	 * 新增审计
 	 */
 	public void startAudit(final Feature feature){
@@ -130,7 +144,39 @@ public class YzlActivity extends BaseActivity {
 		return parentView;
 	}
 
-	/**
+    /**
+     * 属性查看
+     * @param geodatabaseFeature
+     */
+    @Override
+    protected void showCallout(GeodatabaseFeature geodatabaseFeature) {
+        CalloutStyle calloutStyle=new CalloutStyle(mContext);
+        calloutStyle.setMaxHeight(500);
+        mCallout.setStyle(calloutStyle);
+        //设置定位点
+        Point point=GeometryUtil.getGeometryCenter(geodatabaseFeature.getGeometry());
+        mCallout.setCoordinates(point);
+        //mCallout.setContent(createCallView(feature.getAttributes()));
+        List<Field> fields=myLayer.getLayer().getFeatureTable().getFields();
+        mCallout.setContent(CalloutUtil.createCallView(mContext,fields, geodatabaseFeature, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                   case R.id.iv_close:
+                       mCallout.hide();
+                    break;
+                    case R.id.btn_takephoto:
+                        break;
+                }
+
+            }
+        }));
+        mCallout.show();
+
+
+    }
+
+    /**
 	 * @param type 审计类型 false为新增审计,true为审计历史
 	 */
 	public void auditAddOrCompare(boolean type) {

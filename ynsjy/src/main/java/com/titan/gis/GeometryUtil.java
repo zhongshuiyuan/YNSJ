@@ -1,6 +1,7 @@
 package com.titan.gis;
 
 import com.esri.android.map.GraphicsLayer;
+import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.MultiPoint;
@@ -33,6 +34,16 @@ public class GeometryUtil {
             polygon.lineTo(polyline.getPoint(i));
         }
         return  polygon.isValid()?polygon:null;
+    }
+
+    /**
+     * 获取图形中心点
+     * @return
+     */
+    public static Point getGeometryCenter(Geometry geometry){
+        Envelope envelope=new Envelope();
+        geometry.queryEnvelope(envelope);
+        return envelope.getCenter();
     }
 
     /**

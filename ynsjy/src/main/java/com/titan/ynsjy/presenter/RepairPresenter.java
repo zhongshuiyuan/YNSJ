@@ -36,7 +36,6 @@ public class RepairPresenter {
 
     /**一条path时小班修改保存*/
     public Graphic saveXBoPathFeature(Polyline drawline, Polygon selectPpolygon) {
-
         int drawSize = drawline.getPointCount();
 
         int selsize = selectPpolygon.getPointCount();//98

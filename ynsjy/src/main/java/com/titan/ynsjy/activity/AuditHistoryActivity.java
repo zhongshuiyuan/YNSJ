@@ -27,11 +27,11 @@ import com.titan.ynsjy.util.ExcelUtil;
 import com.titan.ynsjy.util.FileUtil;
 import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
+import com.titan.ynsjy.util.UtilTime;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ import butterknife.OnClick;
  * 审计历史界面
  */
 
-public class AuditHistoryActivity extends AppCompatActivity   {
+public class AuditHistoryActivity extends AppCompatActivity  implements AuditCatalogFragment.onRefreshDetial {
     @BindView(R.id.audit_add_close)
     TextView auditAddClose;//返回
     @BindView(R.id.audit_add_edit)
@@ -75,6 +75,11 @@ public class AuditHistoryActivity extends AppCompatActivity   {
 
     private Map<String, Boolean> cbMap;//checkbox状态
     AuditCatalogFragment mAuditCatalogFragment;//所有审计历史记录显示页面
+
+    public AuditHistoryInfoFragment getInfoFragment() {
+        return infoFragment;
+    }
+
     AuditHistoryInfoFragment infoFragment;//单个审计记录详细信息显示页面
     private  AuditCompareFragment compareFragment;
     //用来存储导出的数据
@@ -161,14 +166,14 @@ public class AuditHistoryActivity extends AppCompatActivity   {
 
     @NonNull
     public AuditCompareFragment findOrCreateConpareFragmentFragment() {
-        AuditCompareFragment tasksFragment =
-                (AuditCompareFragment) getSupportFragmentManager().findFragmentById(R.id.audit_detail_frame);
-        if (tasksFragment == null) {
+        /*AuditCompareFragment tasksFragment =
+                (AuditCompareFragment) getSupportFragmentManager().findFragmentById(R.id.audit_detail_frame);*/
+
             // Create the fragment
-            tasksFragment = AuditCompareFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(
+        AuditCompareFragment tasksFragment = AuditCompareFragment.newInstance();
+            ActivityUtils.replaceFragmentToActivity(
                     getSupportFragmentManager(), tasksFragment, R.id.audit_detail_frame);
-        }
+
         return tasksFragment;
     }
 
@@ -233,18 +238,23 @@ public class AuditHistoryActivity extends AppCompatActivity   {
                 auditAddCompare.setVisibility(View.VISIBLE);
                 auditAddCancel.setVisibility(View.GONE);
                 break;
-
             case R.id.audit_export:
-                ProgressDialogUtil.startProgressDialog(mContext);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        export();
-                    }
-                }).start();
+                mAuditCatalogFragment.modeChoice(2);
+                //exportFile();
                 break;
         }
     }
+
+    public void exportFile() {
+        ProgressDialogUtil.startProgressDialog(mContext);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                export();
+            }
+        }).start();
+    }
+
 
     /**
      * 导出数据
@@ -253,12 +263,56 @@ public class AuditHistoryActivity extends AppCompatActivity   {
 
         initExportData(mAuditCatalogFragment.getSelectList());
         //导出数据
-        String path=MyApplication.resourcesManager.getExportPath(new Date().toString());
-        ExcelUtil.initExcel(path + "/导出数据.xls", title,"数据统计");
-        String fileName = path + "/导出数据.xls";
-        ExcelUtil.writeObjListToExcel(auditInfoList, fileName, mContext);
-        copyImg2Export(path);
+        String path= null;
+        Message msg=new Message();
+        try {
+            path = MyApplication.resourcesManager.getExportPath(UtilTime.getSystemtime2());
+            ExcelUtil.initExcel(path + "/导出数据.xls", title,"数据统计");
+            String fileName = path + "/导出数据.xls";
+            boolean exportexcel=ExcelUtil.writeObjListToExcel(getRecordData(auditInfoList), fileName, mContext);
+            if(!exportexcel){
+                msg.what=EXPORT_FIELD;
+                msg.obj="导出Excel出错";
+                handler.sendMessage(msg);
+            }
+            copyImg2Export(path);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            msg.what=EXPORT_FIELD;
+            msg.obj="导出数据异常"+e;
+            handler.sendMessage(msg);
+
+            //ToastUtil.setToast(mContext,"导出数据异常"+e);
+        }
+
+
     }
+
+    /**
+     * 将数据集合 转化成ArrayList<ArrayList<String>>
+     * @return
+     */
+    private  ArrayList<ArrayList<String>> getRecordData(List<AuditInfo> auditInfos) {
+       // private static String[] title = { "编号","审计人员","审计时间","审计地址","描述信息","修改前情况","修改后情况","备注"};
+
+        ArrayList<ArrayList<String>> recordList = new ArrayList<>();
+        for (int i = 0; i <auditInfos.size(); i++) {
+            AuditInfo auditInfo = auditInfos.get(i);
+            ArrayList<String> beanList = new ArrayList<String>();
+            beanList.add(auditInfo.getObjectid());
+            beanList.add("测试");
+            beanList.add("测试");
+            beanList.add("测试");
+            beanList.add("测试");
+            beanList.add("测试");
+            beanList.add("测试");
+            beanList.add("测试");
+            recordList.add(beanList);
+        }
+        return recordList;
+    }
+
+
 
     /**
      * 拷贝多媒体信息到导出目录
@@ -294,10 +348,28 @@ public class AuditHistoryActivity extends AppCompatActivity   {
         imgpaths.clear();
         for (Map<String,Object> item:selectList){
             AuditInfo auditInfo=new AuditInfo();
-            auditInfo.setObjectid((String) item.get("OBJECTID"));
+            auditInfo.setObjectid(String.valueOf(item.get("OBJECTID")));
+            auditInfo.setTime(item.get("MODIFYTIME").toString());
             auditInfoList.add(auditInfo);
             List<String> pathlist= ResourcesManager.getImagesFiles(data,auditInfo.getObjectid());
-            imgpaths.addAll(pathlist);
+            if(pathlist!=null){
+                imgpaths.addAll(pathlist);
+            }
         }
+    }
+
+    @Override
+    public void onRefreshDetial(Map<String, Object> map) {
+        infoFragment.refresh(map);
+        infoFragment.editMode(false);
+    }
+
+    @Override
+    public void onShowCompare(List<Map<String, Object>> selectList, Map<String, Object> map) {
+         infoFragment.refresh(selectList.get(0));
+        //setLayout(map);
+        mAuditCatalogFragment.setLayout(map);
+        //compareFragment.setLayout().s();
+
     }
 }

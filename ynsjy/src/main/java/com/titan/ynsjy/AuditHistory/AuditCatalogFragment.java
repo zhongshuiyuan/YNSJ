@@ -18,6 +18,7 @@ import com.esri.core.map.FeatureResult;
 import com.titan.model.AuditInfo;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.activity.AuditHistoryActivity;
 import com.titan.ynsjy.activity.AuditInfoActivity;
 import com.titan.ynsjy.adapter.AuditHistoryExpandAdapter;
 import com.titan.ynsjy.entity.MyLayer;
@@ -49,6 +50,7 @@ public class AuditCatalogFragment extends Fragment {
     private Context mContext;
     private View view;
     private MyLayer myLayer;
+    private int type;//模式设定 0：单选，1：比较，2：多选
 
     public List<Map<String, Object>> getSelectList() {
         return selectList;
@@ -72,7 +74,7 @@ public class AuditCatalogFragment extends Fragment {
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_FINISH:
-                    catalogFragment.exRefresh(mContext, fk_uidList, childList, cbMap, 0);
+                    exRefresh(mContext, fk_uidList, childList, cbMap, 0);
                     break;
                 case QUERY_NODATA:
                     ToastUtil.setToast(mContext, "没有查询到数据");
@@ -85,11 +87,7 @@ public class AuditCatalogFragment extends Fragment {
     //存储选择的审计信息
     private List<AuditInfo> auditInfos;
 
-    //private onItemSelectListener mListener;
-
-    private static AuditCatalogFragment singleton;
-
-
+    public static AuditCatalogFragment singleton;
 
 
 
@@ -100,6 +98,16 @@ public class AuditCatalogFragment extends Fragment {
         return singleton;
     }
 
+    public interface  onRefreshDetial{
+        //刷新
+        void onRefreshDetial(Map<String, Object> map);
+        //比较
+        void onShowCompare(List<Map<String, Object>> selectList, Map<String, Object> map);
+    }
+
+
+    private onRefreshDetial onRefresh;
+
 
     @Nullable
     @Override
@@ -109,6 +117,19 @@ public class AuditCatalogFragment extends Fragment {
         unbinder = ButterKnife.bind(this, view);
         init();
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            onRefresh = (onRefreshDetial) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
     }
 
     private void init() {
@@ -191,6 +212,7 @@ public class AuditCatalogFragment extends Fragment {
      * @param mode 模式选择，true为比较模式，false为默认模式
      */
     public void modeChoice(int mode) {
+        type = mode;
         exRefresh(mContext, fk_uidList, childList, cbMap, mode);
     }
 
@@ -203,7 +225,7 @@ public class AuditCatalogFragment extends Fragment {
     public void exRefresh(Context context, final List<String> list, final List<List<Feature>> listfeature,
                           final Map<String, Boolean> cbMap, final int type) {
         //选择布局模式
-        if (type==1) {
+        if (type==0) {
             auditCatalogSure.setVisibility(View.GONE);
         }else {
             auditCatalogSure.setVisibility(View.VISIBLE);
@@ -217,7 +239,7 @@ public class AuditCatalogFragment extends Fragment {
                 attrMap = listfeature.get(groupPosition).get(childPosition).getAttributes();
                 Feature feature = listfeature.get(groupPosition).get(childPosition);
                 //选择布局模式
-                if (type==1) {
+                if (type==0) {
                     setLayout(attrMap);
                 }
                 else {
@@ -231,7 +253,7 @@ public class AuditCatalogFragment extends Fragment {
                         selectList.add(selFeature.getAttributes());
                         cbMap.put(featureId, true);
                     } else {
-                        if(type==3){
+                        if(type==2){
                             //多选模式
                             selectList.add(selFeature.getAttributes());
                             cbMap.put(featureId, true);
@@ -254,21 +276,20 @@ public class AuditCatalogFragment extends Fragment {
     /**
      * 显示选择的两个历史记录的详细信息
      */
-    private void showCompare(Map<String, Object> map) {
-        AuditHistoryInfoFragment compareFragment =  (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_detail_frame);
-        compareFragment.refresh(selectList.get(0));
-        setLayout(map);
-    }
+   /* private void showCompare(Map<String, Object> map) {
+
+        ///AuditHistoryInfoFragment compareFragment =  (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_detail_frame);
+        .refresh(selectList.get(0));
+        //setLayout(map);
+    }*/
 
     /**
      * @param map 选择的审计记录
      */
-    private void setLayout(Map<String, Object> map) {
+    public void setLayout(Map<String, Object> map) {
         if (isTwoPane) {
-
-            AuditHistoryInfoFragment fragment = (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_index_frame);
-            fragment.refresh(map);
-            fragment.editMode(false);
+            onRefresh.onRefreshDetial(map);
+           //fragment.editMode(false);
         }else {
             AuditInfoActivity.actionStart(mContext,map);
         }
@@ -288,15 +309,22 @@ public class AuditCatalogFragment extends Fragment {
     }
 
     /**
-     * 比较模式，选择小班
+     * 确定比较，选择小班
      */
     @OnClick(R.id.audit_catalog_sure)
     public void onViewClicked() {
 
-        if (selectList.size()==2){
-            showCompare(attrMap);
-            return;
+        if (type==1){
+            if (selectList.size()==2){
+                onRefresh.onShowCompare(selectList,attrMap);
+                //showCompare(attrMap);
+                return;
+            }
+            ToastUtil.setToast(mContext,"请选择两个记录");
+        }else if (type==2){
+            AuditHistoryActivity historyActivity = (AuditHistoryActivity) getActivity();
+            historyActivity.exportFile();
         }
-        ToastUtil.setToast(mContext,"请选择两个记录");
+
     }
 }

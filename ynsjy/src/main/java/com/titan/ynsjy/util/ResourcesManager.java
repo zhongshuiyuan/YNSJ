@@ -149,8 +149,9 @@ public class ResourcesManager implements Serializable {
 	/**
 	 * 获取导出文件目录
 	 */
-	public  String getExportPath(String date){
-        File file=new File(getFilePath(export)+"/"+date);
+	public  String getExportPath(String date) throws Exception {
+		File file=new File(getTootPath()+ROOT_MAPS+export+"/"+date);
+        //File file=new File(getFilePath(export)+"/"+date);
         if(file.exists()){
             file.delete();
         }else {

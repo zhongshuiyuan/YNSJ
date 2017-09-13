@@ -56,7 +56,7 @@ public class LayerControlPresenter{
     public Map<String, ArcGISLocalTiledLayer> imgTileLayerMap = new HashMap<>();
     /** 影像图文件地址 */
     public HashMap<String, Boolean> imgCheckMap = new HashMap<>();
-
+    //地区名称
     public String gname;
     public String cname;
     public String path;
@@ -179,10 +179,12 @@ public class LayerControlPresenter{
                 }
             }
         });
+        //默认加载影像
+        cb_yx.setChecked(true);
         // 影像图所放到地图范围
         ImageView imageView = (ImageView) childView.findViewById(R.id.image_extent);
         imageView.setOnClickListener(onClickListener);
-
+        //初始化图层数据
         initOtmsData("");
 
         ImageView closeView = (ImageView) childView.findViewById(R.id.close_tuceng);
