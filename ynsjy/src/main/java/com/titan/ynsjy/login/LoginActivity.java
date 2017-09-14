@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.titan.util.ActivityUtils;
 import com.titan.ynsjy.R;
@@ -20,6 +21,9 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel mViewModel;
     private LoginFragment mFragment;
     private Context mContext;
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

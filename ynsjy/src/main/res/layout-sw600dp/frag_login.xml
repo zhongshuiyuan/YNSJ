@@ -79,14 +79,14 @@
             <EditText
                 android:id="@+id/et_username"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_height="wrap_content"
                 android:background="@drawable/bg_loginform"
-                android:drawableLeft="@drawable/ic_username"
+                android:drawableLeft="@drawable/ic_user_name"
                 android:drawablePadding="10dp"
                 android:hint="@string/username"
                 android:gravity="center_vertical"
-                android:paddingLeft="5dp"
+                android:padding="10dp"
+                android:paddingStart="20dp"
                 android:text="@={viewmodel.username}"/>
 
 
@@ -98,12 +98,11 @@
             <EditText
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/bg_loginform"
                 android:drawableLeft="@drawable/ic_password"
-                android:drawablePadding="10dp"
+                android:drawablePadding="12dp"
                 android:hint="@string/password"
                 android:imeActionId="@+id/login"
                 android:imeActionLabel="@string/action_sign_in_short"
@@ -112,17 +111,17 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:gravity="center_vertical"
-                android:paddingLeft="5dp"
+                android:padding="10dp"
+                android:paddingStart="18dp"
                 android:text="@={viewmodel.password}"/>
 
             <CheckBox
                 android:id="@+id/cb_remember"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="60dp"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:checked="@={viewmodel.isremember}"
                 android:onClick="@{()->viewmodel.onCheckRemember()}"
                 android:text="@string/rememberuser"/>
@@ -130,8 +129,7 @@
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_height="wrap_content"
                 android:background="@drawable/btn_login_selector"
                 android:onClick="@{()->viewmodel.onLogin()}"
                 android:text="@string/login"

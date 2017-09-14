@@ -34,7 +34,7 @@ public class LoginViewModel extends BaseObservable {
     public void initData(){
         isremember.set(sharedPreferences.getBoolean("isremember",false));
         if (isremember.get()){
-            username.set(sharedPreferences.getString("ic_username",""));
+            username.set(sharedPreferences.getString("ic_user_name",""));
             password.set(sharedPreferences.getString("ic_password",""));
         }
     }
@@ -78,7 +78,7 @@ public class LoginViewModel extends BaseObservable {
         }
         SharedPreferences.Editor editor = MyApplication.sharedPreferences.edit();
         editor.putBoolean("isremember",isremember.get());
-        editor.putString("ic_username",username.get().trim());
+        editor.putString("ic_user_name",username.get().trim());
         editor.putString("ic_password",password.get().trim());
         editor.apply();
     }

@@ -456,6 +456,7 @@ public class LayerControlPresenter{
                     controlView.getMapView().addLayer(layer);
 
                     setMyLayer(gname,cname,path,flag,layer,gdbFeatureTable);
+                    Log.e("tag",layer.getName());
                 }
             }
 //        }

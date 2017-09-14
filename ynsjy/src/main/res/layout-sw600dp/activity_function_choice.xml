@@ -17,22 +17,20 @@
         android:src="@drawable/login_logo"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
+        android:layout_marginStart="100dp"
+        android:layout_marginEnd="100dp"
         android:gravity="center|top">
 
         <LinearLayout
             android:id="@+id/function_add_audit"
-            android:layout_marginBottom="70dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="30dp"
-            style="@style/function_choice_btn_style">
+            style="@style/function_choice_btn_sw_style">
 
             <ImageView
                 app:srcCompat="@drawable/ic_add_audit"
-                style="@style/function_img_style"/>
+                style="@style/function_img_sw_style"/>
 
             <TextView
                 android:text="我要审计"
@@ -41,14 +39,10 @@
 
         <LinearLayout
             android:id="@+id/function_my_audit"
-            android:layout_marginBottom="70dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="30dp"
-            style="@style/function_choice_btn_style">
+            style="@style/function_choice_btn_sw_style">
 
             <ImageView
-                style="@style/function_img_style"
+                style="@style/function_img_sw_style"
                 app:srcCompat="@drawable/ic_my_audit"/>
 
             <TextView
@@ -58,14 +52,10 @@
 
         <LinearLayout
             android:id="@+id/function_my_track"
-            android:layout_marginBottom="70dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="30dp"
-            style="@style/function_choice_btn_style">
+            style="@style/function_choice_btn_sw_style">
 
             <ImageView
-                style="@style/function_img_style"
+                style="@style/function_img_sw_style"
                 app:srcCompat="@drawable/ic_my_track"/>
 
             <TextView
