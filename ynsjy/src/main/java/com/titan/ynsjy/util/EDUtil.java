@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.service.PullParseXml;
@@ -28,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EDUtil {
 
@@ -51,6 +53,21 @@ public class EDUtil {
 
 	private EDUtil(Context context) throws Exception {
 		this.context = context;
+	}
+
+	/**
+	 * 将空字段转为“空”
+	 *
+	 * @param map  审计记录属性集合
+	 * @param attr 属性字段
+	 * @return 属性字段值
+	 */
+	public static String getAttrValue(Map<String, Object> map, String attr) {
+		Object value = map.get(attr);
+		if (value==null || TextUtils.isEmpty(value.toString())) {
+			value = "空";
+		}
+		return value.toString();
 	}
 
 	/**

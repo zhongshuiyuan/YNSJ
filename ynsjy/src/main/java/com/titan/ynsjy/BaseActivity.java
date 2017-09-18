@@ -1309,8 +1309,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             }
             else if(actionMode==ActionMode.MODE_SELECT)
             {
+                Log.e("tag",layerNameList.toString());
                 if (layerNameList.size() > 0) {
                     layerNameList.get(0).getLayer().clearSelection();
+                    Log.e("tag",layerNameList.toString());
                     getGeometryInfo(mapPoint);
                 }
 
@@ -2231,13 +2233,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             ToastUtil.setToast(mContext,"请先加载图层");
             return;
         }
-        if(layerList.size() == 1 && mode == ActionMode.MODE_ADD_LABLE){
-            myLayer = layerList.get(0);
+        if(mode == ActionMode.MODE_ADD_LABLE){
+            //图层标注
+            myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("fxh", layerList);
             layerType = myLayer.getLayer().getGeometryType();
             layerLableInclude.setVisibility(View.VISIBLE);
-            //lablePresenter.showLayerAials(layerLableInclude,myLayer);
+            lablePresenter.showLayerAials(layerLableInclude,myLayer);
         }else if(actionMode==ActionMode.MODE_SELECT){
-            myLayer = layerList.get(0);
+            //myLayer = layerList.get(0);
+            myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("fxh", layerList);
             layerType = myLayer.getLayer().getGeometryType();
         }
         else{
@@ -2512,12 +2516,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /**根据勾绘区域查询图层小班*/
     public void getGeometryInfo(Geometry geometry) {
         selGeoFeaturesList.clear();
-        myLayer = layerNameList.get(0);
+        //myLayer = layerNameList.get(0);
+        Log.e("tag","query");
+        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("fxh", layerNameList);
         ProgressDialogUtil.startProgressDialog(mContext);
         ArcGISQueryUtils.getSelectFeatures(geometry,mapView.getSpatialReference(), myLayer.getLayer(), new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult objects) {
                 long size = objects.featureCount();
+                Log.e("tag",myLayer.getTable().getTableName()+","+size);
                 ProgressDialogUtil.stopProgressDialog(mContext);
                 if (size > 0) {
                     Iterator<Object> iterator = objects.iterator();
@@ -2525,6 +2532,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                     while (iterator.hasNext()) {
                         geodatabaseFeature = (GeodatabaseFeature)iterator.next();
                         selGeoFeaturesList.add(geodatabaseFeature);
+                        Log.e("tag",geodatabaseFeature.toString());
                         selMap.put(geodatabaseFeature, myLayer.getCname());
                     }
                 }else{

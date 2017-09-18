@@ -157,5 +157,23 @@
     <string name="rememberuser">记住用户</string>
     <string name="login">登录</string>
     <string name="app_version">版本号: </string>
+    <string name="audit_multi_select">多选</string>
+    <string name="audit_all_select">全选</string>
+    <string name="audit_add_close">返回</string>
+    <string name="audit_history_compare">审计历史比较</string>
+    <string name="audit_add_save">保存</string>
+    <string name="audit_add_cancel">取消</string>
+    <string name="audit_add_compare">比较</string>
+    <string name="audit_add_edit">编辑</string>
+    <string name="audit_history">审计历史</string>
+    <string name="takephoto">拍照</string>
+    <string name="audit_people">审计人员</string>
+    <string name="audit_time">审计时间</string>
+    <string name="audit_latlon">审计地址</string>
+    <string name="audit_reason">修改原因</string>
+    <string name="audit_info">描述信息</string>
+    <string name="audit_edit_before">修改前状况</string>
+    <string name="audit_edit_after">修改后状况</string>
+    <string name="audit_mark">备 注</string>
 
 </resources>

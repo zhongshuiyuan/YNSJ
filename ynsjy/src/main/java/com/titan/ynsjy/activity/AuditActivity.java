@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -52,13 +53,13 @@ public class AuditActivity extends AppCompatActivity {
      * 新增审计
      */
     @BindView(R.id.audit_pic_browse)//图片浏览
-    TextView auditPicBrowse;
+            TextView auditPicBrowse;
     @BindView(R.id.audit_take_pic)//拍照
-    TextView auditTakePic;
+            TextView auditTakePic;
     @BindView(R.id.audit_sure)//确定
-    TextView auditSure;
+            TextView auditSure;
     @BindView(R.id.audit_cancel)//取消
-    TextView auditCancel;
+            TextView auditCancel;
     @BindView(R.id.audit_people)
     EditText auditPeople;
     @BindView(R.id.audit_reason)
@@ -71,10 +72,10 @@ public class AuditActivity extends AppCompatActivity {
     EditText auditEditAfter;
     @BindView(R.id.audit_mark)
     EditText auditMark;
+    @BindView(R.id.fragment_videotape)
+    TextView fragmentVideotape;
 
     private Context mContext;
-    private View view;
-    private View addView;
     private View compareView;
     private Feature feature;//小班
     private FeatureTable featureTable;
@@ -89,8 +90,7 @@ public class AuditActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mContext = AuditActivity.this;
-        view = LayoutInflater.from(this).inflate(R.layout.dialog_audit, null);
-        setContentView(view);
+        setContentView(R.layout.dialog_audit);
         ButterKnife.bind(this);
         getData();
         setMyVisibility(auditType);
@@ -112,7 +112,7 @@ public class AuditActivity extends AppCompatActivity {
         AuditActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
-    @OnClick({R.id.audit_pic_browse, R.id.audit_take_pic, R.id.audit_sure, R.id.audit_cancel})
+    @OnClick({R.id.audit_pic_browse, R.id.audit_take_pic, R.id.audit_sure, R.id.audit_cancel,R.id.fragment_videotape})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.audit_pic_browse:
@@ -127,6 +127,10 @@ public class AuditActivity extends AppCompatActivity {
             case R.id.audit_cancel:
                 this.finish();
                 break;
+            case R.id.fragment_videotape:
+                videotape();
+                break;
+
         }
     }
 
@@ -140,18 +144,17 @@ public class AuditActivity extends AppCompatActivity {
     }
 
     /**
-     * 将空字段转为“空”
-     *
-     * @param map  审计记录属性集合
-     * @param attr 属性字段
-     * @return 属性字段值
+     * 录像
      */
-    private String getAttrValue(Map<String, Object> map, String attr) {
-        String value = map.get(attr).toString();
-        if (value.isEmpty() || value.equals("")) {
-            value = "空";
-        }
-        return value;
+    private void videotape() {
+        Intent intent = new Intent();
+        intent.setAction("android.media.action.VIDEO_CAPTURE");
+        intent.addCategory("android.intent.category.DEFAULT");
+        File file = new File(ResourcesManager.getImagePath(picPath) + "/" + ResourcesManager.getVideoName(String.valueOf(fid)));
+        Log.e("tag", "path" + ResourcesManager.getImagePath(picPath) + "/" + ResourcesManager.getVideoName(String.valueOf(fid)));
+        Uri uri = Uri.fromFile(file);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivity(intent);
     }
 
     /**
@@ -229,6 +232,7 @@ public class AuditActivity extends AppCompatActivity {
     private Map<String, Object> setData() {
         Map<String, Object> map = new HashMap<>();
         map.put("FK_EDIT_UID", fid);
+        map.put("AUDIT_PEOPLE", auditPeople.getText().toString());
         map.put("MODIFYINFO", auditReason.getText().toString());
         map.put("MODIFYTIME", UtilTime.getSystemtime2());
         map.put("BEFOREINFO", auditEditBefore.getText().toString());

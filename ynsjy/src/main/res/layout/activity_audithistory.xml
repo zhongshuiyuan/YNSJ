@@ -13,13 +13,13 @@
                 android:id="@+id/audit_add_close"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="返回"
+                android:text="@string/audit_add_close"
                 style="@style/textview_btn_style" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="审计历史"
+                android:text="@string/audit_history"
                 style="@style/title_style" />
             <TextView
                 android:id="@+id/audit_export"
@@ -31,26 +31,26 @@
                 android:id="@+id/audit_add_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="编辑"
+                android:text="@string/audit_add_edit"
                 style="@style/textview_btn_style" />
             <TextView
                 android:id="@+id/audit_add_compare"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="比较"
+                android:text="@string/audit_add_compare"
                 style="@style/textview_btn_style" />
             <TextView
                 android:id="@+id/audit_add_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="取消"
+                android:text="@string/audit_add_cancel"
                 style="@style/textview_btn_style"
                 android:visibility="gone"/>
             <TextView
                 android:id="@+id/audit_add_save"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="保存"
+                android:text="@string/audit_add_save"
                 style="@style/textview_btn_style"
                 android:visibility="gone"/>
         </LinearLayout>

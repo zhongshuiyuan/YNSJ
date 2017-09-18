@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -26,7 +27,7 @@
             android:layout_gravity="right"
             android:background="@color/white"
             android:contentDescription=""
-            android:src="@drawable/ic_close"
+            app:srcCompat="@drawable/ic_close"
             tools:ignore="ContentDescription" />
 
         <ScrollView
@@ -52,7 +53,7 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="拍照"
+                android:text="@string/takephoto"
                 android:visibility="gone"
                 style="@style/textview_btn_style"
                 android:textColor="@color/white"

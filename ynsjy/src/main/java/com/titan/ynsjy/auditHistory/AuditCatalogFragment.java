@@ -1,29 +1,32 @@
-package com.titan.ynsjy.AuditHistory;
+package com.titan.ynsjy.auditHistory;
 
 import android.content.Context;
+import android.databinding.ObservableBoolean;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
+import com.esri.core.table.TableException;
 import com.titan.model.AuditInfo;
-import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.activity.AuditHistoryActivity;
 import com.titan.ynsjy.activity.AuditInfoActivity;
 import com.titan.ynsjy.adapter.AuditHistoryExpandAdapter;
+import com.titan.ynsjy.databinding.AuditHistoryCatalogBinding;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.util.ArcGISQueryUtils;
-import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -31,32 +34,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  * Created by hanyw on 2017/9/7/007
  * 审计历史记录目录界面
  */
 
-public class AuditCatalogFragment extends Fragment {
-    @BindView(R.id.audit_history_exlist)
-    ExpandableListView auditHistoryAll;//所有审计历史记录显示列表
-    Unbinder unbinder;
-    @BindView(R.id.audit_catalog_sure)
-    TextView auditCatalogSure;//确定
+public class AuditCatalogFragment extends Fragment implements AuditHistory {
+    private AuditHistoryCatalogBinding binding;
+
+    private AuditViewModel auditViewModel;
     private Context mContext;
     private View view;
+    private ExpandableListView exListView;
+    private AuditHistoryExpandAdapter adapter;
     private MyLayer myLayer;
-    private int type;//模式设定 0：单选，1：比较，2：多选
+    private int type;//模式设定 0：单选，1：多选
 
     public List<Map<String, Object>> getSelectList() {
         return selectList;
     }
-
-
 
     private List<Map<String, Object>> selectList = new ArrayList<>();//已选择的历史记录
     private Map<String, Object> attrMap;//选择的审计记录属性集合
@@ -90,17 +88,17 @@ public class AuditCatalogFragment extends Fragment {
     public static AuditCatalogFragment singleton;
 
 
-
-    public static AuditCatalogFragment newInstance(){
-        if(singleton==null){
-            singleton=new AuditCatalogFragment();
+    public static AuditCatalogFragment newInstance() {
+        if (singleton == null) {
+            singleton = new AuditCatalogFragment();
         }
         return singleton;
     }
 
-    public interface  onRefreshDetial{
+    public interface onRefreshDetial {
         //刷新
-        void onRefreshDetial(Map<String, Object> map);
+        void onRefreshDetial(Map<String, Object> map,boolean flag);
+
         //比较
         void onShowCompare(List<Map<String, Object>> selectList, Map<String, Object> map);
     }
@@ -113,10 +111,10 @@ public class AuditCatalogFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         this.mContext = getActivity();
-        view = inflater.inflate(R.layout.audit_history_catalog, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        binding = AuditHistoryCatalogBinding.inflate(inflater,container,false);
+        binding.setViewmodel(auditViewModel);
         init();
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -130,6 +128,10 @@ public class AuditCatalogFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement OnHeadlineSelectedListener");
         }
+    }
+
+    public void setViewModel(AuditViewModel viewModel) {
+        auditViewModel = viewModel;
     }
 
     private void init() {
@@ -210,6 +212,28 @@ public class AuditCatalogFragment extends Fragment {
     }
 
     /**
+     * 多选模式
+     */
+    public void multiSelect(int mode){
+        selectList.clear();
+        for (String key:cbMap.keySet()) {
+            cbMap.put(key,false);
+        }
+        modeChoice(mode);
+    }
+
+    /**
+     * 全选
+     */
+    public void allSelect(){
+        //modeChoice(1);
+        for (String key:cbMap.keySet()) {
+            cbMap.put(key,true);
+        }
+        exRefresh(mContext, fk_uidList, childList, cbMap, 1);
+    }
+
+    /**
      * @param mode 模式选择，true为比较模式，false为默认模式
      */
     public void modeChoice(int mode) {
@@ -218,60 +242,71 @@ public class AuditCatalogFragment extends Fragment {
     }
 
     /**
-     * @param context   上下文
-     * @param list      编辑id
-     * @param cbMap     checkbox状态
-     * @param type      页面显示状态，false为默认模式，true为比较模式
+     * @param context 上下文
+     * @param list    编辑id
+     * @param cbMap   checkbox状态
+     * @param type    页面显示状态，false为默认模式，true为比较模式
      */
     public void exRefresh(Context context, final List<String> list, final List<List<Feature>> listfeature,
                           final Map<String, Boolean> cbMap, final int type) {
         //选择布局模式
-        if (type==0) {
-            auditCatalogSure.setVisibility(View.GONE);
-        }else {
-            auditCatalogSure.setVisibility(View.VISIBLE);
-        }
-        final AuditHistoryExpandAdapter adapter = new AuditHistoryExpandAdapter(context, list, type,listfeature, cbMap);
-        auditHistoryAll.setAdapter(adapter);
-        auditHistoryAll.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//        if (type == 0) {
+//            auditCatalogSure.setVisibility(View.GONE);
+//        } else {
+//            auditCatalogSure.setVisibility(View.VISIBLE);
+//        }
+        exListView = binding.auditHistoryExlist;
+        adapter = new AuditHistoryExpandAdapter(context, list, type, listfeature, cbMap);
+
+        exListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
-                attrMap = listfeature.get(groupPosition).get(childPosition).getAttributes();
-                Feature feature = listfeature.get(groupPosition).get(childPosition);
-                //选择布局模式
-                if (type==0) {
-                    setLayout(attrMap);
+                LinearLayout layout = (LinearLayout) v;
+                CheckBox checkBox = (CheckBox) layout.findViewById(R.id.audit_item_check);
+                checkBox.toggle();
+
+                Feature feature;
+                try {
+                    feature = myLayer.getTable().getFeature(listfeature.get(groupPosition).get(childPosition).getId());
+                    attrMap = feature.getAttributes();
+                } catch (Exception e) {
+                    ToastUtil.setToast(mContext,"数据读取出错："+e);
+                    e.printStackTrace();
+                    return false;
                 }
-                else {
+                //选择布局模式
+//                if (type == 0) {
+                    //setLayout(attrMap);
+//                } else {
                     //审计历史记录比较时双选
                     String featureId = String.valueOf(feature.getId());
                     Feature selFeature = listfeature.get(groupPosition).get(childPosition);
                     if (cbMap.get(featureId)) {
                         cbMap.put(featureId, false);
                         selectList.remove(selFeature.getAttributes());
-                    } else if (selectList.size() < 2) {
+                    } else {
+                        //多选模式
                         selectList.add(selFeature.getAttributes());
                         cbMap.put(featureId, true);
-                    } else {
-                        if(type==2){
-                            //多选模式
-                            selectList.add(selFeature.getAttributes());
-                            cbMap.put(featureId, true);
-                        }else {
-                            Map<String, Object> s = selectList.get(0);
-                            selectList.remove(s);
-                            cbMap.put(String.valueOf(s.get("OBJECTID")), false);
-                            selectList.add(selFeature.getAttributes());
-                            cbMap.put(featureId, true);
-                        }
-
                     }
                     adapter.notifyDataSetChanged();
+//                }
+                if (selectList.size()>=1){
+                    setLayout(selectList.get(selectList.size()-1),true);
+                }else {
+                    setLayout(null,false);
                 }
                 return false;
             }
         });
+
+        exListView.setAdapter(adapter);
+        if (type==1){
+            for (int i = 0; i < adapter.getGroupCount(); i++) {
+                exListView.expandGroup(i,true);
+            }
+        }
     }
 
     /**
@@ -287,12 +322,12 @@ public class AuditCatalogFragment extends Fragment {
     /**
      * @param map 选择的审计记录
      */
-    public void setLayout(Map<String, Object> map) {
+    public void setLayout(Map<String, Object> map,boolean flag) {
         if (isTwoPane) {
-            onRefresh.onRefreshDetial(map);
-           //fragment.editMode(false);
-        }else {
-            AuditInfoActivity.actionStart(mContext,map);
+            onRefresh.onRefreshDetial(map,flag);
+            //fragment.editMode(false);
+        } else {
+            AuditInfoActivity.actionStart(mContext, map);
         }
     }
 
@@ -302,29 +337,32 @@ public class AuditCatalogFragment extends Fragment {
         isTwoPane = getActivity().findViewById(R.id.audit_detail_frame) != null;
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
     /**
      * 确定比较，选择小班
      */
-    @OnClick(R.id.audit_catalog_sure)
-    public void onViewClicked() {
+    @OnClick({R.id.audit_catalog_sure, R.id.audit_multi_select, R.id.audit_all_select})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.audit_catalog_sure:
+                if (type == 1) {
+                    if (selectList.size() == 2) {
+                        onRefresh.onShowCompare(selectList, attrMap);
+                        //showCompare(attrMap);
+                        return;
+                    }
+                    ToastUtil.setToast(mContext, "请选择两个记录");
+                } else if (type == 2) {
+                    AuditHistoryActivity historyActivity = (AuditHistoryActivity) getActivity();
+                    historyActivity.exportFile();
+                }
+                break;
+            case R.id.audit_multi_select:
+                break;
+            case R.id.audit_all_select:
 
-        if (type==1){
-            if (selectList.size()==2){
-                onRefresh.onShowCompare(selectList,attrMap);
-                //showCompare(attrMap);
-                return;
-            }
-            ToastUtil.setToast(mContext,"请选择两个记录");
-        }else if (type==2){
-            AuditHistoryActivity historyActivity = (AuditHistoryActivity) getActivity();
-            historyActivity.exportFile();
+                break;
+            default:
+                break;
         }
 
     }

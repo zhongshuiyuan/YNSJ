@@ -42,13 +42,13 @@
             android:layout_width="63dp"
             android:layout_height="63dp"
             android:orientation="vertical"
+            android:background="@drawable/background_view_rounded_image"
             android:gravity="center">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
                 android:layout_gravity="bottom"
-                android:background="@drawable/background_view_rounded_image"
                 android:contentDescription="@null"
                 android:src="@drawable/menu_audit_history" />
 

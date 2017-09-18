@@ -244,7 +244,8 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void showVideo(String path){
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri uri = Uri.parse(path);
+        Uri uri = Uri.parse("file://"+path);
+        Log.e("tag","file://"+path);
         intent.setDataAndType(uri,"video/mp4");
         startActivity(intent);
     }
@@ -366,6 +367,7 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.pic_sampling_item, parent, false);
                 viewHolder.picView = (ImageView) convertView.findViewById(R.id.pic_samp_view);
                 viewHolder.picBox = (CheckBox) convertView.findViewById(R.id.pic_checkBox);
+                viewHolder.picVideo = (ImageView) convertView.findViewById(R.id.pic_video);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -377,6 +379,9 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
             viewHolder.picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             viewHolder.picBox.setChecked(isSelectList.get(String.valueOf(position)));
             viewHolder.picView.setTag(path);
+            if (path.endsWith(".jpg")){
+                viewHolder.picVideo.setVisibility(View.GONE);
+            }
             final ViewHolder finalViewHolder = viewHolder;
             viewHolder.picBox.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -456,6 +461,7 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
         /*item的ViewHolder类*/
         class ViewHolder {
             ImageView picView;
+            ImageView picVideo;
             CheckBox picBox;
         }
     }

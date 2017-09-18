@@ -1,14 +1,19 @@
 package com.titan.ynsjy.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.esri.core.map.Feature;
+import com.titan.ynsjy.BR;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.databinding.AuditItemBinding;
+import com.titan.ynsjy.util.EDUtil;
 import com.titan.ynsjy.util.ViewHolderUtil;
 
 import java.util.ArrayList;
@@ -18,19 +23,20 @@ import java.util.Map;
 
 /**
  * Created by hanyw on 2017/9/2/002.
- * 审计适配器
+ * 审计历史详细信息适配器
  */
 
 public class AuditAdapter extends BaseAdapter {
     private Context mContext;
-    private Map<String,Object> map = new HashMap<>();
+    private String[] array = new String[]{"AUDIT_PEOPLE","MODIFYTIME","AUDIT_COORDINATE",
+            "MODIFYINFO","INFO","BEFOREINFO","AFTERINFO","REMARK"};
+    private Map<String,Object> map;
     private List<Feature> list = new ArrayList<>();
     private Map<String,Boolean> auditCheckMap;
 
-    public AuditAdapter(Context context, List<Feature> list, Map<String,Boolean> auditCheckMap) {
+    public AuditAdapter(Context context, Map<String, Object> map) {
         this.mContext = context;
-        this.list = list;
-        this.auditCheckMap = auditCheckMap;
+        this.map = map;
         //getList();
     }
 
@@ -43,12 +49,12 @@ public class AuditAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return list.size();
+        return array.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return list.get(position);
+        return array[position];
     }
 
     @Override
@@ -58,14 +64,22 @@ public class AuditAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        AuditItemBinding binding;
         if (convertView==null){
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.audit_choice_item, parent, false);
+            //convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_textview, parent, false);
+            binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(mContext),R.layout.audit_item,parent,false);
+        }else {
+            binding = DataBindingUtil.getBinding(convertView);
         }
-        final CheckBox tv_key = ViewHolderUtil.get(convertView,R.id.audit_checkbox);
-        String key = list.get(position).getAttributeValue("MODIFYTIME").toString();
-        tv_key.setText(key);
-        tv_key.setChecked(auditCheckMap.get(String.valueOf(list.get(position).getId())));
-        return convertView;
+        binding.setVariable(BR.key,array[position]);
+        binding.setVariable(BR.value,map.get(array[position]));
+//        binding.setKey(array[position]);
+//        binding.setMap(map);
+//        final TextView tv_key = ViewHolderUtil.get(convertView,R.id.tv1);
+//        String key = EDUtil.getAttrValue(map,array[position]);
+//        tv_key.setText(array[position]+" : "+key);
+        return binding.getRoot();
     }
 
 }

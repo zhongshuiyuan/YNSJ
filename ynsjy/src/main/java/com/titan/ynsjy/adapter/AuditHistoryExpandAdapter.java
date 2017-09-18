@@ -1,11 +1,13 @@
 package com.titan.ynsjy.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.esri.core.map.Feature;
@@ -87,17 +89,25 @@ public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.audit_history_all_item, parent, false);
         }
-        CheckBox cb_people = ViewHolderUtil.get(convertView, R.id.audit_item_check);
+        final CheckBox cb_people = ViewHolderUtil.get(convertView, R.id.audit_item_check);
         TextView tv_value = ViewHolderUtil.get(convertView, R.id.audit_item_value);
         String id = getAttrValue("OBJECTID",groupPosition,childPosition);
-        tv_value.setText(id);
-        if (type==1||type==2){
-            cb_people.setChecked(cbMap.get(id));
-            cb_people.setVisibility(View.VISIBLE);
-        }else {
-            cb_people.setVisibility(View.GONE);
-        }
-
+        String time = getAttrValue("MODIFYTIME",groupPosition,childPosition);
+        tv_value.setText(time);
+//        cb_people.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                //cb_people.toggle();
+//
+//                Log.e("tag","qwd"+cb_people.isChecked());
+//            }
+//        });
+        cb_people.setChecked(cbMap.get(id));
+//        if (type==1){
+//            cb_people.setVisibility(View.VISIBLE);
+//        }else {
+//            cb_people.setVisibility(View.GONE);
+//        }
         return convertView;
     }
 

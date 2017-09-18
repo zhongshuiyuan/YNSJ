@@ -27,15 +27,27 @@
             android:layout_toStartOf="@+id/audit_take_pic"
             android:paddingEnd="20dp"
             android:paddingStart="20dp"
-            android:text="图片浏览"/>
+            android:text="多媒体浏览"/>
 
         <TextView
             android:id="@+id/audit_take_pic"
             style="@style/textview_btn_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@+id/fragment_videotape"
             android:text="拍照"/>
+
+        <TextView
+            android:id="@+id/fragment_videotape"
+            android:text="录像"
+            style="@style/textview_btn_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="20dp"
+            android:paddingStart="20dp"
+            android:layout_alignParentEnd="true" />
+
+
 
     </RelativeLayout>
 

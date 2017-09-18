@@ -215,7 +215,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="属性编辑"
+                android:text="属性查看"
                 android:textSize="14sp"
                 android:layout_gravity="center"
                 android:textColor="@color/white"
@@ -231,7 +231,8 @@
             android:layout_weight="1"
             android:background="@drawable/xbbj_select"
             android:button="@null"
-            android:onClick="selectFeature" >
+            android:onClick="selectFeature"
+            android:visibility="gone">
         </RadioButton>
         
         <RadioButton

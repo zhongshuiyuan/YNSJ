@@ -122,7 +122,6 @@ public abstract class BaseEditActivity extends Activity {
 
         selGeoFeature = myFeture.getFeature();
         fid = selGeoFeature.getId();
-        Log.e("tag","idbase:"+fid);
         featureLayer = myFeture.getMyLayer().getLayer();
         fieldList = selGeoFeature.getTable().getFields();//featureLayer.getFeatureTable().getFields();
         LINE_NUM = selGeoFeature.getAttributes().size();

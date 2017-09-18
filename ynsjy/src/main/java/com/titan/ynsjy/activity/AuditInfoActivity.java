@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.titan.ynsjy.AuditHistory.AuditHistoryInfoFragment;
+import com.titan.ynsjy.auditHistory.AuditHistoryInfoFragment;
 import com.titan.ynsjy.R;
 
 import java.io.Serializable;

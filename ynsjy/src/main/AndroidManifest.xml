@@ -58,11 +58,7 @@
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity
             android:name=".activity.YzlActivity"
@@ -87,8 +83,9 @@
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".activity.FunctionChoiceActivity"
-                  android:screenOrientation="landscape"/>
+        <activity
+            android:name=".activity.FunctionChoiceActivity"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".activity.PicSampActivity"
             android:screenOrientation="landscape"/>
@@ -98,9 +95,19 @@
         <activity
             android:name=".activity.AuditHistoryActivity"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.AuditInfoActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".auditHistory.AuditCompareActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden"/>
         <activity

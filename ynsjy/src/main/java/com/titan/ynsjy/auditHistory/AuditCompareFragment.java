@@ -1,4 +1,4 @@
-package com.titan.ynsjy.AuditHistory;
+package com.titan.ynsjy.auditHistory;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
-import com.titan.model.AuditInfo;
 import com.titan.ynsjy.databinding.AuditHistoryInfoBinding;
+import com.titan.ynsjy.util.EDUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
@@ -20,10 +20,10 @@ import java.util.Map;
 
 /**
  * Created by hanyw on 2017/9/7/007.
- * 审计详细内容展示页面
+ * 审计详细内容对比页面
  */
 
-public class AuditHistoryInfoFragment extends Fragment {
+public class AuditCompareFragment extends Fragment {
    /* @BindView(R.id.audit_people)
     EditText auditPeople;//审计人员
     @BindView(R.id.audit_time)
@@ -46,11 +46,11 @@ public class AuditHistoryInfoFragment extends Fragment {
 
     private AuditHistoryInfoBinding binding;
 
-    private static AuditHistoryInfoFragment singleton;
+    private static AuditCompareFragment singleton;
 
-    public static AuditHistoryInfoFragment newInstance(){
+    public static AuditCompareFragment newInstance(){
         if(singleton==null){
-            singleton=new AuditHistoryInfoFragment();
+            singleton=new AuditCompareFragment();
         }
         return singleton;
     }
@@ -60,7 +60,6 @@ public class AuditHistoryInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         binding= AuditHistoryInfoBinding.inflate(inflater,container,false);
-        //unbinder = ButterKnife.bind(this, view);
         return binding.getRoot();
         //view = inflater.inflate(R.layout.audit_history_info, container, false);
         //unbinder = ButterKnife.bind(this, view);
@@ -83,38 +82,23 @@ public class AuditHistoryInfoFragment extends Fragment {
      * @param map 审计记录属性集合
      */
     public void refresh(Map<String, Object> map) {
-        try {
-            String id=map.get("OBJECTID").toString();
-            String time=map.get("MODIFYTIME").toString();
-            String reason=map.get("MODIFYINFO").toString();
-            String info=map.get("INFO").toString();
-            String beforeinfo=map.get("BEFOREINFO").toString();
-            String afterinfo=map.get("AFTERINFO").toString();
-            String remark=map.get("REMARK").toString();
-            AuditInfo auditInfo=new AuditInfo();
-            auditInfo.setObjectid(id);
-            auditInfo.setAddress("地址");
-            auditInfo.setTime(time);
-            auditInfo.setReason(reason);
-            auditInfo.setInfo(info);
-            auditInfo.setBeforinfo(beforeinfo);
-            auditInfo.setAfterinfo(afterinfo);
-            auditInfo.setReason(remark);
-            binding.setAuditInfo(auditInfo);
-            /*id = Long.valueOf(map.get("OBJECTID").toString());
-            //auditPeople.setText(map.get("").toString());
-            auditTime.setText(map.get("MODIFYTIME").toString());
-            //auditLatlon.setText(map.get("").toString());
-            auditReason.setText(map.get("MODIFYINFO").toString());
-            auditInfo.setText(map.get("INFO").toString());
-            auditEditBefore.setText(map.get("BEFOREINFO").toString());
-            auditEditAfter.setText(map.get("AFTERINFO").toString());
-            auditMark.setText(map.get("REMARK").toString());*/
-
-        }catch (Exception e){
-            ToastUtil.setToast(getActivity(),"获取数据异常"+e);
-        }
-
+        id = Long.valueOf(map.get("OBJECTID").toString());
+//        binding.auditPeople.setText(EDUtil.getAttrValue(map,"AUDIT_PEOPLE"));
+//        binding.auditTime.setText(map.get("MODIFYTIME").toString());
+//        binding.auditLatlon.setText("地址："+EDUtil.getAttrValue(map,"AUDIT_COORDINATE"));
+//        binding.auditReason.setText(EDUtil.getAttrValue(map,"MODIFYINFO"));
+//        binding.auditInfo.setText(EDUtil.getAttrValue(map,"INFO"));
+//        binding.auditEditBefore.setText(EDUtil.getAttrValue(map,"BEFOREINFO"));
+//        binding.auditEditAfter.setText(EDUtil.getAttrValue(map,"AFTERINFO"));
+//        binding.auditMark.setText(EDUtil.getAttrValue(map,"REMARK"));
+//        auditPeople.setEnabled(false);
+//        auditTime.setEnabled(false);
+//        auditLatlon.setEnabled(false);
+//        auditReason.setEnabled(false);
+//        auditInfo.setEnabled(false);
+//        auditEditBefore.setEnabled(false);
+//        auditEditAfter.setEnabled(false);
+//        auditMark.setEnabled(false);
     }
 
     /**
@@ -124,11 +108,11 @@ public class AuditHistoryInfoFragment extends Fragment {
             //auditPeople.setEnabled(type);
             //auditTime.setEnabled(type);
             //auditLatlon.setEnabled(type);
-            binding.auditReason.setEnabled(type);
-        binding.auditInfo.setEnabled(type);
-            binding.auditEditBefore.setEnabled(type);
-            binding.auditEditAfter.setEnabled(type);
-            binding.auditMark.setEnabled(type);
+//            binding.auditReason.setEnabled(type);
+//            binding.auditInfo.setEnabled(type);
+//            binding.auditEditBefore.setEnabled(type);
+//            binding.auditEditAfter.setEnabled(type);
+//            binding.auditMark.setEnabled(type);
     }
 
     /**
@@ -138,13 +122,13 @@ public class AuditHistoryInfoFragment extends Fragment {
     public void save(FeatureTable table){
         Map<String,Object> map = new HashMap<>();
         //map.put("",auditPeople.getText().toString());
-        map.put("MODIFYTIME", UtilTime.getSystemtime2());
-        //map.put("",auditLatlon.getText().toString());
-        map.put("MODIFYINFO",binding.auditReason.getText().toString());
-        map.put("INFO",binding.auditInfo.getText().toString());
-        map.put("BEFOREINFO",binding.auditEditBefore.getText().toString());
-        map.put("AFTERINFO",binding.auditEditAfter.getText().toString());
-        map.put("REMARK",binding.auditMark.getText().toString());
+//        map.put("MODIFYTIME", UtilTime.getSystemtime2());
+//        //map.put("",auditLatlon.getText().toString());
+//        map.put("MODIFYINFO",binding.auditReason.getText().toString());
+//        map.put("INFO",binding.auditInfo.getText().toString());
+//        map.put("BEFOREINFO",binding.auditEditBefore.getText().toString());
+//        map.put("AFTERINFO",binding.auditEditAfter.getText().toString());
+//        map.put("REMARK",binding.auditMark.getText().toString());
         Graphic graphic = new Graphic(null,null,map);
         try {
             table.updateFeature(id,graphic);
@@ -158,7 +142,6 @@ public class AuditHistoryInfoFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //unbinder.unbind();
     }
 
 

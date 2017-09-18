@@ -190,25 +190,12 @@ public class XbEditActivity extends BaseEditActivity{
 					break;
 				case R.id.fragment_videotape:
 					/* 录像 */
-					videotape();
+
 					break;
 				default:
 					break;
 			}
 		}
-	}
-
-	/**
-	 * 录像
-	 */
-	private void videotape() {
-		Intent intent = new Intent();
-		intent.setAction("android.media.action.VIDEO_CAPTURE");
-		intent.addCategory("android.intent.category.DEFAULT");
-		File file = new File(ResourcesManager.getImagePath(path)+"/"+ ResourcesManager.getVideoName(String.valueOf(fid)));
-		Uri uri = Uri.fromFile(file);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		startActivity(intent);
 	}
 
 	/**

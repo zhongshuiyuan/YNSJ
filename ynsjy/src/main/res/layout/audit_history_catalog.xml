@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<layout>
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.titan.ynsjy.auditHistory.AuditViewModel"/>
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
 
-    <ExpandableListView
-        android:id="@+id/audit_history_exlist"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:groupIndicator="@null" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:id="@+id/audit_multi_select"
+                android:text="@string/audit_multi_select"
+                style="@style/audit_catalog_cb_style"
+                android:checked="@={viewmodel.isMulti}"
+                android:onClick="@{()->viewmodel.multiSelect()}"
+                android:visibility="gone"/>
+            <CheckBox
+                android:id="@+id/audit_all_select"
+                android:text="@string/audit_all_select"
+                android:checked="@={viewmodel.isAll}"
+                android:onClick="@{()->viewmodel.allSelect()}"
+                style="@style/audit_catalog_cb_style"/>
+        </LinearLayout>
+        <ExpandableListView
+            android:id="@+id/audit_history_exlist"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:groupIndicator="@null" />
 
-    <TextView
-        android:id="@+id/audit_catalog_sure"
-        style="@style/textview_btn_style"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="确    定"
-        android:visibility="gone"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/audit_catalog_sure"
+            style="@style/textview_btn_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+    </LinearLayout>
+</layout>

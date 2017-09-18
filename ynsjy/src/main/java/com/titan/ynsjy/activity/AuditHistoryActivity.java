@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.esri.android.map.FeatureLayer;
@@ -19,12 +20,14 @@ import com.esri.core.map.Feature;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.model.AuditInfo;
 import com.titan.util.ActivityUtils;
-import com.titan.ynsjy.AuditHistory.AuditCatalogFragment;
-import com.titan.ynsjy.AuditHistory.AuditCompareFragment;
-import com.titan.ynsjy.AuditHistory.AuditHistoryInfoFragment;
+import com.titan.ynsjy.auditHistory.AuditCatalogFragment;
+import com.titan.ynsjy.auditHistory.AuditCompareActivity;
+import com.titan.ynsjy.auditHistory.AuditCompareFragment;
+import com.titan.ynsjy.auditHistory.AuditHistoryInfoFragment;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.auditHistory.AuditViewModel;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.ExcelUtil;
@@ -32,10 +35,12 @@ import com.titan.ynsjy.util.FileUtil;
 import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
+import com.titan.ynsjy.util.ViewModelHolder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +71,7 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
     private Context mContext;
     private View view;
     //private FrameLayout compareFragment;//审计历史比较页面
+    public static final String HISTORY_VIEWMODEL_TAG = "HISTORY_VIEWMODEL_TAG";
 
     public static MyLayer myLayer;
     private List<Feature> featureList;//审计记录列表
@@ -81,12 +87,12 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
     private Map<String, Boolean> cbMap;//checkbox状态
     AuditCatalogFragment mAuditCatalogFragment;//所有审计历史记录显示页面
 
+    private AuditViewModel auditViewModel;
     public AuditHistoryInfoFragment getInfoFragment() {
         return infoFragment;
     }
 
     AuditHistoryInfoFragment infoFragment;//单个审计记录详细信息显示页面
-    private  AuditCompareFragment compareFragment;
     //用来存储导出的数据
     private List<AuditInfo> auditInfoList=new ArrayList<>();
     //用来暂存小班路径
@@ -123,6 +129,8 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
         this.mContext = this;
         getData();
         mAuditCatalogFragment=findOrCreateAuditCatalogFragment();
+        auditViewModel = findOrCreateAuditViewModel();
+        mAuditCatalogFragment.setViewModel(auditViewModel);
         //mAuditCatalogFragment = (AuditCatalogFragment) getSupportFragmentManager().findFragmentById(R.id.audit_catalog);
         infoFragment = findOrCreateInfoFragmentFragment();
         //compareFragment = (FrameLayout) view.findViewById(R.id.audit_detail_frame);
@@ -171,11 +179,30 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
             // Create the fragment
         AuditCompareFragment tasksFragment = AuditCompareFragment.newInstance();
             ActivityUtils.replaceFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.audit_detail_frame);
+                    getSupportFragmentManager(), tasksFragment, R.id.audit_compare_frame);
 
         return tasksFragment;
     }
 
+    public AuditViewModel findOrCreateAuditViewModel(){
+        @SuppressWarnings("unchecked")
+        ViewModelHolder<AuditViewModel> viewModel =
+                (ViewModelHolder<AuditViewModel>) getSupportFragmentManager()
+                        .findFragmentByTag(HISTORY_VIEWMODEL_TAG);
+        if (viewModel != null && viewModel.getViewmodel() != null) {
+            // If the model was retained, return it.
+            return viewModel.getViewmodel();
+        } else {
+            // There is no ViewModel yet, create it.
+            AuditViewModel auditViewModel = new AuditViewModel(mAuditCatalogFragment);
+            // and bind it to this Activity's lifecycle using the Fragment Manager.
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(),
+                    ViewModelHolder.createContainer(auditViewModel),
+                    HISTORY_VIEWMODEL_TAG);
+            return auditViewModel;
+        }
+    }
 
     /**
      * 初始化页面和数据
@@ -202,7 +229,6 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
             if (list.contains("审计眼")){
                 String path = ResourcesManager.getInstance(mContext).getFolderPath("/otms")+"/审计眼/test.geodatabase";
                 try {
-                    Log.e("tag",path);
                     Geodatabase geodatabase = new Geodatabase(path);
                     List<GeodatabaseFeatureTable> tableList = geodatabase.getGeodatabaseTables();
                     for (GeodatabaseFeatureTable gdbFeatureTable : tableList) {
@@ -239,6 +265,8 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
 
     @OnClick({R.id.audit_add_close, R.id.audit_add_edit, R.id.audit_add_save, R.id.audit_add_compare, R.id.audit_add_cancel,R.id.audit_export})
     public void onViewClicked(View view) {
+        FrameLayout layout = (FrameLayout) findViewById(R.id.audit_compare_frame);
+        List<Map<String, Object>> list = mAuditCatalogFragment.getSelectList();
         switch (view.getId()) {
             case R.id.audit_add_close:
                 //返回
@@ -256,31 +284,50 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
             case R.id.audit_add_save:
                 //保存
                 infoFragment.save(myLayer.getTable());
+                infoFragment.editMode(false);
+                mAuditCatalogFragment.modeChoice(0);
+                auditAddSave.setVisibility(View.GONE);
+                auditAddEdit.setVisibility(View.VISIBLE);
+                auditAddCompare.setVisibility(View.VISIBLE);
+                auditAddCancel.setVisibility(View.GONE);
                 //queryData();
                 break;
             case R.id.audit_add_compare:
                 //比较
-                mAuditCatalogFragment.modeChoice(1);
-                compareFragment=findOrCreateConpareFragmentFragment();
-                //compareFragment.setVisibility(View.VISIBLE);
-                auditAddSave.setVisibility(View.GONE);
-                auditAddEdit.setVisibility(View.GONE);
-                auditAddCompare.setVisibility(View.GONE);
-                auditAddCancel.setVisibility(View.VISIBLE);
+                //mAuditCatalogFragment.modeChoice(1);
+                if (list.size()!=2){
+                    ToastUtil.setToast(mContext,"请选择两条记录做比较");
+                    return;
+                }
+                Intent intent = new Intent(AuditHistoryActivity.this, AuditCompareActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("dataList", (Serializable) list);
+                intent.putExtras(bundle);
+                startActivity(intent);
+//                layout.setVisibility(View.VISIBLE);
+//                compareFragment=findOrCreateConpareFragmentFragment();
+//                //compareFragment.setVisibility(View.VISIBLE);
+//                auditAddSave.setVisibility(View.GONE);
+//                auditAddEdit.setVisibility(View.GONE);
+//                auditAddCompare.setVisibility(View.GONE);
+//                auditAddCancel.setVisibility(View.VISIBLE);
                 break;
             case R.id.audit_add_cancel:
                 //取消
                 infoFragment.editMode(false);
-                mAuditCatalogFragment.modeChoice(1);
-                //compareFragment.setVisibility(View.GONE);
+                mAuditCatalogFragment.modeChoice(0);
                 auditAddSave.setVisibility(View.GONE);
                 auditAddEdit.setVisibility(View.VISIBLE);
                 auditAddCompare.setVisibility(View.VISIBLE);
                 auditAddCancel.setVisibility(View.GONE);
                 break;
             case R.id.audit_export:
-                mAuditCatalogFragment.modeChoice(2);
-                //exportFile();
+                //mAuditCatalogFragment.modeChoice(2);
+                if (list==null||list.size()<=0){
+                    ToastUtil.setToast(mContext,"请选择至少一条数据");
+                    return;
+                }
+                exportFile();
                 break;
         }
     }
@@ -399,17 +446,18 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
     }
 
     @Override
-    public void onRefreshDetial(Map<String, Object> map) {
-        infoFragment.refresh(map);
+    public void onRefreshDetial(Map<String, Object> map,boolean flag) {
+        //auditAddEdit.setVisibility(View.VISIBLE);
         infoFragment.editMode(false);
+        infoFragment.setMyVisibility(flag);
+        infoFragment.refresh(map);
     }
 
     @Override
     public void onShowCompare(List<Map<String, Object>> selectList, Map<String, Object> map) {
-         infoFragment.refresh(selectList.get(0));
+        //infoFragment.refresh(selectList.get(0));
         //setLayout(map);
-        mAuditCatalogFragment.setLayout(map);
+        //mAuditCatalogFragment.setLayout(selectList.get(1));
         //compareFragment.setLayout().s();
-
     }
 }
