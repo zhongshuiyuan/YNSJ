@@ -135,7 +135,7 @@ public class ExcelUtil {
                 }
 
                 writebook.write();
-                return true;
+                //return true;
                 //Toast.makeText(c, "导出到手机存储中文件夹Record成功", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -156,7 +156,7 @@ public class ExcelUtil {
                         e.printStackTrace();
                     }
                 }
-                return false;
+                return true;
             }
 
         }

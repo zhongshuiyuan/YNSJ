@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
-
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="com.titan.ynsjy.login.LoginActivity"
+        >
     <data>
-
         <import type="android.view.View"/>
-
         <variable
             name="viewmodel"
             type="com.titan.ynsjy.login.LoginViewModel"/>
@@ -81,18 +80,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="2"
-                android:background="@drawable/bg_loginform"
-                android:drawableLeft="@drawable/ic_user_name"
+                android:background="@null"
                 android:drawablePadding="10dp"
                 android:hint="@string/username"
                 android:gravity="center_vertical"
+
                 android:paddingLeft="5dp"
                 android:text="@={viewmodel.username}"/>
 
 
             <!-- <android.support.design.widget.TextInputLayout
                      android:layout_width="match_parent"
-                     android:layout_height="wrap_content">-->
+                     android:layout_height="wrap_content">-->                android:background="@drawable/bg_loginform"
+<!--
+                android:drawableLeft="@drawable/ic_user_name"
+
+            android:background="@drawable/bg_loginform"
+-->
+
+
 
 
             <EditText
@@ -101,8 +107,8 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="10dp"
                 android:layout_weight="2"
-                android:background="@drawable/bg_loginform"
-                android:drawableLeft="@drawable/ic_password"
+                android:background="@null"
+                android:drawableLeft="@{@drawable/ic_password}"
                 android:drawablePadding="10dp"
                 android:hint="@string/password"
                 android:imeActionId="@+id/login"

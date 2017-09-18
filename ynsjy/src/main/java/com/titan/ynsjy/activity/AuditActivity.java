@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import com.esri.core.map.Feature;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
+import com.titan.util.Camera.CameraActivity;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.dialog.EditPhoto;
@@ -40,8 +40,6 @@ import butterknife.OnClick;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.RuntimePermissions;
-
-import static com.titan.ynsjy.edite.activity.BaseEditActivity.TAKE_PICTURE;
 
 /**
  * Created by hanyw on 2017/9/2/002.
@@ -178,11 +176,13 @@ public class AuditActivity extends AppCompatActivity {
      */
     @NeedsPermission({Manifest.permission.CAMERA})
     void photograph() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         imagePath = picPath + "/" + ResourcesManager.getPicName(String.valueOf(fid));
         Uri uri = Uri.fromFile(new File(imagePath));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent, TAKE_PICTURE);
+        startActivityForResult(intent, TAKE_PICTURE);*/
+        Intent intent=new Intent(AuditActivity.this, CameraActivity.class);
+        startActivity(intent);
     }
 
     @OnPermissionDenied({Manifest.permission.CAMERA})

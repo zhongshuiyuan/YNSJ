@@ -1,13 +1,11 @@
 package com.titan.ynsjy.auditHistory;
 
 import android.content.Context;
-import android.databinding.ObservableBoolean;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,6 @@ import android.widget.LinearLayout;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
-import com.esri.core.table.TableException;
 import com.titan.model.AuditInfo;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.activity.AuditHistoryActivity;
@@ -135,8 +132,14 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
     }
 
     private void init() {
-        getData();
-        queryData();
+        try{
+            getData();
+            queryData();
+        }catch(Exception e) {
+            ToastUtil.setToast(mContext,"初始化数据异常"+e);
+        }
+
+
     }
 
     /**
@@ -249,12 +252,6 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
      */
     public void exRefresh(Context context, final List<String> list, final List<List<Feature>> listfeature,
                           final Map<String, Boolean> cbMap, final int type) {
-        //选择布局模式
-//        if (type == 0) {
-//            auditCatalogSure.setVisibility(View.GONE);
-//        } else {
-//            auditCatalogSure.setVisibility(View.VISIBLE);
-//        }
         exListView = binding.auditHistoryExlist;
         adapter = new AuditHistoryExpandAdapter(context, list, type, listfeature, cbMap);
 
@@ -309,15 +306,7 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
         }
     }
 
-    /**
-     * 显示选择的两个历史记录的详细信息
-     */
-   /* private void showCompare(Map<String, Object> map) {
 
-        ///AuditHistoryInfoFragment compareFragment =  (AuditHistoryInfoFragment) getFragmentManager().findFragmentById(R.id.audit_detail_frame);
-        .refresh(selectList.get(0));
-        //setLayout(map);
-    }*/
 
     /**
      * @param map 选择的审计记录

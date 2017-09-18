@@ -13,13 +13,9 @@ import android.widget.TextView;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
-import com.titan.model.AuditInfo;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.AuditAdapter;
-import com.titan.ynsjy.databinding.AuditHistoryInfoBinding;
-import com.titan.ynsjy.util.EDUtil;
 import com.titan.ynsjy.util.ToastUtil;
-import com.titan.ynsjy.util.UtilTime;
 
 import java.util.HashMap;
 import java.util.Map;

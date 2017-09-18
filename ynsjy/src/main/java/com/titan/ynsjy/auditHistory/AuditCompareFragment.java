@@ -1,148 +1,117 @@
 package com.titan.ynsjy.auditHistory;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.esri.core.map.Graphic;
-import com.esri.core.table.FeatureTable;
-import com.esri.core.table.TableException;
-import com.titan.ynsjy.databinding.AuditHistoryInfoBinding;
+import com.titan.model.AuditInfo;
+import com.titan.ynsjy.databinding.FragAuditCompareBinding;
 import com.titan.ynsjy.util.EDUtil;
-import com.titan.ynsjy.util.ToastUtil;
-import com.titan.ynsjy.util.UtilTime;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+
 /**
- * Created by hanyw on 2017/9/7/007.
- * 审计详细内容对比页面
+ * Created by hanyw on 2017/9/15/015.
+ * 审计历史对比页面
  */
 
-public class AuditCompareFragment extends Fragment {
-   /* @BindView(R.id.audit_people)
-    EditText auditPeople;//审计人员
-    @BindView(R.id.audit_time)
-    EditText auditTime;//审计时间
-    @BindView(R.id.audit_latlon)
-    EditText auditLatlon;//审计地点
-    @BindView(R.id.audit_reason)
-    EditText auditReason;//审计原因
-    @BindView(R.id.audit_info)
-    EditText auditInfo;//描述信息
-    @BindView(R.id.audit_edit_before)
-    EditText auditEditBefore;//修改前状况
-    @BindView(R.id.audit_edit_after)
-    EditText auditEditAfter;//修改后状况
-    @BindView(R.id.audit_mark)
-    EditText auditMark;//备注
-    Unbinder unbinder;*/
-    private View view;
-    private long id;//审计记录的OBJECTID
+public class AuditCompareFragment extends Fragment implements AuditCompare {
+    private Context mContext;
+    private String[] attrArray = new String[]{"OBJECTID","AUDIT_PEOPLE","MODIFYTIME","AUDIT_COORDINATE",
+            "MODIFYINFO","INFO","BEFOREINFO","AFTERINFO","REMARK"};
+    private List<Map<String, Object>> dataList;
 
-    private AuditHistoryInfoBinding binding;
+    public static AuditCompareFragment singleton;
+    private FragAuditCompareBinding binding;
 
-    private static AuditCompareFragment singleton;
-
-    public static AuditCompareFragment newInstance(){
-        if(singleton==null){
-            singleton=new AuditCompareFragment();
+    private AuditViewModel auditViewModel;
+    public static AuditCompareFragment newIntance() {
+        if (singleton == null) {
+            singleton = new AuditCompareFragment();
         }
         return singleton;
     }
 
-
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        binding= AuditHistoryInfoBinding.inflate(inflater,container,false);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        this.mContext = getActivity();
+        binding = FragAuditCompareBinding.inflate(inflater, container, false);
+        binding.setViewModel(auditViewModel);
+        setData();
         return binding.getRoot();
-        //view = inflater.inflate(R.layout.audit_history_info, container, false);
-        //unbinder = ButterKnife.bind(this, view);
-        //return view;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void setViewModel(AuditViewModel viewModel) {
+        auditViewModel = viewModel;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    public void setData() {
+        Bundle bundle = getActivity().getIntent().getExtras();
+        dataList = (List<Map<String, Object>>) bundle.getSerializable("dataList");
 
-    }
-
-    /**
-     * @param map 审计记录属性集合
-     */
-    public void refresh(Map<String, Object> map) {
-        id = Long.valueOf(map.get("OBJECTID").toString());
-//        binding.auditPeople.setText(EDUtil.getAttrValue(map,"AUDIT_PEOPLE"));
-//        binding.auditTime.setText(map.get("MODIFYTIME").toString());
-//        binding.auditLatlon.setText("地址："+EDUtil.getAttrValue(map,"AUDIT_COORDINATE"));
-//        binding.auditReason.setText(EDUtil.getAttrValue(map,"MODIFYINFO"));
-//        binding.auditInfo.setText(EDUtil.getAttrValue(map,"INFO"));
-//        binding.auditEditBefore.setText(EDUtil.getAttrValue(map,"BEFOREINFO"));
-//        binding.auditEditAfter.setText(EDUtil.getAttrValue(map,"AFTERINFO"));
-//        binding.auditMark.setText(EDUtil.getAttrValue(map,"REMARK"));
-//        auditPeople.setEnabled(false);
-//        auditTime.setEnabled(false);
-//        auditLatlon.setEnabled(false);
-//        auditReason.setEnabled(false);
-//        auditInfo.setEnabled(false);
-//        auditEditBefore.setEnabled(false);
-//        auditEditAfter.setEnabled(false);
-//        auditMark.setEnabled(false);
-    }
-
-    /**
-     * @param type 设置是否为编辑模式，true为编辑模式，false为默认模式
-     */
-    public void editMode(boolean type){
-            //auditPeople.setEnabled(type);
-            //auditTime.setEnabled(type);
-            //auditLatlon.setEnabled(type);
-//            binding.auditReason.setEnabled(type);
-//            binding.auditInfo.setEnabled(type);
-//            binding.auditEditBefore.setEnabled(type);
-//            binding.auditEditAfter.setEnabled(type);
-//            binding.auditMark.setEnabled(type);
-    }
-
-    /**
-     * 编辑之后保存数据
-     * @param table 编辑表
-     */
-    public void save(FeatureTable table){
-        Map<String,Object> map = new HashMap<>();
-        //map.put("",auditPeople.getText().toString());
-//        map.put("MODIFYTIME", UtilTime.getSystemtime2());
-//        //map.put("",auditLatlon.getText().toString());
-//        map.put("MODIFYINFO",binding.auditReason.getText().toString());
-//        map.put("INFO",binding.auditInfo.getText().toString());
-//        map.put("BEFOREINFO",binding.auditEditBefore.getText().toString());
-//        map.put("AFTERINFO",binding.auditEditAfter.getText().toString());
-//        map.put("REMARK",binding.auditMark.getText().toString());
-        Graphic graphic = new Graphic(null,null,map);
+        Log.e("tag",dataList+"dataList");
         try {
-            table.updateFeature(id,graphic);
-            ToastUtil.setToast(getActivity(),"数据保存成功");
-        } catch (TableException e) {
-            e.printStackTrace();
-            ToastUtil.setToast(getActivity(),"数据保存失败");
+            if (dataList != null && dataList.size() == 2) {
+                Map<String, Object> map1 = dataList.get(0);
+                Map<String, Object> map2 = dataList.get(1);
+                AuditInfo info1 = new AuditInfo();
+                List<AuditInfo> auditInfos=new ArrayList<>();
+
+                for (Map<String,Object> map :dataList){
+                    AuditInfo auditInfo=new AuditInfo();
+                    auditInfo.setAuditer(EDUtil.getAttrValue(map1, "AUDIT_PEOPLE"));
+                    auditInfo.setObjectid(EDUtil.getAttrValue(map1, "OBJECTID"));
+                    auditInfo.setAddress(EDUtil.getAttrValue(map1, "AUDIT_COORDINATE"));
+                    auditInfo.setTime(EDUtil.getAttrValue(map1, "MODIFYTIME"));
+                    auditInfo.setReason(EDUtil.getAttrValue(map1, "MODIFYINFO"));
+                    auditInfo.setInfo(EDUtil.getAttrValue(map1, "INFO"));
+                    auditInfo.setBeforinfo(EDUtil.getAttrValue(map1, "BEFOREINFO"));
+                    auditInfo.setAfterinfo(EDUtil.getAttrValue(map1, "AFTERINFO"));
+                    auditInfo.setRemark(EDUtil.getAttrValue(map1, "REMARK"));
+                    auditInfos.add(auditInfo);
+                }
+                binding.setAuditInfo(auditInfos.get(0));
+                binding.setAuditInfo2(auditInfos.get(1));
+
+
+
+
+                //binding.setAuditInfo(info1);
+              /*  AuditInfo info2 = new AuditInfo();
+                info2.setAuditer(EDUtil.getAttrValue(map2, "AUDIT_PEOPLE"));
+                info2.setObjectid(EDUtil.getAttrValue(map2, "OBJECTID"));
+                info2.setAddress(EDUtil.getAttrValue(map2, "AUDIT_COORDINATE"));
+                info2.setTime(EDUtil.getAttrValue(map2, "MODIFYTIME"));
+                info2.setReason(EDUtil.getAttrValue(map2, "MODIFYINFO"));
+                info2.setInfo(EDUtil.getAttrValue(map2, "INFO"));
+                info2.setBeforinfo(EDUtil.getAttrValue(map2, "BEFOREINFO"));
+                info2.setAfterinfo(EDUtil.getAttrValue(map2, "AFTERINFO"));
+                info2.setRemark(EDUtil.getAttrValue(map2, "REMARK"));*/
+                //binding.setAuditInfo2(info2);
+
+               /* Field[] fields = info2.getClass().getDeclaredFields();
+                for(Field field : fields) {
+                    field.setAccessible(true); // 这句使我们可以访问似有成员变量
+                    Object property = field.get(info2);
+                    Log.e("tag",property.toString());
+                }*/
+            }
+        }catch (Exception e){
+            Log.e("tag","setdata:"+e);
         }
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void close() {
+        getActivity().finish();
     }
-
-
 }

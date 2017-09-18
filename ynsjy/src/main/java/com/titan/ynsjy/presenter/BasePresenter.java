@@ -121,7 +121,8 @@ public class BasePresenter {
             mapView.addLayer(tiledLayer);
             return tiledLayer;
         } else {
-            return new ArcGISLocalTiledLayer(path);
+           // return new ArcGISLocalTiledLayer(path);
+            return null;
         }
     }
 

@@ -531,7 +531,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 		/* 基础底图 */
         String titlePath = MyApplication.resourcesManager.getTitlePath();
         tiledLayer = basePresenter.addTitleLayer(titlePath);
-
+        if(tiledLayer==null){
+            ToastUtil.setToast(mContext,"底图文件不存在");
+        }
         //spatialReference=mapView.getSpatialReference();
         /*触摸事件*/
         myTouchListener = new MyTouchListener(mContext, mapView);
@@ -1837,11 +1839,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
     }
 
-    /**
-     * 退出小班编辑
-     */
-    public void exitedit(View view) {
-    }
+
 
     /**
      * 切割面保存方法
@@ -2446,22 +2444,30 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      * 小班修斑保存方法
      */
     public void saveXbFeature(Polyline drawline) {
-        if (selectGeometry == null) {
-            ToastUtil.setToast(mContext, "请选择小班");
+        try{
+            if (selectGeometry == null) {
+                ToastUtil.setToast(mContext, "请选择小班");
+                return;
+            }
+            // 所画草图线的点个数
+            int drawSize = drawline.getPointCount();
+            if (drawSize < 2) {
+                ToastUtil.setToast(mContext, "草图线段点数少于2,无法修整面");
+                return;
+            }
+            Polygon selectPpolygon = (Polygon) selectGeometry;
+            int pathSize = selectPpolygon.getPathCount();//2
+            if (pathSize == 1) {
+                repairPresenter.saveXBoPathFeature(drawline, selectPpolygon);
+            } else if (pathSize > 1) {
+                saveXbAllPath(drawline);
+            }
+
+        }catch(Exception e) {
+             ToastUtil.setToast(mContext,"修班出现异常"+e);
         }
-        // 所画草图线的点个数
-        int drawSize = drawline.getPointCount();
-        if (drawSize < 2) {
-            ToastUtil.setToast(mContext, "草图线段点数少于2,无法修整面");
-            return;
-        }
-        Polygon selectPpolygon = (Polygon) selectGeometry;
-        int pathSize = selectPpolygon.getPathCount();//2
-        if (pathSize == 1) {
-            repairPresenter.saveXBoPathFeature(drawline, selectPpolygon);
-        } else if (pathSize > 1) {
-            saveXbAllPath(drawline);
-        }
+
+
     }
 
     /**多条path时小班修改保存*/

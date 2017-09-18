@@ -19,7 +19,7 @@ public class AuditCompareActivity extends AppCompatActivity {
 
     public static final String COMPARE_VIEWMODEL_TAG = "COMPARE_VIEWMODEL_TAG";
 
-    private AuditSecondCompareFragment compareFragment;
+    private AuditCompareFragment compareFragment;
     private AuditViewModel auditViewModel;
 
     @Override
@@ -31,11 +31,11 @@ public class AuditCompareActivity extends AppCompatActivity {
         compareFragment.setViewModel(auditViewModel);
     }
 
-    private AuditSecondCompareFragment findOrCreateCompareFragment() {
-        AuditSecondCompareFragment fragment = (AuditSecondCompareFragment)
+    private AuditCompareFragment findOrCreateCompareFragment() {
+        AuditCompareFragment fragment = (AuditCompareFragment)
                 getSupportFragmentManager().findFragmentById(R.id.audit_compare);
         if (fragment == null) {
-            fragment = AuditSecondCompareFragment.newIntance();
+            fragment = AuditCompareFragment.newIntance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), fragment, R.id.audit_compare);
         }
         return fragment;

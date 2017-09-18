@@ -6,7 +6,6 @@ import android.provider.Settings.Secure;
 import android.support.multidex.MultiDexApplication;
 
 import com.tencent.bugly.crashreport.CrashReport;
-import com.titan.baselibrary.crash.CrashHandler;
 import com.titan.ynsjy.entity.ScreenTool;
 import com.titan.ynsjy.service.Webservice;
 import com.titan.ynsjy.util.BussUtil;
@@ -84,8 +83,8 @@ public class MyApplication extends MultiDexApplication {
 		new MyAsyncTask().execute("copyDatabase");
 
 		/*异常本地记录*/
-		CrashHandler crashHandler = CrashHandler.getInstance();
-		crashHandler.init(this);
+		/*CrashHandler crashHandler = CrashHandler.getInstance();
+		crashHandler.init(this);*/
 	}
 
 	/*@Override

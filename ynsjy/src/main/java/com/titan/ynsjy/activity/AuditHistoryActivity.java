@@ -20,13 +20,13 @@ import com.esri.core.map.Feature;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.model.AuditInfo;
 import com.titan.util.ActivityUtils;
+import com.titan.ynsjy.BaseActivity;
+import com.titan.ynsjy.MyApplication;
+import com.titan.ynsjy.R;
 import com.titan.ynsjy.auditHistory.AuditCatalogFragment;
 import com.titan.ynsjy.auditHistory.AuditCompareActivity;
 import com.titan.ynsjy.auditHistory.AuditCompareFragment;
 import com.titan.ynsjy.auditHistory.AuditHistoryInfoFragment;
-import com.titan.ynsjy.BaseActivity;
-import com.titan.ynsjy.MyApplication;
-import com.titan.ynsjy.R;
 import com.titan.ynsjy.auditHistory.AuditViewModel;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.util.BaseUtil;
@@ -38,7 +38,6 @@ import com.titan.ynsjy.util.UtilTime;
 import com.titan.ynsjy.util.ViewModelHolder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -140,7 +139,6 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
         // Link View and ViewModel
         //mFragment.setViewModel(mViewModel);
         ButterKnife.bind(this);
-        init();
 
     }
 
@@ -177,7 +175,7 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
                 (AuditCompareFragment) getSupportFragmentManager().findFragmentById(R.id.audit_detail_frame);*/
 
             // Create the fragment
-        AuditCompareFragment tasksFragment = AuditCompareFragment.newInstance();
+        AuditCompareFragment tasksFragment = AuditCompareFragment.newIntance();
             ActivityUtils.replaceFragmentToActivity(
                     getSupportFragmentManager(), tasksFragment, R.id.audit_compare_frame);
 
@@ -204,17 +202,7 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
         }
     }
 
-    /**
-     * 初始化页面和数据
-     */
-    private void init() {
-        //审计历史记录列表页面
-        //catalogFragment = findOrCreateAuditCatalogFragment();
-        //审计历史记录详细信息显示页面
-        //infoFragment = (AuditHistoryInfoFragment) getSupportFragmentManager().findFragmentById(R.id.audit_history_all_info);
-        //两个审计历史记录对比页面
-        //compareFragment = (FrameLayout) view.findViewById(R.id.audit_detail_frame);
-    }
+
 
     /**
      * 获取编辑表
@@ -231,21 +219,24 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
                 try {
                     Geodatabase geodatabase = new Geodatabase(path);
                     List<GeodatabaseFeatureTable> tableList = geodatabase.getGeodatabaseTables();
+                    //geodatabase.getGeodatabaseTables().get()
                     for (GeodatabaseFeatureTable gdbFeatureTable : tableList) {
-                        if (!gdbFeatureTable.hasGeometry()) {
+                        /*if (!gdbFeatureTable.hasGeometry()) {
                             ToastUtil.setToast(mContext,"没有数据");
                             continue;
-                        }
+                        }*/
                         if (gdbFeatureTable.getTableName().equals("edit")){
                             FeatureLayer layer = new FeatureLayer(gdbFeatureTable);
                             setMyLayer("审计眼","test",path,layer,gdbFeatureTable);
                         }
                     }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                    ToastUtil.setToast(mContext,"获取数据异常"+e);
                 }
+
             }else {
-                ToastUtil.setToast(mContext,"没有数据");
+                ToastUtil.setToast(mContext,"没有发现审计数据");
             }
         }
     }
@@ -354,6 +345,8 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
         Message msg=new Message();
         try {
             path = MyApplication.resourcesManager.getExportPath(UtilTime.getSystemtime2());
+            File file = new File(path);
+            makeDir(file);
             ExcelUtil.initExcel(path + "/导出数据.xls", title,"数据统计");
             String fileName = path + "/导出数据.xls";
             boolean exportexcel=ExcelUtil.writeObjListToExcel(getRecordData(auditInfoList), fileName, mContext);
@@ -374,6 +367,14 @@ public class AuditHistoryActivity extends AppCompatActivity  implements AuditCat
 
 
     }
+    public  void makeDir(File dir) {
+        if (!dir.getParentFile().exists()) {
+            makeDir(dir.getParentFile());
+        }
+        dir.mkdir();
+    }
+
+
 
     /**
      * 将数据集合 转化成ArrayList<ArrayList<String>>
