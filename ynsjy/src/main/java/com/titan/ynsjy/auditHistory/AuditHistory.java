@@ -1,4 +1,4 @@
-package com.titan.ynsjy.auditHistory;
+package com.titan.ynsjy.audithistory;
 
 /**
  * Created by hanyw on 2017/9/15/015.

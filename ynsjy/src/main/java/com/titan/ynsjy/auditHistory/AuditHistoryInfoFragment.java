@@ -1,23 +1,26 @@
-package com.titan.ynsjy.auditHistory;
+package com.titan.ynsjy.audithistory;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.esri.core.geodatabase.GeodatabaseFeatureTable;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
+import com.titan.gis.GisUtil;
+import com.titan.model.TitanField;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.AuditAdapter;
 import com.titan.ynsjy.util.ToastUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,45 +72,18 @@ public class AuditHistoryInfoFragment extends Fragment {
     /**
      * @param map 审计记录属性集合
      */
-    public void refresh(Map<String, Object> map) {
+    public void refresh(Map<String, Object> map, GeodatabaseFeatureTable audittable) {
         try {
-//            id=Long.valueOf(map.get("OBJECTID").toString());
-//            String auditer=EDUtil.getAttrValue(map,"AUDIT_PEOPLE");
-//            String time=map.get("MODIFYTIME").toString();
-//            String address=EDUtil.getAttrValue(map,"AUDIT_COORDINATE");
-//            String reason=EDUtil.getAttrValue(map,"MODIFYINFO");
-//            String info=EDUtil.getAttrValue(map,"INFO");
-//            String beforeinfo=EDUtil.getAttrValue(map,"BEFOREINFO");
-//            String afterinfo=EDUtil.getAttrValue(map,"AFTERINFO");
-//            String remark=EDUtil.getAttrValue(map,"REMARK");
-//            AuditInfo auditInfo=new AuditInfo();
-//            auditInfo.setAuditer(auditer);
-//            auditInfo.setObjectid(String.valueOf(id));
-//            auditInfo.setAddress("地址："+address);
-//            auditInfo.setTime(time);
-//            auditInfo.setReason(reason);
-//            auditInfo.setInfo(info);
-//            auditInfo.setBeforinfo(beforeinfo);
-//            auditInfo.setAfterinfo(afterinfo);
-//            auditInfo.setRemark(remark);
-            //binding.setAuditInfo(auditInfo);
             if (map!=null){
-                AuditAdapter adapter = new AuditAdapter(getActivity(),map);
+                List<TitanField> fieldList=GisUtil.getFields(map,audittable.getFields());
+                AuditAdapter adapter = new AuditAdapter(getActivity(),fieldList);
                 listView.setAdapter(adapter);
             }
-            /*id = Long.valueOf(map.get("OBJECTID").toString());
-            //auditPeople.setText(map.get("").toString());
-            auditTime.setText(map.get("MODIFYTIME").toString());
-            //auditLatlon.setText(map.get("").toString());
-            auditReason.setText(map.get("MODIFYINFO").toString());
-            auditInfo.setText(map.get("INFO").toString());
-            auditEditBefore.setText(map.get("BEFOREINFO").toString());
-            auditEditAfter.setText(map.get("AFTERINFO").toString());
-            auditMark.setText(map.get("REMARK").toString());*/
+
 
         }catch (Exception e){
-            Log.e("tag","activity:"+getContext()+e);
-            //ToastUtil.setToast(getContext(),"获取数据异常"+e);
+            //Log.e("tag","activity:"+getContext()+e);
+            ToastUtil.setToast(getActivity(),"更新数据异常"+e);
         }
 
     }

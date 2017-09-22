@@ -55,66 +55,6 @@
                 style="@style/textview_btn_style"
                 android:visibility="gone"/>
         </LinearLayout>
-
-        <!--<LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="审计人员"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="审计时间"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="审计位置"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="修改原因"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="修改前状况"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="修改后状况"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="描述信息"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="备注"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="小班编号"
-                android:textSize="18sp"
-                android:padding="5dp"/>
-        </LinearLayout>-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

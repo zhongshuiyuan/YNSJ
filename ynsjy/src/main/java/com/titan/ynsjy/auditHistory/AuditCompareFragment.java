@@ -1,4 +1,4 @@
-package com.titan.ynsjy.auditHistory;
+package com.titan.ynsjy.audithistory;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -32,7 +32,7 @@ public class AuditCompareFragment extends Fragment implements AuditCompare {
     public static AuditCompareFragment singleton;
     private FragAuditCompareBinding binding;
 
-    private AuditViewModel auditViewModel;
+    private AuditHistoryViewModel auditViewModel;
     public static AuditCompareFragment newIntance() {
         if (singleton == null) {
             singleton = new AuditCompareFragment();
@@ -50,7 +50,7 @@ public class AuditCompareFragment extends Fragment implements AuditCompare {
         return binding.getRoot();
     }
 
-    public void setViewModel(AuditViewModel viewModel) {
+    public void setViewModel(AuditHistoryViewModel viewModel) {
         auditViewModel = viewModel;
     }
 

@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.titan.ynsjy.auditHistory.AuditHistoryInfoFragment;
+import com.titan.ynsjy.audithistory.AuditHistoryInfoFragment;
 import com.titan.ynsjy.R;
 
 import java.io.Serializable;
@@ -47,7 +47,7 @@ public class AuditInfoActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         map = (Map<String, Object>) bundle.getSerializable("featureMap");
         AuditHistoryInfoFragment fragment = (AuditHistoryInfoFragment) getSupportFragmentManager().findFragmentById(R.id.audit_history_info);
-        fragment.refresh(map);
+        //fragment.refresh(map);
     }
 
     /**

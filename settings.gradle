@@ -1,1 +1,1 @@
-include ':proj4android', ':ynsjy', ':versionupdata', ':baselibrary', ':photopicker'
+include ':proj4android', ':ynsjy', ':versionupdata', ':baselibrary', ':photopicker', ':ynsj'

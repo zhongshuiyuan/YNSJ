@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">云南审计眼</string>
+    <!-- 登陆页面-->
+    <string name="username">请输入用户名</string>
+    <string name="password">请输入密码</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="rememberuser">记住用户</string>
+    <string name="login">登录</string>
+    <string name="app_version">版本号: </string>
+</resources>

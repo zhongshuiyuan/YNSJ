@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.titan.ynsjy.auditHistory.AuditViewModel"/>
+            type="com.titan.ynsjy.audithistory.AuditHistoryViewModel"/>
         <variable
             name="auditInfo"
             type="com.titan.model.AuditInfo"/>

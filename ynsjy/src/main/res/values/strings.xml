@@ -191,5 +191,8 @@
 
         ]]>
     </string>
-
+    <!--数据图层-->
+    <string name="resource">fxh</string>
+    <string name="edit">edit</string>
+    <string name="photo">photo</string>
 </resources>

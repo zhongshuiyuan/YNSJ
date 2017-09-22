@@ -1,4 +1,4 @@
-package com.titan.ynsjy.auditHistory;
+package com.titan.ynsjy.audithistory;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,16 +13,14 @@ import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 
+import com.esri.core.geodatabase.GeodatabaseFeatureTable;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
 import com.titan.model.AuditInfo;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.activity.AuditHistoryActivity;
-import com.titan.ynsjy.activity.AuditInfoActivity;
 import com.titan.ynsjy.adapter.AuditHistoryExpandAdapter;
 import com.titan.ynsjy.databinding.AuditHistoryCatalogBinding;
-import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.util.ArcGISQueryUtils;
 import com.titan.ynsjy.util.ToastUtil;
 
@@ -41,12 +39,10 @@ import butterknife.OnClick;
 public class AuditCatalogFragment extends Fragment implements AuditHistory {
     private AuditHistoryCatalogBinding binding;
 
-    private AuditViewModel auditViewModel;
-    private Context mContext;
-    private View view;
+    private AuditHistoryViewModel auditViewModel;
     private ExpandableListView exListView;
     private AuditHistoryExpandAdapter adapter;
-    private MyLayer myLayer;
+    //private MyLayer myLayer;
     private int type;//模式设定 0：单选，1：多选
 
     public List<Map<String, Object>> getSelectList() {
@@ -69,10 +65,10 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_FINISH:
-                    exRefresh(mContext, fk_uidList, childList, cbMap, 0);
+                    exRefresh(getActivity(), fk_uidList, childList, cbMap, 0);
                     break;
                 case QUERY_NODATA:
-                    ToastUtil.setToast(mContext, "没有查询到数据");
+                    ToastUtil.setToast(getActivity(), "没有查询到数据");
                     break;
                 default:
                     break;
@@ -84,9 +80,13 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
 
     public static AuditCatalogFragment singleton;
 
+    private static GeodatabaseFeatureTable audittable;
 
-    public static AuditCatalogFragment newInstance() {
+
+    public static AuditCatalogFragment newInstance(GeodatabaseFeatureTable featureTable) {
+
         if (singleton == null) {
+            audittable=featureTable;
             singleton = new AuditCatalogFragment();
         }
         return singleton;
@@ -107,7 +107,6 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        this.mContext = getActivity();
         binding = AuditHistoryCatalogBinding.inflate(inflater,container,false);
         binding.setViewmodel(auditViewModel);
         init();
@@ -127,34 +126,28 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
         }
     }
 
-    public void setViewModel(AuditViewModel viewModel) {
+    public void setViewModel(AuditHistoryViewModel viewModel) {
         auditViewModel = viewModel;
     }
 
     private void init() {
         try{
-            getData();
+            //getData();
             queryData();
         }catch(Exception e) {
-            ToastUtil.setToast(mContext,"初始化数据异常"+e);
+            ToastUtil.setToast(getActivity(),"初始化数据异常"+e);
         }
 
 
     }
 
-    /**
-     * 获取编辑表
-     */
-    private void getData() {
-        //myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
-        myLayer = AuditHistoryActivity.myLayer;
-    }
 
     /**
      * 查询审计记录
      */
     public void queryData() {
-        ArcGISQueryUtils.getQueryFeaturesAll(myLayer.getTable(), new CallbackListener<FeatureResult>() {
+
+        ArcGISQueryUtils.getQueryFeaturesAll(audittable, new CallbackListener<FeatureResult>() {
             @Override
             public void onCallback(FeatureResult objects) {
                 Message message = new Message();
@@ -172,14 +165,13 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
                     cbMap.put(String.valueOf(feature.getId()), false);
                 }
                 childList = featureSort();
-
                 message.what = QUERY_FINISH;
                 handler.sendMessage(message);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                ToastUtil.setToast(mContext, "数据查询出错");
+                ToastUtil.setToast(getActivity(), "数据查询出错");
             }
         });
     }
@@ -188,30 +180,43 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
      * @return 按照编辑id对应分类好的map集合
      */
     private List<List<Feature>> featureSort() {
-        List<List<Feature>> list = new ArrayList<>();
-        List<Feature> cList;
-        fk_uidList = new ArrayList<>();
-        for (Feature f : featureList) {
-            String fk_uid = f.getAttributeValue("FK_EDIT_UID").toString();
-            if (fk_uidList.contains(fk_uid)) {
-                continue;
+        try{
+
+            List<List<Feature>> list = new ArrayList<>();
+            List<Feature> cList;
+            fk_uidList = new ArrayList<>();
+            //按原始数据ID分组
+            for (Feature f : featureList) {
+                if(f.getAttributeValue("FK_EDIT_UID")==null||f.getAttributeValue("FK_EDIT_UID").equals(""))
+                    continue;
+                String fk_uid = f.getAttributeValue("FK_EDIT_UID").toString();
+                if (fk_uidList.contains(fk_uid)) {
+                    continue;
+                }
+                fk_uidList.add(fk_uid);
             }
-            fk_uidList.add(fk_uid);
+
+            for (String fk_uid : fk_uidList) {
+                cList = new ArrayList<>();
+                List<Feature> tempList = new ArrayList<>();
+                for (Feature f : featureList) {
+                    if(f.getAttributeValue("FK_EDIT_UID")==null||f.getAttributeValue("FK_EDIT_UID").equals(""))
+                        continue;
+                    if (f.getAttributeValue("FK_EDIT_UID").toString().equals(fk_uid)) {
+                        cList.add(f);
+                        tempList.add(f);
+                    }
+                }
+                featureList.removeAll(tempList);
+                list.add(cList);
+            }
+            return list;
+        }catch(Exception e) {
+            ToastUtil.setToast(getActivity(),"解析数据异常"+e);
+            return  null;
         }
 
-        for (String fk_uid : fk_uidList) {
-            cList = new ArrayList<>();
-            List<Feature> tempList = new ArrayList<>();
-            for (Feature f : featureList) {
-                if (f.getAttributeValue("FK_EDIT_UID").toString().equals(fk_uid)) {
-                    cList.add(f);
-                    tempList.add(f);
-                }
-            }
-            featureList.removeAll(tempList);
-            list.add(cList);
-        }
-        return list;
+
     }
 
     /**
@@ -230,10 +235,14 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
      */
     public void allSelect(){
         //modeChoice(1);
+
         for (String key:cbMap.keySet()) {
             cbMap.put(key,true);
         }
-        exRefresh(mContext, fk_uidList, childList, cbMap, 1);
+        if(fk_uidList!=null&& fk_uidList.size()>0){
+            exRefresh(getActivity(), fk_uidList, childList, cbMap, 1);
+        }
+
     }
 
     /**
@@ -241,7 +250,7 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
      */
     public void modeChoice(int mode) {
         type = mode;
-        exRefresh(mContext, fk_uidList, childList, cbMap, mode);
+        exRefresh(getActivity(), fk_uidList, childList, cbMap, mode);
     }
 
     /**
@@ -265,11 +274,11 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
 
                 Feature feature;
                 try {
-                    feature = myLayer.getTable().getFeature(listfeature.get(groupPosition).get(childPosition).getId());
+                    feature = audittable.getFeature(listfeature.get(groupPosition).get(childPosition).getId());
                     attrMap = feature.getAttributes();
                 } catch (Exception e) {
-                    ToastUtil.setToast(mContext,"数据读取出错："+e);
-                    e.printStackTrace();
+                    ToastUtil.setToast(getActivity(),"数据读取出错："+e);
+                    //e.printStackTrace();
                     return false;
                 }
                 //选择布局模式
@@ -315,9 +324,9 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
         if (isTwoPane) {
             onRefresh.onRefreshDetial(map,flag);
             //fragment.editMode(false);
-        } else {
-            AuditInfoActivity.actionStart(mContext, map);
-        }
+        } /*else {
+            AuditInfoActivity.actionStart(getActivity(), map);
+        }*/
     }
 
     @Override
@@ -339,11 +348,11 @@ public class AuditCatalogFragment extends Fragment implements AuditHistory {
                         //showCompare(attrMap);
                         return;
                     }
-                    ToastUtil.setToast(mContext, "请选择两个记录");
-                } else if (type == 2) {
-                    AuditHistoryActivity historyActivity = (AuditHistoryActivity) getActivity();
-                    historyActivity.exportFile();
-                }
+                    ToastUtil.setToast(getActivity(), "请选择两个记录");
+                } /*else if (type == 2) {
+                    //AuditHistoryActivity historyActivity = (AuditHistoryActivity) getActivity();
+                    //historyActivity.exportFile();
+                }*/
                 break;
             case R.id.audit_multi_select:
                 break;

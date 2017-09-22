@@ -1,4 +1,4 @@
-package com.titan.ynsjy.auditHistory;
+package com.titan.ynsjy.audithistory;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,7 +20,7 @@ public class AuditCompareActivity extends AppCompatActivity {
     public static final String COMPARE_VIEWMODEL_TAG = "COMPARE_VIEWMODEL_TAG";
 
     private AuditCompareFragment compareFragment;
-    private AuditViewModel auditViewModel;
+    private AuditHistoryViewModel auditViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,17 +41,17 @@ public class AuditCompareActivity extends AppCompatActivity {
         return fragment;
     }
 
-    public AuditViewModel findOrCreateAuditViewModel() {
+    public AuditHistoryViewModel findOrCreateAuditViewModel() {
         @SuppressWarnings("unchecked")
-        ViewModelHolder<AuditViewModel> viewModel =
-                (ViewModelHolder<AuditViewModel>) getSupportFragmentManager()
+        ViewModelHolder<AuditHistoryViewModel> viewModel =
+                (ViewModelHolder<AuditHistoryViewModel>) getSupportFragmentManager()
                         .findFragmentByTag(COMPARE_VIEWMODEL_TAG);
         if (viewModel != null && viewModel.getViewmodel() != null) {
             // If the model was retained, return it.
             return viewModel.getViewmodel();
         } else {
             // There is no ViewModel yet, create it.
-            AuditViewModel auditViewModel = new AuditViewModel(compareFragment);
+            AuditHistoryViewModel auditViewModel = new AuditHistoryViewModel(compareFragment);
             // and bind it to this Activity's lifecycle using the Fragment Manager.
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(),

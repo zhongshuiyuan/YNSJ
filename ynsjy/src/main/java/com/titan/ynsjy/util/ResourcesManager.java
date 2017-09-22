@@ -94,6 +94,11 @@ public class ResourcesManager implements Serializable {
 		String name = otitan_map + "/title_fxh.tpk";
 		return getFilePath(name);
 	}
+	/** 获取基础地图的本地路径 */
+	public String getImagePath() {
+		String name = otitan_map + "/image.tpk";
+		return getFilePath(name);
+	}
 
 	public String getLayerPath(){
 		String path = otitan_map + "/dxt.tpk";
@@ -191,9 +196,10 @@ public class ResourcesManager implements Serializable {
 				dataPath = memoryPath[i] + ROOT_MAPS + path;
 				break;
 			} else {
-				if (path.equals("")) {
+				file.mkdirs();
+				/*if (path.equals("")) {
 					file.mkdirs();
-				}
+				}*/
 			}
 		}
 		return dataPath;
@@ -303,7 +309,7 @@ public class ResourcesManager implements Serializable {
      */
     public String getImagePath(long id) {
         //String str = getFolderPath(otms) + "/审计眼/images/T_img.jpg";
-        return  getFolderPath(otms) + "/审计眼/images/id"+id +"_img.jpg";
+        return  getFolderPath(otms) + "/审计眼/images/"+id +"_img.jpg";
 
     }
 
@@ -422,6 +428,21 @@ public class ResourcesManager implements Serializable {
 				continue;
 			}
 			groups.add(files[i].getName());
+		}
+		return groups;
+	}
+
+	/** 获取otms文件夹下的文件夹名 */
+	public List<File> getOtmsFolderFile() {
+		String path = otms;
+		File[] files = new File(getFolderPath(path)).listFiles();
+		List<File> groups = new ArrayList<>();
+		int files_lenght = files.length;
+		for (int i = 0; i < files_lenght; i++) {
+			if (!files[i].isDirectory()) {
+				continue;
+			}
+			groups.add(files[i]);
 		}
 		return groups;
 	}

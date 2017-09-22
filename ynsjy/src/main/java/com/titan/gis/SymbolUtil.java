@@ -3,6 +3,7 @@ package com.titan.gis;
 import android.content.Context;
 import android.graphics.Color;
 
+import com.esri.core.symbol.FillSymbol;
 import com.esri.core.symbol.PictureMarkerSymbol;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.titan.ynsjy.R;
@@ -15,6 +16,8 @@ import com.titan.ynsjy.R;
 public class SymbolUtil {
     //测量面积样式
     public static SimpleFillSymbol areaSymbol=new SimpleFillSymbol(Color.BLUE);
+    //一般填充样式
+    public static FillSymbol fillSymbol=new SimpleFillSymbol(Color.GREEN).setAlpha(80);
 
     /**
      * 获取兴趣点图标
@@ -26,5 +29,8 @@ public class SymbolUtil {
         pictureMarkerSymbol.setOffsetY(20);
         return pictureMarkerSymbol;
     }
+
+
+
 
 }

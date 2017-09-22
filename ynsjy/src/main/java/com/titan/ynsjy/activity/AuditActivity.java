@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,13 +16,20 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.esri.android.map.GraphicsLayer;
+import com.esri.android.map.ags.ArcGISLocalTiledLayer;
+import com.esri.android.map.event.OnStatusChangedListener;
+import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.map.Feature;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
+import com.titan.gis.SymbolUtil;
 import com.titan.util.Camera.CameraActivity;
 import com.titan.ynsjy.BaseActivity;
+import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.databinding.ActivityAuditBinding;
 import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.util.BaseUtil;
@@ -83,15 +91,56 @@ public class AuditActivity extends AppCompatActivity {
     private long newId;//新增小班id
     private String imagePath = "";//图片地址
     private boolean auditType = false;
+    private ActivityAuditBinding binding;
+    //审计的原始数据
+    private GeodatabaseFeature editfeature;
+    private GraphicsLayer editlayer;
+    private Graphic editgraphic;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mContext = AuditActivity.this;
-        setContentView(R.layout.dialog_audit);
+        mContext = this;
+        binding= DataBindingUtil.setContentView(this,R.layout.activity_audit);
+        //setContentView(R.layout.activity_audit);
+
         ButterKnife.bind(this);
         getData();
+        initView();
+
         setMyVisibility(auditType);
+    }
+
+    /**
+     * 初始化界面
+     */
+    private void initView() {
+        binding.mapviewAudit.setOnStatusChangedListener(new OnStatusChangedListener() {
+            @Override
+            public void onStatusChanged(Object o, STATUS status) {
+                if (STATUS.LAYER_LOADED == status) {
+                    //spatialReference=mapView.getSpatialReference();
+                    ToastUtil.setToast(mContext, "添加图层成功");
+                } else {
+                    //ProgressDialogUtil.stopProgressDialog(mContext);
+                    ToastUtil.setToast(mContext, "添加图层失败");
+                }
+            }
+        });
+        /* 基础底图 */
+        String titlePath = MyApplication.resourcesManager.getTitlePath();
+        ArcGISLocalTiledLayer titlelayer=new ArcGISLocalTiledLayer(titlePath);
+         /* 影像底图 */
+        String imagePath = MyApplication.resourcesManager.getImagePath();
+        ArcGISLocalTiledLayer imagelayer=new ArcGISLocalTiledLayer(imagePath);
+        binding.mapviewAudit.addLayer(titlelayer);
+        binding.mapviewAudit.addLayer(imagelayer);
+        editlayer=new GraphicsLayer();
+        editgraphic=new Graphic(editfeature.getGeometry(), SymbolUtil.fillSymbol);
+        editlayer.addGraphic(editgraphic);
+        binding.mapviewAudit.addLayer(editlayer);
+        binding.mapviewAudit.setExtent(editgraphic.getGeometry());
+
     }
 
     private void setMyVisibility(boolean auditType) {
@@ -120,9 +169,11 @@ public class AuditActivity extends AppCompatActivity {
                 AuditActivityPermissionsDispatcher.photographWithCheck(this);
                 break;
             case R.id.audit_sure:
+                //确定
                 saveData();
                 break;
             case R.id.audit_cancel:
+                //取消
                 this.finish();
                 break;
             case R.id.fragment_videotape:
@@ -187,7 +238,7 @@ public class AuditActivity extends AppCompatActivity {
 
     @OnPermissionDenied({Manifest.permission.CAMERA})
     void showRecordDenied() {
-        ToastUtil.setToast(mContext, "拒绝后将无法da打开相机，您可以在手机中手动授予权限");
+        ToastUtil.setToast(mContext, "拒绝后将无法打开相机，您可以在手机中手动授予权限");
     }
 
     /**
@@ -197,11 +248,11 @@ public class AuditActivity extends AppCompatActivity {
         myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
         featureTable = myLayer.getTable();
         Intent intent = getIntent();
-        if (intent != null) {
-            fid = intent.getLongExtra("fid", 0);
-            picPath = intent.getStringExtra("picPath");
-            auditType = intent.getBooleanExtra("auditType", false);
-        }
+        fid = intent.getLongExtra("fid", 0);
+        picPath = intent.getStringExtra("picPath");
+        auditType = intent.getBooleanExtra("auditType", false);
+        editfeature=BaseActivity.selGeoFeature;
+
     }
 
     /**
@@ -217,12 +268,13 @@ public class AuditActivity extends AppCompatActivity {
      * 新建数据
      */
     private void createFeature() {
-        Graphic g = new Graphic(null, null);
+        Graphic g = new Graphic(editgraphic.getGeometry(), null);
         try {
             newId = featureTable.addFeature(g);
             feature = featureTable.getFeature(newId);
         } catch (TableException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            ToastUtil.setToast(mContext,"新增审计图形数据失败"+e);
         }
     }
 

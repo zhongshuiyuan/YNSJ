@@ -6,20 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.TextView;
 
-import com.esri.core.map.Feature;
+import com.titan.model.TitanField;
 import com.titan.ynsjy.BR;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.databinding.AuditItemBinding;
-import com.titan.ynsjy.util.EDUtil;
-import com.titan.ynsjy.util.ViewHolderUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by hanyw on 2017/9/2/002.
@@ -28,33 +22,29 @@ import java.util.Map;
 
 public class AuditAdapter extends BaseAdapter {
     private Context mContext;
-    private String[] array = new String[]{"AUDIT_PEOPLE","MODIFYTIME","AUDIT_COORDINATE",
-            "MODIFYINFO","INFO","BEFOREINFO","AFTERINFO","REMARK"};
-    private Map<String,Object> map;
-    private List<Feature> list = new ArrayList<>();
-    private Map<String,Boolean> auditCheckMap;
+    //完整字段
+    private List<TitanField> fieldList;
+    //可见字段
+    private List<TitanField> visablefields=new ArrayList<>();
 
-    public AuditAdapter(Context context, Map<String, Object> map) {
+    public AuditAdapter(Context context,List<TitanField> fields) {
         this.mContext = context;
-        this.map = map;
-        //getList();
-    }
+        this.fieldList=fields;
+        for (TitanField field:fields){
+            if(field.isHasalias())
+                visablefields.add(field);
+        }
 
-//    public List<String> getList(List<Feature> featureList) {
-//        for (int i = 0; i < featureList.size(); i++) {
-//            list.add(featureList.get(i).getAttributeValue("MODIFYTIME").toString());
-//        }
-//        return list;
-//    }
+    }
 
     @Override
     public int getCount() {
-        return array.length;
+        return visablefields==null?0:visablefields.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return array[position];
+        return visablefields.get(position);
     }
 
     @Override
@@ -72,13 +62,8 @@ public class AuditAdapter extends BaseAdapter {
         }else {
             binding = DataBindingUtil.getBinding(convertView);
         }
-        binding.setVariable(BR.key,array[position]);
-        binding.setVariable(BR.value,map.get(array[position]));
-//        binding.setKey(array[position]);
-//        binding.setMap(map);
-//        final TextView tv_key = ViewHolderUtil.get(convertView,R.id.tv1);
-//        String key = EDUtil.getAttrValue(map,array[position]);
-//        tv_key.setText(array[position]+" : "+key);
+        binding.setVariable(BR.key,visablefields.get(position).getAlias());
+        binding.setVariable(BR.value,visablefields.get(position).getValue());
         return binding.getRoot();
     }
 

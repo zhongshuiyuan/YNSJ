@@ -81,7 +81,7 @@ public class ArcGISQueryUtils {
     public static void getQueryFeaturesAll(FeatureTable table,CallbackListener<FeatureResult> callbackListener){
         QueryParameters queryParams = new QueryParameters();
         queryParams.setOutFields(new String[]{"*"});
-        queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
+        //queryParams.setSpatialRelationship(SpatialRelationship.INTERSECTS);
         queryParams.setWhere("1=1");
         queryParams.setOutSpatialReference(BaseActivity.spatialReference);
         table.queryFeatures(queryParams,callbackListener);

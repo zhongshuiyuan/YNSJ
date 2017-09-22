@@ -38,7 +38,7 @@
             android:src="@drawable/share_tucengkongzhi" />
 
         <LinearLayout
-            android:id="@+id/sjjl_imageview"
+            android:id="@+id/ll_audithistory"
             android:layout_width="63dp"
             android:layout_height="63dp"
             android:orientation="vertical"

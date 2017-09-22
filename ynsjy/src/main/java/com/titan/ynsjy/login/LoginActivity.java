@@ -21,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel mViewModel;
     private LoginFragment mFragment;
     private Context mContext;
+    //矢量支持
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }

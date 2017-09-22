@@ -80,7 +80,7 @@ public class AuditDialog extends DialogFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.dialog_audit, container, false);
+        view = inflater.inflate(R.layout.activity_audit, container, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         this.mContext = getActivity();
         getData();

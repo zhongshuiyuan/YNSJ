@@ -5,15 +5,13 @@
     android:layout_gravity="center_horizontal"
     android:layout_marginBottom="50dp"
     android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp" >
-
+    android:layout_marginRight="20dp">
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:orientation="horizontal"
         android:padding="10dp" >
-
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +46,6 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:orientation="horizontal" >
-
         <RadioButton
             android:id="@+id/addfeature"
             android:layout_width="0dp"
@@ -164,6 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <RadioButton
@@ -236,6 +234,7 @@
         </RadioButton>
         
         <RadioButton
+            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
