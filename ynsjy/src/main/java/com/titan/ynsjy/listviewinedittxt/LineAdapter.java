@@ -901,228 +901,228 @@ public class LineAdapter extends BaseAdapter {
 
 	/** 弹出输入框dialog */
 	private void showKeyDialog(final Line line, final TextView editText) {
-		final Dialog dialog = new Dialog(mContext, R.style.Dialog);
-		dialog.setContentView(R.layout.dialog_edittxt_input);
-		dialog.setCanceledOnTouchOutside(false);
-		final SharedPreferences preferences = mContext.getSharedPreferences(line.getKey(), Context.MODE_PRIVATE);
-		final Set<String> items = preferences.getStringSet(line.getKey(),new HashSet<String>());
-		final ArrayList<String> list = new ArrayList<String>();
-		if (items.size() > 0) {
-			for (String str : items) {
-				list.add(str);
-			}
-		}
-		TextView aliasTxt = (TextView) dialog.findViewById(R.id.textView_two_alias);
-		aliasTxt.setText(line.getTview());
-
-		SwipeMenuListView listView = (SwipeMenuListView) dialog.findViewById(R.id.listView_two_selectvalue);
-
-		final EditText edit = (EditText) dialog.findViewById(R.id.edittxt_input);
-		listView.setVisibility(View.VISIBLE);
-		if(line.getTview().contains("成活率") || line.getTview().contains("保存率")){
-			if(zlchl != 0){
-				edit.setText(zlchl+"");
-			}
-			edit.setFocusable(false);
-			listView.setVisibility(View.GONE);
-			ToastUtil.setToast(mContext, "只能在样地中修改对应值");
-		}else if (line.getTview().contains("面积")) {
-			double area = Math.abs(selGeoFeature.getGeometry().calculateArea2D());
-			String strt = line.getText().trim();
-			double yarea = 0;
-			if(strt != null && !strt.equals("")){
-				boolean f = Util.CheckStrIsDouble(strt.trim());
-				if(f){
-					yarea = Double.parseDouble(strt.trim());
-				}
-			}
-
-			if(line.getTview().contains("公顷")){
-
-				if(yarea == 0){
-					edit.setText(df.format(area*0.0001));
-				}else if(area*0.0015 > yarea*15){
-					edit.setText(df.format(yarea));
-				}else{
-					double d = (yarea*15 - area*0.0015)/yarea*15 * 100;
-					ToastUtil.setToast(mContext, "误差率"+df.format(d)+"%");
-					if(d > 5){
-						edit.setText(df.format(area*0.0001));
-					}else{
-						edit.setText(df.format(yarea));
-					}
-				}
-			}else{
-				if(yarea == 0){
-					edit.setText(df.format(area*0.0015));
-				}else if(area*0.0015 > yarea){
-					edit.setText(df.format(yarea));
-				}else{
-					double d = (yarea - area*0.0015)/yarea * 100;
-					ToastUtil.setToast(mContext, "误差率"+df.format(d)+"%");
-					if(d > 5){
-						edit.setText(df.format(area*0.0015));
-					}else{
-						edit.setText(df.format(yarea));
-					}
-				}
-			}
-		}else if(line.getTview().contains("东经") || line.getTview().contains("北纬")){
-			View view = dialog.findViewById(R.id.textview_gszh);
-			view.setVisibility(View.VISIBLE);
-			edit.setText(editText.getText().toString());
-			TextView zhwxsh = (TextView) dialog.findViewById(R.id.zhuanhxshu);
-			zhwxsh.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					String txts = edit.getText().toString().trim();//106°39'50.151"
-					if((txts != null || txts.equals("")) && txts.contains("°")){
-						String[] jingdu = txts.split("°");
-						String[] weidu;
-						if(jingdu[1].trim().contains("'")){
-							weidu = jingdu[1].trim().split("\'");
-						}else{
-							ToastUtil.setToast(mContext, "数据格式不正确");
-							double str = Double.parseDouble(jingdu[0]);
-							DecimalFormat df = new DecimalFormat("0.000000");
-							edit.setText(df.format(str)+"");
-							setEditTextCursorLocation(edit);
-							return;
-						}
-						double miao = 0;
-						if(weidu[1].trim().contains("\"")){
-							miao = Double.parseDouble(weidu[1].trim().split("\"")[0]);
-						}else{
-							ToastUtil.setToast(mContext, "数据格式不正确");
-							double str = Double.parseDouble(jingdu[0])+Double.parseDouble(weidu[0])/60;
-							DecimalFormat df = new DecimalFormat("0.000000");
-							edit.setText(df.format(str)+"");
-							setEditTextCursorLocation(edit);
-							return;
-						}
-
-						double str = Double.parseDouble(jingdu[0])+Double.parseDouble(weidu[0])/60+miao/3600;
-						DecimalFormat df = new DecimalFormat("0.000000");
-						edit.setText(df.format(str)+"");
-						setEditTextCursorLocation(edit);
-					}
-				}
-			});
-
-			TextView dfmview = (TextView) dialog.findViewById(R.id.fhwdfmgs);
-			dfmview.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					String txt = editText.getText().toString().trim();
-					if(txt.contains("°")){
-						edit.setText(txt);
-						setEditTextCursorLocation(edit);
-					}else{
-						String txts = edit.getText().toString().trim();
-						boolean flag = Util.CheckStrIsDouble(txts);
-						if(flag){
-							int du = (int) Math.floor(Double.parseDouble(txts));
-							double fff = (Double.parseDouble(txts)-du)*60;
-							int fen =(int) Math.floor(fff);
-							DecimalFormat df = new DecimalFormat("0.000");
-							String miao = df.format((fff - fen)*60);
-							String str = du+"°"+fen+"'"+miao+"\"";
-							edit.setText(str);
-							setEditTextCursorLocation(edit);
-						}else{
-							ToastUtil.setToast(mContext, "数据格式不正确，转换不了");
-							return;
-						}
-					}
-				}
-			});
-		} else {
-			edit.setText(editText.getText().toString());
-		}
-		setEditTextCursorLocation(edit);
-
-		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.myspinner, list);
-		listView.setAdapter(adapter);
-
-		TextView sure = (TextView) dialog.findViewById(R.id.textView_two_sure);
-		sure.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				String bfText = line.getText();
-				hide(edit);
-				final String strTxt = edit.getText() == null ? null : edit.getText().toString();
-
-				if (line.getTview().contains("面积")) {
-					boolean result = Util.CheckStrIsDouble(strTxt);
-					if(!result){
-						ToastUtil.setToast(mContext, "输入数据不符合数据格式");
-						return;
-					}
-				}
-
-				editText.setText(strTxt);
-				dialog.dismiss();
-				line.setText(strTxt);
-				updataData(line, bfText, strTxt,strTxt);
-				setTextViewCursorLocation(editText);
-				updateSet(preferences, items, line, strTxt);
-			}
-		});
-
-		TextView back = (TextView) dialog.findViewById(R.id.textView_two_back);
-		back.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				hide(edit);
-				dialog.dismiss();
-			}
-		});
-
-		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-									int psition, long arg3) {
-				String selTxt = list.get(psition);
-				edit.setText(selTxt);
-				setTextViewCursorLocation(edit);
-			}
-		});
-
-		// step 1. create a MenuCreator
-		SwipeMenuCreator creator = new SwipeMenuCreator() {
-
-			@Override
-			public void create(SwipeMenu menu) {
-				// create "delete" item
-				addMenuItem(menu);
-
-			}
-		};
-		// set creator
-		listView.setMenuCreator(creator);
-
-		// step 2. listener item click event
-		listView.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public void onMenuItemClick(int position, SwipeMenu menu, int index) {
-				switch (index) {
-					case 0:
-						String str = list.get(position);
-						list.remove(str);
-						adapter.notifyDataSetChanged();
-						items.remove(str);
-						updateSet(preferences, items, line);
-						break;
-				}
-			}
-		});
-
-		BussUtil.setDialogParams(mContext, dialog, 0.5, 0.5);
+//		final Dialog dialog = new Dialog(mContext, R.style.Dialog);
+//		dialog.setContentView(R.layout.dialog_edittxt_input);
+//		dialog.setCanceledOnTouchOutside(false);
+//		final SharedPreferences preferences = mContext.getSharedPreferences(line.getKey(), Context.MODE_PRIVATE);
+//		final Set<String> items = preferences.getStringSet(line.getKey(),new HashSet<String>());
+//		final ArrayList<String> list = new ArrayList<String>();
+//		if (items.size() > 0) {
+//			for (String str : items) {
+//				list.add(str);
+//			}
+//		}
+//		TextView aliasTxt = (TextView) dialog.findViewById(R.id.textView_two_alias);
+//		aliasTxt.setText(line.getTview());
+//
+//		SwipeMenuListView listView = (SwipeMenuListView) dialog.findViewById(R.id.listView_two_selectvalue);
+//
+//		final EditText edit = (EditText) dialog.findViewById(R.id.edittxt_input);
+//		listView.setVisibility(View.VISIBLE);
+//		if(line.getTview().contains("成活率") || line.getTview().contains("保存率")){
+//			if(zlchl != 0){
+//				edit.setText(zlchl+"");
+//			}
+//			edit.setFocusable(false);
+//			listView.setVisibility(View.GONE);
+//			ToastUtil.setToast(mContext, "只能在样地中修改对应值");
+//		}else if (line.getTview().contains("面积")) {
+//			double area = Math.abs(selGeoFeature.getGeometry().calculateArea2D());
+//			String strt = line.getText().trim();
+//			double yarea = 0;
+//			if(strt != null && !strt.equals("")){
+//				boolean f = Util.CheckStrIsDouble(strt.trim());
+//				if(f){
+//					yarea = Double.parseDouble(strt.trim());
+//				}
+//			}
+//
+//			if(line.getTview().contains("公顷")){
+//
+//				if(yarea == 0){
+//					edit.setText(df.format(area*0.0001));
+//				}else if(area*0.0015 > yarea*15){
+//					edit.setText(df.format(yarea));
+//				}else{
+//					double d = (yarea*15 - area*0.0015)/yarea*15 * 100;
+//					ToastUtil.setToast(mContext, "误差率"+df.format(d)+"%");
+//					if(d > 5){
+//						edit.setText(df.format(area*0.0001));
+//					}else{
+//						edit.setText(df.format(yarea));
+//					}
+//				}
+//			}else{
+//				if(yarea == 0){
+//					edit.setText(df.format(area*0.0015));
+//				}else if(area*0.0015 > yarea){
+//					edit.setText(df.format(yarea));
+//				}else{
+//					double d = (yarea - area*0.0015)/yarea * 100;
+//					ToastUtil.setToast(mContext, "误差率"+df.format(d)+"%");
+//					if(d > 5){
+//						edit.setText(df.format(area*0.0015));
+//					}else{
+//						edit.setText(df.format(yarea));
+//					}
+//				}
+//			}
+//		}else if(line.getTview().contains("东经") || line.getTview().contains("北纬")){
+//			View view = dialog.findViewById(R.id.textview_gszh);
+//			view.setVisibility(View.VISIBLE);
+//			edit.setText(editText.getText().toString());
+//			TextView zhwxsh = (TextView) dialog.findViewById(R.id.zhuanhxshu);
+//			zhwxsh.setOnClickListener(new View.OnClickListener() {
+//
+//				@Override
+//				public void onClick(View arg0) {
+//					String txts = edit.getText().toString().trim();//106°39'50.151"
+//					if((txts != null || txts.equals("")) && txts.contains("°")){
+//						String[] jingdu = txts.split("°");
+//						String[] weidu;
+//						if(jingdu[1].trim().contains("'")){
+//							weidu = jingdu[1].trim().split("\'");
+//						}else{
+//							ToastUtil.setToast(mContext, "数据格式不正确");
+//							double str = Double.parseDouble(jingdu[0]);
+//							DecimalFormat df = new DecimalFormat("0.000000");
+//							edit.setText(df.format(str)+"");
+//							setEditTextCursorLocation(edit);
+//							return;
+//						}
+//						double miao = 0;
+//						if(weidu[1].trim().contains("\"")){
+//							miao = Double.parseDouble(weidu[1].trim().split("\"")[0]);
+//						}else{
+//							ToastUtil.setToast(mContext, "数据格式不正确");
+//							double str = Double.parseDouble(jingdu[0])+Double.parseDouble(weidu[0])/60;
+//							DecimalFormat df = new DecimalFormat("0.000000");
+//							edit.setText(df.format(str)+"");
+//							setEditTextCursorLocation(edit);
+//							return;
+//						}
+//
+//						double str = Double.parseDouble(jingdu[0])+Double.parseDouble(weidu[0])/60+miao/3600;
+//						DecimalFormat df = new DecimalFormat("0.000000");
+//						edit.setText(df.format(str)+"");
+//						setEditTextCursorLocation(edit);
+//					}
+//				}
+//			});
+//
+//			TextView dfmview = (TextView) dialog.findViewById(R.id.fhwdfmgs);
+//			dfmview.setOnClickListener(new View.OnClickListener() {
+//
+//				@Override
+//				public void onClick(View arg0) {
+//					String txt = editText.getText().toString().trim();
+//					if(txt.contains("°")){
+//						edit.setText(txt);
+//						setEditTextCursorLocation(edit);
+//					}else{
+//						String txts = edit.getText().toString().trim();
+//						boolean flag = Util.CheckStrIsDouble(txts);
+//						if(flag){
+//							int du = (int) Math.floor(Double.parseDouble(txts));
+//							double fff = (Double.parseDouble(txts)-du)*60;
+//							int fen =(int) Math.floor(fff);
+//							DecimalFormat df = new DecimalFormat("0.000");
+//							String miao = df.format((fff - fen)*60);
+//							String str = du+"°"+fen+"'"+miao+"\"";
+//							edit.setText(str);
+//							setEditTextCursorLocation(edit);
+//						}else{
+//							ToastUtil.setToast(mContext, "数据格式不正确，转换不了");
+//							return;
+//						}
+//					}
+//				}
+//			});
+//		} else {
+//			edit.setText(editText.getText().toString());
+//		}
+//		setEditTextCursorLocation(edit);
+//
+//		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.myspinner, list);
+//		listView.setAdapter(adapter);
+//
+//		TextView sure = (TextView) dialog.findViewById(R.id.textView_two_sure);
+//		sure.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				String bfText = line.getText();
+//				hide(edit);
+//				final String strTxt = edit.getText() == null ? null : edit.getText().toString();
+//
+//				if (line.getTview().contains("面积")) {
+//					boolean result = Util.CheckStrIsDouble(strTxt);
+//					if(!result){
+//						ToastUtil.setToast(mContext, "输入数据不符合数据格式");
+//						return;
+//					}
+//				}
+//
+//				editText.setText(strTxt);
+//				dialog.dismiss();
+//				line.setText(strTxt);
+//				updataData(line, bfText, strTxt,strTxt);
+//				setTextViewCursorLocation(editText);
+//				updateSet(preferences, items, line, strTxt);
+//			}
+//		});
+//
+//		TextView back = (TextView) dialog.findViewById(R.id.textView_two_back);
+//		back.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View arg0) {
+//				hide(edit);
+//				dialog.dismiss();
+//			}
+//		});
+//
+//		listView.setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> arg0, View arg1,
+//									int psition, long arg3) {
+//				String selTxt = list.get(psition);
+//				edit.setText(selTxt);
+//				setTextViewCursorLocation(edit);
+//			}
+//		});
+//
+//		// step 1. create a MenuCreator
+//		SwipeMenuCreator creator = new SwipeMenuCreator() {
+//
+//			@Override
+//			public void create(SwipeMenu menu) {
+//				// create "delete" item
+//				addMenuItem(menu);
+//
+//			}
+//		};
+//		// set creator
+//		listView.setMenuCreator(creator);
+//
+//		// step 2. listener item click event
+//		listView.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+//			@Override
+//			public void onMenuItemClick(int position, SwipeMenu menu, int index) {
+//				switch (index) {
+//					case 0:
+//						String str = list.get(position);
+//						list.remove(str);
+//						adapter.notifyDataSetChanged();
+//						items.remove(str);
+//						updateSet(preferences, items, line);
+//						break;
+//				}
+//			}
+//		});
+//
+//		BussUtil.setDialogParams(mContext, dialog, 0.5, 0.5);
 	}
 
 	public void addMenuItem(SwipeMenu menu){

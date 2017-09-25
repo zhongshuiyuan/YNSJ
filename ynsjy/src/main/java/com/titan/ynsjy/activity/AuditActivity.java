@@ -291,6 +291,7 @@ public class AuditActivity extends AppCompatActivity {
         map.put("AFTERINFO", auditEditAfter.getText().toString());
         map.put("REMARK", auditMark.getText().toString());
         map.put("INFO", auditInfo.getText().toString());
+        map.put("AUDIT_COORDINATE",BaseActivity.currentPoint.getX()+","+BaseActivity.currentPoint.getY());
         return map;
     }
 

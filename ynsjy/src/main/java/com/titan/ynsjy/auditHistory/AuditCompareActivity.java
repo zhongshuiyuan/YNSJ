@@ -35,7 +35,7 @@ public class AuditCompareActivity extends AppCompatActivity {
         AuditCompareFragment fragment = (AuditCompareFragment)
                 getSupportFragmentManager().findFragmentById(R.id.audit_compare);
         if (fragment == null) {
-            fragment = AuditCompareFragment.newIntance();
+            fragment = AuditCompareFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), fragment, R.id.audit_compare);
         }
         return fragment;

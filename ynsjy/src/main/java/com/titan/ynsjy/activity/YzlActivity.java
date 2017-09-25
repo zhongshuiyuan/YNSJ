@@ -85,7 +85,7 @@ public class YzlActivity extends BaseActivity  {
 					ToastUtil.setToast(mContext,"没有加载图层数据");
 					return;
 				}
-				if (selGeoFeaturesList.size()<0){
+				if (selGeoFeaturesList.size()<=0){
 					ToastUtil.setToast(mContext,"没有选择小班");
 					return;
 				}

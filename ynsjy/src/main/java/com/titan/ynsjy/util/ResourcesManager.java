@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.os.storage.StorageManager;
+import android.util.Log;
 
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.entity.Row;
@@ -155,8 +156,9 @@ public class ResourcesManager implements Serializable {
 	 * 获取导出文件目录
 	 */
 	public  String getExportPath(String date) throws Exception {
-		File file=new File(getTootPath()+ROOT_MAPS+export+"/"+date);
-        //File file=new File(getFilePath(export)+"/"+date);
+		//File file=new File(getTootPath()+ROOT_MAPS+export+"/"+date);
+        Log.e("tag","getpath:"+getFolderPath(ROOT_MAPS)+export+"/"+date);
+        File file=new File(getFolderPath(otms)+export+"/"+date);
         if(file.exists()){
             file.delete();
         }else {
@@ -420,6 +422,7 @@ public class ResourcesManager implements Serializable {
 	/** 获取otms文件夹下的文件夹名 */
 	public List<String> getOtmsFolderName() {
 		String path = otms;
+		Log.e("tag",new File(getFolderPath(path)).toString());
 		File[] files = new File(getFolderPath(path)).listFiles();
 		List<String> groups = new ArrayList<>();
 		int files_lenght = files.length;

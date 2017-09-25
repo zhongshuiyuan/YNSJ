@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<layout>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/audit_info_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-    <TextView
-        android:id="@+id/audit_placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="暂无数据"
-        android:gravity="center"
-        android:textSize="50sp"/>
-</LinearLayout>
+        <ListView
+            android:id="@+id/audit_info_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/audit_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/no_data"
+            android:gravity="center"
+            android:layout_marginBottom="50dp"
+            android:textSize="50sp"/>
+    </LinearLayout>
+</layout>
 

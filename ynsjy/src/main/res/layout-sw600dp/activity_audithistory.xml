@@ -66,6 +66,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
             </FrameLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/blue"/>
             <!--  <fragment
                   android:id="@+id/audit_catalog"
                   android:name="com.titan.ynsjy.AuditHistory.AuditCatalogFragment"

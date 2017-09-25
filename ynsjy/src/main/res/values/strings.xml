@@ -175,6 +175,7 @@
     <string name="audit_edit_before">修改前状况</string>
     <string name="audit_edit_after">修改后状况</string>
     <string name="audit_mark">备 注</string>
+    <string name="no_data">暂无数据</string>
 
     <!--自定义相机-->
     <string name="picture">Picture</string>

@@ -45,7 +45,13 @@ public class CalloutUtil {
                 if(!ReUtil.hasChinese(alias)){
                   continue;
                 }else{
-                    String value=attrmap.get(field.getName()).toString();
+                    Object object = attrmap.get(field.getName());
+                    String value;
+                    if (object!=null){
+                        value = attrmap.get(field.getName()).toString();
+                    }else {
+                        value = "";
+                    }
                     calloutcontent.append(alias + " | " + value + "\n");
                 }
             }

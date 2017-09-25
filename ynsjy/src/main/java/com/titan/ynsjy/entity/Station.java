@@ -7,7 +7,7 @@ import com.titan.ynsjy.db.sqlite.Table;
 @Table(name = "station")
 public class Station {
 	/**小地名表主键id*/
-	@Id(autoGenerate = true, name = "id")
+	@Id(autoGenerate = true, name = "Id")
 	private Long id;
 	public Long getId() {
 		return id;

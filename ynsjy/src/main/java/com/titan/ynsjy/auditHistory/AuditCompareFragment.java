@@ -1,4 +1,4 @@
-package com.titan.ynsjy.audithistory;
+package com.titan.ynsjy.auditHistory;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,22 +8,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
-import com.titan.model.AuditInfo;
+import com.titan.ynsjy.adapter.AuditAdapter;
 import com.titan.ynsjy.databinding.FragAuditCompareBinding;
-import com.titan.ynsjy.util.EDUtil;
+import com.titan.ynsjy.dialog.AuditInfoEditDialog;
+import com.titan.ynsjy.util.ToastUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- * Created by hanyw on 2017/9/15/015.
- * 审计历史对比页面
+ * Created by hanyw on 2017/9/7/007.
+ * 审计详细内容对比页面
  */
 
-public class AuditCompareFragment extends Fragment implements AuditCompare {
+public class AuditCompareFragment extends Fragment implements AuditCompare{
     private Context mContext;
     private String[] attrArray = new String[]{"OBJECTID","AUDIT_PEOPLE","MODIFYTIME","AUDIT_COORDINATE",
             "MODIFYINFO","INFO","BEFOREINFO","AFTERINFO","REMARK"};
@@ -31,14 +31,16 @@ public class AuditCompareFragment extends Fragment implements AuditCompare {
 
     public static AuditCompareFragment singleton;
     private FragAuditCompareBinding binding;
+    private AuditInfoEditDialog dialog;
 
-    private AuditHistoryViewModel auditViewModel;
-    public static AuditCompareFragment newIntance() {
+    private AuditViewModel auditViewModel;
+    public static AuditCompareFragment newInstance() {
         if (singleton == null) {
             singleton = new AuditCompareFragment();
         }
         return singleton;
     }
+
 
     @Nullable
     @Override
@@ -48,62 +50,53 @@ public class AuditCompareFragment extends Fragment implements AuditCompare {
         binding.setViewModel(auditViewModel);
         setData();
         return binding.getRoot();
+        //view = inflater.inflate(R.layout.audit_history_info, container, false);
+        //unbinder = ButterKnife.bind(this, view);
+        //return view;
     }
 
-    public void setViewModel(AuditHistoryViewModel viewModel) {
+    public void setViewModel(AuditViewModel viewModel) {
         auditViewModel = viewModel;
     }
 
     public void setData() {
         Bundle bundle = getActivity().getIntent().getExtras();
         dataList = (List<Map<String, Object>>) bundle.getSerializable("dataList");
-
         Log.e("tag",dataList+"dataList");
         try {
             if (dataList != null && dataList.size() == 2) {
+                Log.e("tag","data");
+//                for (int i = 0; i < dataList.size(); i++) {
+//
+//                }
                 Map<String, Object> map1 = dataList.get(0);
                 Map<String, Object> map2 = dataList.get(1);
-                AuditInfo info1 = new AuditInfo();
-                List<AuditInfo> auditInfos=new ArrayList<>();
+//                AuditInfo info1 = new AuditInfo();
+//                info1.setAuditer(EDUtil.getAttrValue(map1, "AUDIT_PEOPLE"));
+//                info1.setObjectid(EDUtil.getAttrValue(map1, "OBJECTID"));
+//                info1.setAddress(EDUtil.getAttrValue(map1, "AUDIT_COORDINATE"));
+//                info1.setTime(EDUtil.getAttrValue(map1, "MODIFYTIME"));
+//                info1.setReason(EDUtil.getAttrValue(map1, "MODIFYINFO"));
+//                info1.setInfo(EDUtil.getAttrValue(map1, "INFO"));
+//                info1.setBeforinfo(EDUtil.getAttrValue(map1, "BEFOREINFO"));
+//                info1.setAfterinfo(EDUtil.getAttrValue(map1, "AFTERINFO"));
+//                info1.setRemark(EDUtil.getAttrValue(map1, "REMARK"));
+//                Log.e("tag","mcontext:"+mContext);
+                ListView listView1 = binding.auditHistoryFirst.auditInfoList;
+                AuditAdapter adapter1 = new AuditAdapter(mContext,map1,auditViewModel);
+                listView1.setVisibility(View.VISIBLE);
+                listView1.setAdapter(adapter1);
+                ListView listView2 = binding.auditHistorySecond.auditInfoList;
+                AuditAdapter adapter2 = new AuditAdapter(mContext,map2,auditViewModel);
+                listView2.setVisibility(View.VISIBLE);
+                listView2.setAdapter(adapter2);
 
-                for (Map<String,Object> map :dataList){
-                    AuditInfo auditInfo=new AuditInfo();
-                    auditInfo.setAuditer(EDUtil.getAttrValue(map1, "AUDIT_PEOPLE"));
-                    auditInfo.setObjectid(EDUtil.getAttrValue(map1, "OBJECTID"));
-                    auditInfo.setAddress(EDUtil.getAttrValue(map1, "AUDIT_COORDINATE"));
-                    auditInfo.setTime(EDUtil.getAttrValue(map1, "MODIFYTIME"));
-                    auditInfo.setReason(EDUtil.getAttrValue(map1, "MODIFYINFO"));
-                    auditInfo.setInfo(EDUtil.getAttrValue(map1, "INFO"));
-                    auditInfo.setBeforinfo(EDUtil.getAttrValue(map1, "BEFOREINFO"));
-                    auditInfo.setAfterinfo(EDUtil.getAttrValue(map1, "AFTERINFO"));
-                    auditInfo.setRemark(EDUtil.getAttrValue(map1, "REMARK"));
-                    auditInfos.add(auditInfo);
-                }
-                binding.setAuditInfo(auditInfos.get(0));
-                binding.setAuditInfo2(auditInfos.get(1));
-
-
-
-
-                //binding.setAuditInfo(info1);
-              /*  AuditInfo info2 = new AuditInfo();
-                info2.setAuditer(EDUtil.getAttrValue(map2, "AUDIT_PEOPLE"));
-                info2.setObjectid(EDUtil.getAttrValue(map2, "OBJECTID"));
-                info2.setAddress(EDUtil.getAttrValue(map2, "AUDIT_COORDINATE"));
-                info2.setTime(EDUtil.getAttrValue(map2, "MODIFYTIME"));
-                info2.setReason(EDUtil.getAttrValue(map2, "MODIFYINFO"));
-                info2.setInfo(EDUtil.getAttrValue(map2, "INFO"));
-                info2.setBeforinfo(EDUtil.getAttrValue(map2, "BEFOREINFO"));
-                info2.setAfterinfo(EDUtil.getAttrValue(map2, "AFTERINFO"));
-                info2.setRemark(EDUtil.getAttrValue(map2, "REMARK"));*/
-                //binding.setAuditInfo2(info2);
-
-               /* Field[] fields = info2.getClass().getDeclaredFields();
-                for(Field field : fields) {
-                    field.setAccessible(true); // 这句使我们可以访问似有成员变量
-                    Object property = field.get(info2);
-                    Log.e("tag",property.toString());
-                }*/
+//                Field[] fields = info2.getClass().getDeclaredFields();
+//                for(Field field : fields) {
+//                    field.setAccessible(true); // 这句使我们可以访问似有成员变量
+//                    Object property = field.get(info2);
+//                    Log.e("tag",property.toString());
+//                }
             }
         }catch (Exception e){
             Log.e("tag","setdata:"+e);
@@ -113,5 +106,27 @@ public class AuditCompareFragment extends Fragment implements AuditCompare {
     @Override
     public void close() {
         getActivity().finish();
+    }
+
+    @Override
+    public void sure() {
+        ToastUtil.setToast(mContext,"compare");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+
+    @Override
+    public void showEditDialog(String alias, String value) {
+        dialog = AuditInfoEditDialog.newInstance(alias,value);
+        dialog.show(getFragmentManager(),"editDialog");
+    }
+
+    @Override
+    public void closeDialog() {
+        dialog.dismiss();
     }
 }
