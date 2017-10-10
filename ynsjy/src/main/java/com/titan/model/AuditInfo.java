@@ -1,5 +1,7 @@
 package com.titan.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by whs on 2017/9/12
  * 审计信息
@@ -8,6 +10,8 @@ package com.titan.model;
 public class AuditInfo {
     //ID 主键
     private String objectid;
+    //ID 外键 原始小班ID
+    private String resourceid;
     //审计人员
     private String auditer;
     //审计时间
@@ -96,5 +100,27 @@ public class AuditInfo {
 
     public void setObjectid(String objectid) {
         this.objectid = objectid;
+    }
+
+    public ArrayList<String> toListString(){
+        //String[] title = { "编号","审计人员","审计时间","审计地址","描述信息","修改前情况","修改后情况","备注"};
+        ArrayList<String> result=new ArrayList<>();
+        result.add(this.getObjectid()==null?"":this.getObjectid());
+        result.add(this.getAuditer()==null?"":this.getAuditer());
+        result.add(this.getTime()==null?"":this.getTime());
+        result.add(this.getAddress()==null?"":this.getAddress());
+        result.add(this.getInfo()==null?"":this.getInfo());
+        result.add(this.getBeforinfo()==null?"":this.getBeforinfo());
+        result.add(this.getAfterinfo()==null?"":this.getAfterinfo());
+        result.add(this.getRemark()==null?"":this.getRemark());
+        return result;
+    }
+
+    public String getResourceid() {
+        return resourceid;
+    }
+
+    public void setResourceid(String resourceid) {
+        this.resourceid = resourceid;
     }
 }

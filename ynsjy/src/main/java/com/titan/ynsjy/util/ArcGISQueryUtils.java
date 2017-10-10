@@ -35,7 +35,7 @@ public class ArcGISQueryUtils {
         queryParams.setReturnGeometry(true);
         queryParams.setWhere("1=1");
         queryParams.setOutSpatialReference(spatialReference);
-        layer.selectFeatures(queryParams, FeatureLayer.SelectionMode.ADD, callbackListener);
+        layer.selectFeatures(queryParams, FeatureLayer.SelectionMode.NEW, callbackListener);
     }
 
     /**

@@ -9,7 +9,4 @@ public interface AuditCompare {
     void setData();
 
     void close();
-    void showEditDialog(String alias,String value);
-    void closeDialog();
-    void sure();
 }

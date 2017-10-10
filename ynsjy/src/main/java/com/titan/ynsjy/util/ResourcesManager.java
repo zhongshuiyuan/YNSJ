@@ -7,9 +7,8 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.os.storage.StorageManager;
-import android.util.Log;
 
-import com.titan.ynsjy.R;
+import com.esri.core.geodatabase.Geodatabase;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.service.PullParseXml;
 
@@ -96,10 +95,24 @@ public class ResourcesManager implements Serializable {
 		return getFilePath(name);
 	}
 	/** 获取基础地图的本地路径 */
-	public String getImagePath() {
-		String name = otitan_map + "/image.tpk";
-		return getFilePath(name);
+    public String getImagePath() {
+        String name = otitan_map + "/image.tpk";
+        return getFilePath(name);
+    }
+
+    /** 获取项目根目录 */
+    public String getProjectPath(String projectname) {
+		try {
+			return getTootPath()+ROOT_MAPS + otms+projectname;
+		} catch (Exception e) {
+			return  null;
+		}
 	}
+
+    /** 获取审计项目根目录 */
+    public String getSJPath() {
+        return getProjectPath("/审计眼");
+    }
 
 	public String getLayerPath(){
 		String path = otitan_map + "/dxt.tpk";
@@ -156,9 +169,8 @@ public class ResourcesManager implements Serializable {
 	 * 获取导出文件目录
 	 */
 	public  String getExportPath(String date) throws Exception {
-		//File file=new File(getTootPath()+ROOT_MAPS+export+"/"+date);
-        Log.e("tag","getpath:"+getFolderPath(ROOT_MAPS)+export+"/"+date);
-        File file=new File(getFolderPath(otms)+export+"/"+date);
+		File file=new File(getTootPath()+ROOT_MAPS+export+"/"+date);
+        //File file=new File(getFilePath(export)+"/"+date);
         if(file.exists()){
             file.delete();
         }else {
@@ -167,19 +179,6 @@ public class ResourcesManager implements Serializable {
 		return  file.getPath();
 	}
 
-    /** 取文件可用地址 */
-   /* public String getFilePath(String path) {
-        String dataPath = "文件可用地址";
-        String[] memoryPath = getMemoryPath();
-        for (int i = 0; i < memoryPath.length; i++) {
-            File file = new File(memoryPath[i] + ROOT_MAPS + path);
-            if (file.exists() && file.isFile()) {
-                dataPath = memoryPath[i] + ROOT_MAPS + path;
-                break;
-            }
-        }
-        return dataPath;
-    }*/
 
 	/**获取excel文件保存地址*/
 	public String getExcelPath() {
@@ -314,6 +313,11 @@ public class ResourcesManager implements Serializable {
         return  getFolderPath(otms) + "/审计眼/images/"+id +"_img.jpg";
 
     }
+	public  String getSJImagePath() {
+		//String str = getFolderPath(otms) + "/审计眼/images/T_img.jpg";
+		return  getFolderPath(otms) + "/审计眼/images";
+
+	}
 
 	/** 获取贵阳市影像图 */
 	public String getArcGISLocalImageLayerPath() {
@@ -422,7 +426,6 @@ public class ResourcesManager implements Serializable {
 	/** 获取otms文件夹下的文件夹名 */
 	public List<String> getOtmsFolderName() {
 		String path = otms;
-		Log.e("tag",new File(getFolderPath(path)).toString());
 		File[] files = new File(getFolderPath(path)).listFiles();
 		List<String> groups = new ArrayList<>();
 		int files_lenght = files.length;
@@ -451,9 +454,22 @@ public class ResourcesManager implements Serializable {
 	}
 
 	/** 获取otms中每个文件夹下的.otms或者.geodatabase数据 */
-	public List<Map<String, List<File>>> getChildeData(Context ctx,
-													   List<File> groups) {
-		String[] str = ctx.getResources().getStringArray(R.array.data_sx);
+	public List<Geodatabase> getChildGdb(Context ctx, List<File> groups) {
+		//String[] str = ctx.getResources().getStringArray(R.array.data_sx);
+		int groups_length = groups.size();
+		List<Geodatabase> geodatabases = new ArrayList<>();
+		for (int i = 0; i < groups_length; i++) {
+			String path = otms + "/" + groups.get(i).getName();
+			File[] files = new File(getFolderPath(path)).listFiles();
+			List<Geodatabase> list = getGdbs(files);
+			geodatabases.addAll(list);
+
+		}
+		return geodatabases;
+	}
+	/** 获取otms中每个文件夹下的.otms或者.geodatabase数据 */
+	public List<Map<String, List<File>>> getChildeData(Context ctx, List<File> groups) {
+		//String[] str = ctx.getResources().getStringArray(R.array.data_sx);
 		int groups_length = groups.size();
 		List<Map<String, List<File>>> childs = new ArrayList<Map<String, List<File>>>();
 		for (int i = 0; i < groups_length; i++) {
@@ -461,7 +477,8 @@ public class ResourcesManager implements Serializable {
 			String path = otms + "/" + groups.get(i).getName();
 			File[] files = new File(getFolderPath(path)).listFiles();
 			List<File> list = getOtmsData(files);
-			for (String qxname : str) {
+			/*for (String qxname : str) {
+				//区县名
 				for (int k = 0; k < list.size(); k++) {
 					String fileName = list.get(k).getName();
 					if (fileName.contains(qxname)) {
@@ -469,7 +486,7 @@ public class ResourcesManager implements Serializable {
 						list.remove(k);
 					}
 				}
-			}
+			}*/
 			list_0.addAll(list);
 			Map<String, List<File>> map = new HashMap<String, List<File>>();
 			map.put(groups.get(i).getName(), list_0);
@@ -477,6 +494,7 @@ public class ResourcesManager implements Serializable {
 		}
 		return childs;
 	}
+
 
 	public List<File> getOtmsData(File[] files) {
 		List<File> list = new ArrayList<File>();
@@ -486,6 +504,25 @@ public class ResourcesManager implements Serializable {
 					continue;
 				if (file.getName().endsWith(".otms")||file.getName().endsWith(".geodatabase")) {
 					list.add(file);
+				}
+			}
+		}
+		return list;
+	}
+
+	public List<Geodatabase> getGdbs(File[] files) {
+		List<Geodatabase> list = new ArrayList<>();
+		if (files.length > 0) {
+			for (File file : files) {
+				if (file.isDirectory())
+					continue;
+				if (file.getName().endsWith(".geodatabase")) {
+					try {
+						list.add(new Geodatabase(file.getAbsolutePath()));
+					} catch (FileNotFoundException e) {
+						//e.printStackTrace();
+						continue;
+					}
 				}
 			}
 		}
@@ -619,9 +656,9 @@ public class ResourcesManager implements Serializable {
 			return null;
 		}
 		List<String> fileList = new ArrayList<>();
-		for (File f : filePath) {
+		for (File f : filePath)  {
 			String imgName = StringUtils.substringAfterLast(f.getPath(),File.separator);
-			Boolean flag = imgName.startsWith("id"+name+"_")&&(imgName.endsWith(".jpg")||imgName.endsWith(".mp4"));
+			Boolean flag = imgName.startsWith(name+"_")&&(imgName.endsWith(".jpg")||imgName.endsWith(".mp4"));
 			if (!f.isFile() || !flag) {
 				continue;
 			}
@@ -658,7 +695,7 @@ public class ResourcesManager implements Serializable {
 	 */
 	public static String getPicName(String id) {
 		Date date = new Date(System.currentTimeMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("'id'"+id+"_yyyyMMddHHmmss", Locale.CHINA);
+		SimpleDateFormat sdf = new SimpleDateFormat(id+"_yyyyMMddHHmmss", Locale.CHINA);
 		return sdf.format(date) + ".jpg";
 	}
 
@@ -668,7 +705,7 @@ public class ResourcesManager implements Serializable {
 	 */
 	public static String getVideoName(String id) {
 		Date date = new Date(System.currentTimeMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("'id'"+id+"_yyyyMMddHHmmss", Locale.CHINA);
+		SimpleDateFormat sdf = new SimpleDateFormat(id+"_yyyyMMddHHmmss", Locale.CHINA);
 		return sdf.format(date) + ".mp4";
 	}
 

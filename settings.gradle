@@ -1,1 +1,3 @@
-include ':proj4android', ':ynsjy', ':versionupdata', ':baselibrary', ':photopicker', ':ynsj'
+include ':proj4android',':baselibrary',':versionupdata', ':photopicker',':ynsjy',':drawtoollib'
+     //    ':versionupdata',':proj4android',     //   ':ynsjy', ,':proj4android',
+

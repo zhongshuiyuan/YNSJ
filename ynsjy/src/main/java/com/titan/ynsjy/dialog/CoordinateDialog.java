@@ -116,12 +116,18 @@ public class CoordinateDialog extends Dialog {
         final EditText edit_x = (EditText) findViewById(R.id.edit_x);
         // 米制y
         final EditText edit_y = (EditText) findViewById(R.id.edit_y);
-
+        //当前坐标
         TextView lon = (TextView) findViewById(R.id.location_lon);
-        lon.setText(iBaseView.getCurrentLon() + "");
 
         TextView lat = (TextView) findViewById(R.id.location_lat);
-        lat.setText(iBaseView.getCurrenLat() + "");
+        if(iBaseView.getCurrentPoint()!=null){
+            lon.setText(iBaseView.getCurrentPoint().getX() + "");
+            lat.setText(iBaseView.getCurrentPoint().getY() + "");
+        }else {
+            lon.setText("坐标异常");
+            lat.setText("坐标异常");
+        }
+
 
         // 确定按钮
         Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
@@ -142,12 +148,13 @@ public class CoordinateDialog extends Dialog {
                         ToastUtil.setToast(mContext, "请输入对应数据");
                         return;
                     }
-                    //
+                    //经度
                     x = Double.valueOf(edit_jd.getText().toString().trim());
+                    //纬度
                     y = Double.valueOf(edit_wd.getText().toString().trim());
 
                     // 判断经纬度是否在中国境内
-                    if (y > 135 || y < 74 || x > 54 || x < 3) {
+                    if (x > 135 || x < 74 || y > 54 || y < 3) {
                         ToastUtil.setToast(mContext, "坐标范围不在中国内,请重新输入");
                         return;
                     }

@@ -12,8 +12,10 @@ public class TitanField {
     private  String name;
     //值
     private  String value;
-    //是否有别名
+    //是否有中文别名
     private  boolean hasalias;
+    //字段类型
+    private  int fieldtype;
 
     public TitanField() {
     }
@@ -53,5 +55,13 @@ public class TitanField {
 
     public void setHasalias(boolean hasalias) {
         this.hasalias = hasalias;
+    }
+
+    public int getFieldtype() {
+        return fieldtype;
+    }
+
+    public void setFieldtype(int fieldtype) {
+        this.fieldtype = fieldtype;
     }
 }

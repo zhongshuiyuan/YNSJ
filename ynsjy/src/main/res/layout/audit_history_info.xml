@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <com.esri.android.map.MapView
+            android:id="@+id/mapview_audithistory"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:visibility="gone">
+        </com.esri.android.map.MapView>
         <ListView
             android:id="@+id/audit_info_list"
             android:layout_width="match_parent"
@@ -15,10 +19,9 @@
             android:id="@+id/audit_placeholder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/no_data"
+            android:text="暂无数据"
             android:gravity="center"
-            android:layout_marginBottom="50dp"
             android:textSize="50sp"/>
     </LinearLayout>
-</layout>
+
 

@@ -9,10 +9,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/baselibrary" />
+            <option value="$PROJECT_DIR$/drawtoollib" />
             <option value="$PROJECT_DIR$/photopicker" />
             <option value="$PROJECT_DIR$/proj4android" />
             <option value="$PROJECT_DIR$/versionupdata" />
-            <option value="$PROJECT_DIR$/ynsj" />
             <option value="$PROJECT_DIR$/ynsjy" />
           </set>
         </option>

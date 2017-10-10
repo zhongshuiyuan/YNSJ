@@ -56,7 +56,7 @@
             android:button="@null"
             android:onClick="addFeature" >
         </RadioButton>
-
+        
         <!--<RadioButton
             android:id="@+id/addfeaturegb"
             android:layout_width="0dp"
@@ -67,7 +67,7 @@
             android:button="@null"
             android:onClick="addFeatureGb" >
         </RadioButton>-->
-
+        
         <!--<RadioButton
             android:id="@+id/copyButton"
             android:layout_width="0dp"
@@ -220,7 +220,7 @@
                 android:layout_marginTop="1dp"/>
         </LinearLayout>
         <!--android:background="@drawable/xbbj_attribte"-->
-
+        
         <RadioButton
             android:id="@+id/selectButton"
             android:layout_width="0dp"
@@ -232,7 +232,7 @@
             android:onClick="selectFeature"
             android:visibility="gone">
         </RadioButton>
-
+        
         <RadioButton
             android:visibility="gone"
             android:layout_width="0dp"
@@ -243,7 +243,7 @@
             android:button="@null"
             android:onClick="mapRemove" >
         </RadioButton>
-
+        
         <RadioButton
             android:layout_width="0dp"
             android:layout_height="wrap_content"

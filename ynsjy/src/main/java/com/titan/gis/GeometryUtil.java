@@ -3,7 +3,6 @@ package com.titan.gis;
 import com.esri.android.map.GraphicsLayer;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
-import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.MultiPoint;
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.Polygon;
@@ -26,7 +25,7 @@ public class GeometryUtil {
      * @return
      */
     public static Polygon polyline2Polygon(Polyline polyline, SpatialReference spatialReference){
-        Polyline mPolyline= (Polyline) GeometryEngine.simplify(polyline,spatialReference);
+        //Polyline mPolyline= (Polyline) GeometryEngine.simplify(polyline,spatialReference);
         Polygon polygon=new Polygon();
         int size = polyline.getPointCount();
         polygon.startPath(polyline.getPoint(0));

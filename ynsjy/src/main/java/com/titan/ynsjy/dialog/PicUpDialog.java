@@ -71,9 +71,9 @@ public class PicUpDialog extends Dialog {
     /*控件初始化*/
     private void initView(){
         viewLon =(TextView) findViewById(R.id.uppic_lon);
-        viewLon.setText(activity.currentLon+"");
+        viewLon.setText(activity.getCurrentPoint().getX()+"");
         viewLat =(TextView) findViewById(R.id.uppic_lat);
-        viewLat.setText(activity.currentLat+"");
+        viewLat.setText(activity.getCurrentPoint().getY()+"");
         viewMiaoshu =(EditText) findViewById(R.id.uppic_miaoshu);
         viewBz =(EditText) findViewById(R.id.uppic_beizhu);
         picselect =(View) findViewById(R.id.picselect_view);

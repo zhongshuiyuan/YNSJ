@@ -45,27 +45,33 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="150dp"
             android:visibility="gone" />
-        <!--比例尺-->
-        <TextView
-            android:id="@+id/mapScaleValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|bottom"
+        <LinearLayout
+            android:layout_gravity="bottom"
             android:layout_marginBottom="240dp"
             android:layout_marginLeft="100dp"
-            android:background="@color/transparent"
-            android:textColor="@color/red" />
-
-        <!--当前坐标值-->
-        <TextView
-            android:id="@+id/mylocationValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|bottom"
-            android:layout_marginBottom="200dp"
-            android:layout_marginLeft="100dp"
-            android:background="@color/transparent"
-            android:textColor="@color/red" />
+            android:orientation="vertical">
+            <!--比例尺-->
+            <TextView
+                android:id="@+id/mapScaleValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:background="@color/transparent"
+                android:textColor="@color/red" />
+
+            <!--当前坐标值-->
+            <TextView
+                android:id="@+id/mylocationValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:layout_marginTop="10dp"
+                android:background="@color/transparent"
+                android:textColor="@color/red" />
+        </LinearLayout>
+
         <!--图层控制-->
         <include
             android:id="@+id/tckz_include"
@@ -156,8 +162,7 @@
             android:layout_gravity="bottom|left"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="100dp"
-            android:visibility="visible" />
-
+            android:visibility="gone" />
 
     </FrameLayout>
 </layout>

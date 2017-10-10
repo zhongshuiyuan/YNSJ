@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="titanfield"
+            type="com.titan.model.TitanField" />
+    </data>
+    <LinearLayout
+        style="@style/audit_view_linear_style">
+        <TextView
+            android:id="@+id/tv_alias"
+            style="@style/audit_view_tv_style"
+            android:text="@={titanfield.alias}"
+            />
+        <EditText
+            android:id="@+id/et_value"
+            style="@style/audit_view_ed_style"
+            android:text="@={titanfield.value}"/>
+    </LinearLayout>
+</layout>

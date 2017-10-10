@@ -1,7 +1,6 @@
 package com.titan.ynsjy.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -140,7 +139,6 @@ public class ExcelUtil {
                 //Toast.makeText(c, "导出到手机存储中文件夹Record成功", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.e("tag","1:"+e.toString());
                 return false;
             } finally {
                 if (writebook != null) {
@@ -148,7 +146,6 @@ public class ExcelUtil {
                         writebook.close();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.e("tag","2:"+e.toString());
                     }
 
                 }
@@ -157,7 +154,6 @@ public class ExcelUtil {
                         in.close();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Log.e("tag","3:"+e.toString());
                     }
                 }
                 return true;

@@ -4,10 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/YNSJY.iml" filepath="$PROJECT_DIR$/YNSJY.iml" />
       <module fileurl="file://$PROJECT_DIR$/baselibrary/baselibrary.iml" filepath="$PROJECT_DIR$/baselibrary/baselibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/drawtoollib/drawtoollib.iml" filepath="$PROJECT_DIR$/drawtoollib/drawtoollib.iml" />
       <module fileurl="file://$PROJECT_DIR$/photopicker/photopicker.iml" filepath="$PROJECT_DIR$/photopicker/photopicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/proj4android/proj4android.iml" filepath="$PROJECT_DIR$/proj4android/proj4android.iml" />
       <module fileurl="file://$PROJECT_DIR$/versionupdata/versionupdata.iml" filepath="$PROJECT_DIR$/versionupdata/versionupdata.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ynsj/ynsj.iml" filepath="$PROJECT_DIR$/ynsj/ynsj.iml" />
       <module fileurl="file://$PROJECT_DIR$/ynsjy/ynsjy.iml" filepath="$PROJECT_DIR$/ynsjy/ynsjy.iml" />
     </modules>
   </component>

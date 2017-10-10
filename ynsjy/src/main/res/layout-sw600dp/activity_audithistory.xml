@@ -21,6 +21,12 @@
                 android:layout_weight="1"
                 android:text="@string/audit_history"
                 style="@style/title_style" />
+            <!--<TextView
+                android:id="@+id/audit_space"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/auditspace"
+                style="@style/textview_btn_style"/>-->
             <TextView
                 android:id="@+id/audit_export"
                 android:layout_width="wrap_content"
@@ -39,6 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="@string/audit_add_compare"
+                android:visibility="gone"
                 style="@style/textview_btn_style" />
             <TextView
                 android:id="@+id/audit_add_cancel"
@@ -66,10 +73,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
             </FrameLayout>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/blue"/>
             <!--  <fragment
                   android:id="@+id/audit_catalog"
                   android:name="com.titan.ynsjy.AuditHistory.AuditCatalogFragment"

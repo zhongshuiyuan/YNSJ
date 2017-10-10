@@ -32,6 +32,7 @@ import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.ExpandableAdapter;
 import com.titan.ynsjy.adapter.ImgTucengAdapter;
 import com.titan.ynsjy.entity.MyLayer;
+import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.mview.LayerControlView;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.SytemUtil;
@@ -65,6 +66,20 @@ public class LayerControlPresenter{
     private View childView;
     private View.OnClickListener onClickListener;
 
+    public Map<FeatureLayer, Integer> getLayerindexmap() {
+        return layerindexmap;
+    }
+
+    //图层索引存储
+    private Map<FeatureLayer,Integer> layerindexmap=new HashMap<>();
+
+    public List<Geodatabase> getGeodatabaseList() {
+        return geodatabaseList;
+    }
+
+    //数据库
+    private List<Geodatabase> geodatabaseList;
+
     public LayerControlPresenter(Context ctx, LayerControlView view, View.OnClickListener onClickListener){
         this.mContext = ctx;
         this.controlView = view;
@@ -93,25 +108,6 @@ public class LayerControlPresenter{
         // 基础图 缩放到地图范围
         ImageView tileView = (ImageView)childView.findViewById(R.id.tile_extent);
         tileView.setOnClickListener(onClickListener);
-
-        /*//地形图
-        CheckBox cb_dxt = (CheckBox) childView.findViewById(R.id.cb_dxt);
-        if (controlView.getDxtLayer() != null) {
-            cb_dxt.setChecked(controlView.getDxtLayer().isVisible());
-        }
-        // 地形图
-        cb_dxt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, final boolean flag) {
-                if(controlView.getDxtLayer() != null && controlView.getDxtLayer().isInitialized()){
-                    controlView.getDxtLayer().setVisible(flag);
-                }
-            }
-        });
-        // 地形图 缩放到地图范围
-        ImageView dxtTileView = (ImageView) childView.findViewById(R.id.dxt_extent);
-        dxtTileView.setOnClickListener(onClickListener);*/
 
         // 影像图
         CheckBox cb_yx = (CheckBox) childView.findViewById(R.id.cb_ys);
@@ -145,10 +141,6 @@ public class LayerControlPresenter{
                         }
 
                         controlView.addImageLayer(fileList.get(0).getPath());
-
-                       /* if(controlView.getDxtLayer() != null){
-                            controlView.getMapView().addLayer(controlView.getDxtLayer());
-                        }*/
 
                         if(controlView.getLayerNameList().size() > 0){
                             for(MyLayer myLayer :controlView.getLayerNameList()){
@@ -202,7 +194,6 @@ public class LayerControlPresenter{
     /**影像数据选择*/
     private void showImgLayerSelect(final List<File> list,final Map<String, ArcGISLocalTiledLayer> imgTileLayerMap) {
         controlView.getImgeLayerView().setVisibility(View.VISIBLE);
-
         initImgCheckBoxData(list);
         final ImgTucengAdapter adapter = new ImgTucengAdapter((BaseActivity) mContext,list,imgCheckMap,imgTileLayerMap);
         ListView listView = (ListView) controlView.getImgeLayerView().findViewById(R.id.img_tcselector);
@@ -272,6 +263,8 @@ public class LayerControlPresenter{
 
     /** 图层控制  根据区县 加载otms中资源数据 */
     public void initOtmsData(String qname) {
+        List<Row> dd=controlView.getSysLayerData();
+        Log.e("listrow",dd.toString());
         final List<File> groups = MyApplication.resourcesManager.getOtmsFolder(controlView.getSysLayerData());
         if(groups == null || groups.size() ==0){
             return;
@@ -280,18 +273,56 @@ public class LayerControlPresenter{
 //        TckzListViewAdapter expandableAdapter = new TckzListViewAdapter(mContext, groups);
 //        tc_exp.setAdapter(expandableAdapter);
         final List<Map<String, List<File>>> childs = MyApplication.resourcesManager.getChildeData(mContext,groups);
+        geodatabaseList=MyApplication.resourcesManager.getChildGdb(mContext,groups);
         if (childs == null || childs.size() == 0)
             return;
         ExpandableListView tc_exp = (ExpandableListView) childView.findViewById(R.id.tc_expandlistview);
+
         tc_exp.setGroupIndicator(null);
-        initCheckbox(groups, childs);
+        //initCheckbox(groups, childs);
+        ExpandableAdapter expandableAdapter = new ExpandableAdapter(mContext, groups, childs, controlView.getLayerCheckBox());
+        expandableAdapter.setmItemClickListener(new ExpandableAdapter.OnItemClickListener() {
+            @Override
+            public void onGroupChecked() {
 
-        final ExpandableAdapter expandableAdapter = new ExpandableAdapter((BaseActivity)mContext, groups, childs, controlView.getLayerCheckBox());
+            }
+
+            @Override
+            public void onChildChecked(boolean isadd,GeodatabaseFeatureTable geotable) {
+                FeatureLayer featureLayer=new FeatureLayer(geotable);
+                if(isadd){
+                    //添加
+                    Renderer renderer = getHisSymbol(featureLayer);
+                    featureLayer.setRenderer(renderer);
+                    int layerindex=controlView.getMapView().addLayer(featureLayer);
+                    layerindexmap.put(featureLayer,layerindex);
+                    controlView.getMapView().setExtent(featureLayer.getExtent());
+                }else {
+                    //移除
+                    //controlView.getMapView().getLayerByID(featureLayer.getID()).
+                    try {
+                        for (FeatureLayer key :layerindexmap.keySet()){
+                            if(key.getName()==featureLayer.getName()){
+                                int layerindex=layerindexmap.get(key);
+                                controlView.getMapView().removeLayer(layerindex);
+                                layerindexmap.remove(key);
+                            }
+                        }
+                       /* if(layerindexmap.containsKey(featureLayer)){
+
+                        }*/
+
+                    }catch (Exception e){
+                        ToastUtil.showShort(mContext,"图层移除异常"+e);
+                    }
+
+                }
+            }
+        });
         tc_exp.setAdapter(expandableAdapter);
-
-        setExpendHeight(expandableAdapter, tc_exp);
-
-        tc_exp.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        //setExpendHeight(expandableAdapter, tc_exp);
+        //数据点击事件
+       /* tc_exp.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
@@ -309,7 +340,7 @@ public class LayerControlPresenter{
                 expandableAdapter.notifyDataSetChanged();// 通知数据发生了变化
                 return false;
             }
-        });
+        });*/
     }
 
     private void initImgCheckBoxData(List<File> list) {
@@ -451,7 +482,6 @@ public class LayerControlPresenter{
 
                     Renderer renderer = getHisSymbol(layer);
                     layer.setRenderer(renderer);
-
                     ff = true;
                     controlView.getMapView().addLayer(layer);
 

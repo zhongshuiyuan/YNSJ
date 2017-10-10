@@ -28,40 +28,66 @@
         android:gravity="right"
         android:orientation="horizontal">
 
-        <ImageView
+       <!-- <ImageView
             android:id="@+id/tckz_imageview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@drawable/background_view_rounded_image"
             android:contentDescription="@null"
-            android:src="@drawable/share_tucengkongzhi" />
+            android:src="@drawable/share_tucengkongzhi" />-->
+
+        <!--<RadioButton
+            android:id="@+id/rb_layers"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:button="@null"
+            android:gravity="center"
+            android:drawableTop="@drawable/menu_auditlayers"
+            android:text="@string/auditlayer"
+            android:textColor="@color/white" />-->
+
+        <LinearLayout
+            android:id="@+id/ll_auditlayers"
+            style="@style/menu_ll">
+
+            <ImageView
+                style="@style/menu_img"
+                android:src="@drawable/menu_auditlayers" />
+
+            <TextView
+                style="@style/menu_tv"
+                android:text="@string/auditlayer" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_audit"
+            style="@style/menu_ll">
+
+            <ImageView
+                style="@style/menu_img"
+                android:src="@drawable/menu_audit" />
+
+            <TextView
+                style="@style/menu_tv"
+                android:text="@string/audit" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_audithistory"
-            android:layout_width="63dp"
-            android:layout_height="63dp"
-            android:orientation="vertical"
-            android:background="@drawable/background_view_rounded_image"
-            android:gravity="center">
+            style="@style/menu_ll">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="38dp"
-                android:layout_gravity="bottom"
-                android:contentDescription="@null"
+                style="@style/menu_img"
                 android:src="@drawable/menu_audit_history" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="-2dp"
-                android:textColor="@color/white"
-                android:text="审计记录"/>
+                style="@style/menu_tv"
+                android:text="@string/audithistory" />
         </LinearLayout>
 
-        <ImageView
+
+        <!--<ImageView
             android:id="@+id/share_xbqd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,7 +95,7 @@
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
             android:src="@drawable/xiaobanlist_btn"
-            android:visibility="gone" />
+            android:visibility="gone" />-->
 
         <ImageView
             android:id="@+id/share_dmgl"
@@ -78,8 +104,65 @@
             android:layout_gravity="bottom"
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
-            android:src="@drawable/share_dm_manger"
-             />
+            android:src="@drawable/share_dm_manger" />
+
+        <!--<LinearLayout
+            android:id="@+id/ll_addaudit"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/background_view_rounded_image"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:contentDescription="@null"
+                android:src="@drawable/menu_audit_history" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/addaudit"
+                android:textColor="@color/white" />
+        </LinearLayout>-->
+        <LinearLayout
+            android:id="@+id/ll_attr"
+            style="@style/menu_ll">
+
+            <ImageView
+                style="@style/menu_img"
+                android:src="@drawable/menu_attr" />
+
+            <TextView
+                style="@style/menu_tv"
+                android:text="@string/attr" />
+        </LinearLayout>
+        <!--<LinearLayout
+            android:id="@+id/ll_attr"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/background_view_rounded_image"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:contentDescription="@null"
+                android:src="@drawable/menu_audit_history" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="属性"
+                android:textColor="@color/white" />
+        </LinearLayout>-->
+
 
         <ImageView
             android:id="@+id/share_xbcx"
@@ -90,7 +173,7 @@
             android:contentDescription="@null"
             android:src="@drawable/share_xiaobanchaxun"
             android:visibility="gone" />
-
+        <!--小班编辑-->
         <ImageView
             android:id="@+id/share_xbbj"
             android:layout_width="wrap_content"
@@ -98,7 +181,8 @@
             android:layout_gravity="bottom"
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
-            android:src="@drawable/share_xiaobanbianji" />
+            android:src="@drawable/share_xiaobanbianji"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/share_gjcx"
@@ -161,9 +245,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
-            android:layout_marginEnd="20dp"
             android:src="@drawable/share_shuxingbiaozhu"
             android:text="属性标注" />
 

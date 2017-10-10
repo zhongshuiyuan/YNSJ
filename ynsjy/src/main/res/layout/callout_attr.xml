@@ -6,11 +6,9 @@
     <data>
 
         <import type="android.view.View" />
-
         <variable
             name="viewmodel"
             type="com.titan.gis.callout.CalloutViewModel">
-
         </variable>
     </data>
 
@@ -32,9 +30,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            >
-
+            android:layout_height="150dp">
             <TextView
                 android:id="@+id/tv_content"
                 style="@style/et_content_line"
@@ -47,29 +43,15 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <Button
-                android:id="@+id/btn_takephoto"
+                android:id="@+id/btn_audit"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="@string/takephoto"
-                android:visibility="gone"
+                android:text="@string/audit"
                 style="@style/textview_btn_style"
                 android:textColor="@color/white"
       />
-
-        <!--    <Button
-                android:id="@+id/btn_monitor"
-                style="@style/textview_btn_style"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="5dp"
-                android:layout_weight="1"
-                android:text=""
-                android:textColor="@color/white" />-->
         </LinearLayout>
-
-
     </LinearLayout>
 </layout>

@@ -49,7 +49,6 @@ import com.titan.ynsjy.adapter.FeatureResultAdapter;
 import com.titan.ynsjy.adapter.SearchXdmAdapter;
 import com.titan.ynsjy.db.DataBaseHelper;
 import com.titan.ynsjy.db.DbHelperService;
-import com.titan.ynsjy.dialog.ShouCangDialog;
 import com.titan.ynsjy.edite.activity.LineEditActivity;
 import com.titan.ynsjy.edite.activity.PointEditActivity;
 import com.titan.ynsjy.edite.activity.XbEditActivity;
@@ -141,7 +140,7 @@ public class BasePresenter {
     /**
      * 当前点数据展示
      */
-    public View loadCalloutView(final Point point) {
+    /*public View loadCalloutView(final Point point) {
         DecimalFormat decimalFormat = new DecimalFormat(".000000");
         View view = LayoutInflater.from(baseActivity).inflate(R.layout.callout_mylocation, null);
         final View wgsView = view.findViewById(R.id.callout_mylocation_wgs);
@@ -188,10 +187,10 @@ public class BasePresenter {
             }
         });
         return view;
-    }
+    }*/
 
     /** 长点击事件展示位置信息的popuwindow */
-    public View loadCalloutPopuwindow(final Point mappoint){
+    /*public View loadCalloutPopuwindow(final Point mappoint){
         DecimalFormat decimalFormat = new DecimalFormat(".000000");
         View view = LayoutInflater.from(baseActivity).inflate(R.layout.calloutpopuwindow, null);
         final View wgsView = view.findViewById(R.id.calloutpopuwindow_xian80);
@@ -219,7 +218,7 @@ public class BasePresenter {
             }
         });
         return view;
-    }
+    }*/
 
     /**
      * 添加轨迹坐标点
@@ -647,19 +646,6 @@ public class BasePresenter {
             }
         });
 
-//		new Thread(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				if (BussUtil.isEmperty(searchTxt)) {
-//					// 记录到历史查询数据中
-//					boolean result = DataBaseHelper.selDataHistoryByString(mContext,searchTxt);
-//					if (!result) {
-//						DataBaseHelper.addDataToHistory(mContext, searchTxt);
-//					}
-//				}
-//			}
-//		}).start();
     }
 
     /**
@@ -740,40 +726,7 @@ public class BasePresenter {
 //        }
 //    }
 
-    /**
-     * 加载驯养繁殖基地基地性质数据
-     */
-    public void uploadjdxzData() {
-        if (MyApplication.getInstance().hasNetWork()) {
-            Webservice web = new Webservice(baseActivity);
-            String result = web.getJdxzData();
-            if (result.equals(Webservice.netException)) {
-                //ToastUtil.setToast(mContext, Webservice.netException);
-            } else if (result.equals("无数据")) {
-                //ToastUtil.setToast(mContext, "无数据");
-            } else {
-                baseActivity.jdxzLlist = BussUtil.getJdxzData(result);
-            }
-        }
-    }
 
-    /**
-     * 加载行政区域数据数据
-     */
-    public void uploadxzqyData() {
-
-        if (MyApplication.getInstance().hasNetWork()) {
-            Webservice web = new Webservice(baseActivity);
-            String result = web.getXzqyData("1");
-            if (result.equals(Webservice.netException)) {
-                //ToastUtil.setToast(mContext, Webservice.netException);
-            } else if (result.equals("无数据")) {
-                //ToastUtil.setToast(mContext, "无数据");
-            } else {
-                baseActivity.xzqyLlist = BussUtil.getSjssData(result);
-            }
-        }
-    }
 
     /**
      * 加载图层为一个图层时默认选择这个图层，获取这个图层的数据

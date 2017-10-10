@@ -1,5 +1,6 @@
 package com.titan.ynsjy.activity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,38 +10,49 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.esri.android.map.CalloutStyle;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.Point;
 import com.esri.core.map.Feature;
 import com.esri.core.map.Field;
+import com.esri.core.map.Graphic;
 import com.esri.core.symbol.SimpleFillSymbol;
+import com.esri.core.table.TableException;
+import com.gis_luq.lib.Draw.DrawEvent;
+import com.gis_luq.lib.Draw.DrawEventListener;
+import com.gis_luq.lib.Draw.DrawTool;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.gis.GeometryUtil;
 import com.titan.gis.GisUtil;
 import com.titan.gis.RendererUtil;
+import com.titan.gis.SymbolUtil;
 import com.titan.gis.callout.CalloutUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.entity.ActionMode;
 import com.titan.ynsjy.entity.MyLayer;
-import com.titan.ynsjy.util.BaseUtil;
 import com.titan.ynsjy.util.BitmapTool;
 import com.titan.ynsjy.util.BussUtil;
-import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
  * Created by li on 2016/5/26.
  * 审计主页面
  */
-public class YzlActivity extends BaseActivity  {
-
+public class YzlActivity extends BaseActivity implements View.OnClickListener ,DrawEventListener{
+	//审计类型选择
+	private Dialog auditSelectDialog;
+    //绘制工具类
+    private DrawTool tdrawTool;
+    //新增graphic
+    public static Graphic mAddGraphic;
     //截取影像失败
 	private static final int DRAW_BITMAP_FIELD = 2;
 	private View parentView;
@@ -53,7 +65,7 @@ public class YzlActivity extends BaseActivity  {
             ProgressDialogUtil.stopProgressDialog(mContext);
             if (msg.what==DRAW_BITMAP_FINISH){
 				//auditAdd();
-				auditAddOrCompare(false);
+				//auditAddOrCompare(false);
 			}
 			if (msg.what==DRAW_BITMAP_FIELD){
 				ToastUtil.setToast(mContext,"获取影像截图失败"+msg.obj);
@@ -72,8 +84,13 @@ public class YzlActivity extends BaseActivity  {
 		activitytype = getIntent().getStringExtra("name");
         //根据配置文件获取文件
 		proData = BussUtil.getConfigXml(mContext,"yzl");
+
+        //绘制工具初始化
+        tdrawTool = new DrawTool(mapView);
+        tdrawTool.addEventListener(this);
+        tdrawTool.setFillSymbol(SymbolUtil.fillSymbol);
         //新增审计
-		auditButton = (RadioButton) parentView.findViewById(R.id.auditButton);
+		/*auditButton = (RadioButton) parentView.findViewById(R.id.auditButton);
 		auditButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -85,7 +102,7 @@ public class YzlActivity extends BaseActivity  {
 					ToastUtil.setToast(mContext,"没有加载图层数据");
 					return;
 				}
-				if (selGeoFeaturesList.size()<=0){
+				if (selGeoFeaturesList.size()<0){
 					ToastUtil.setToast(mContext,"没有选择小班");
 					return;
 				}
@@ -96,7 +113,10 @@ public class YzlActivity extends BaseActivity  {
 					basePresenter.showListFeatureResult(selGeoFeaturesList,0);
 				}
 			}
-		});
+		});*/
+		//查看属性
+		LinearLayout auditattr= (LinearLayout) parentView.findViewById(R.id.ll_attr);
+		auditattr.setOnClickListener(this);
         //审计历史
         LinearLayout audithistory= (LinearLayout) parentView.findViewById(R.id.ll_audithistory);
         audithistory.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +132,60 @@ public class YzlActivity extends BaseActivity  {
 
             }
         });
+		//新增审计
+		LinearLayout addaudit= (LinearLayout) parentView.findViewById(R.id.ll_audit);
+		addaudit.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+                if(auditSelectDialog==null){
+                    auditSelectDialog = new MaterialDialog.Builder(mContext)
+                            .title(mContext.getString(R.string.auditype))
+                            .items((CharSequence[]) mContext.getResources().getStringArray(R.array.auditype))
+                            .itemsCallback(new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                                    switch (position){
+                                        case 0:
+                                            //新增
+                                            actionMode = ActionMode.MODE_EDIT_ADD;
+                                            tdrawTool.activate(DrawTool.FREEHAND_POLYGON);
+                                            break;
+                                        case 1:
+                                            //原始
+                                            if (selGeoFeaturesList.size()<0){
+                                                ToastUtil.setToast(mContext,"没有选择原始图班");
+                                                return;
+                                            }
+                                            if (selGeoFeaturesList.size()>=1){
+                                                getSelParams(selGeoFeaturesList,0);
+                                                Intent intent = new Intent(mContext, AuditActivity.class);
+                                                intent.putExtra("fid", selGeoFeature.getId());
+                                                intent.putExtra("picPath",MyApplication.resourcesManager.getSJImagePath());
+                                                intent.putExtra("auditType",false);
+                                                mContext.startActivity(intent);
+                                                //startAudit(selGeoFeature);
+                                            }
+                                            break;
+                                    }
+
+                                }
+                            })
+                            .cancelable(true)
+                            .build();
+                }
+				auditSelectDialog.show();
+				/*if (imgTiledLayer==null){
+					ToastUtil.setToast(mContext,"没有加载影像图");
+					return;
+				}
+				if (!BaseUtil.checkFeaturelayerExist("edit",layerNameList)){
+					ToastUtil.setToast(mContext,"没有加载图层数据");
+					return;
+				}*/
+
+
+			}
+		});
 	}
 
 
@@ -122,6 +196,8 @@ public class YzlActivity extends BaseActivity  {
 			if(layer.getLayer().getGeometryType()== Geometry.Type.POLYGON )
 				layer.getLayer().setRenderer((layer.getRenderer()));
 		}
+		//重置操作模式
+		actionMode=ActionMode.MODE_SELECT;
 	}
 
 	/**
@@ -173,25 +249,39 @@ public class YzlActivity extends BaseActivity  {
      * @param geodatabaseFeature
      */
     @Override
-    protected void showCallout(GeodatabaseFeature geodatabaseFeature) {
+    protected void showCallout(final GeodatabaseFeature geodatabaseFeature) {
         CalloutStyle calloutStyle=new CalloutStyle(mContext);
-        calloutStyle.setMaxHeight(500);
+        //calloutStyle.setMaxHeight(800);
         mCallout.setStyle(calloutStyle);
         //设置定位点
         Point point=GeometryUtil.getGeometryCenter(geodatabaseFeature.getGeometry());
         mCallout.setCoordinates(point);
         //mCallout.setContent(createCallView(feature.getAttributes()));
-        List<Field> fields=myLayer.getLayer().getFeatureTable().getFields();
+        //List<Field> fields=myLayer.getLayer().getFeatureTable().getFields();
+		List<Field> fields=currentlayer.getFeatureTable().getFields();
         mCallout.setContent(CalloutUtil.createCallView(mContext,fields, geodatabaseFeature, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                   case R.id.iv_close:
-                       mCallout.hide();
-                    break;
-                    case R.id.btn_takephoto:
-                        break;
-                }
+					case R.id.iv_close:
+						mCallout.hide();
+						break;
+					case R.id.btn_audit:
+						//图班审计
+						//getSelParams(selGeoFeaturesList,0);
+						selGeoFeature=geodatabaseFeature;
+						Intent intent = new Intent(mContext, AuditActivity.class);
+						intent.putExtra("fid", selGeoFeature.getId());
+                        /*if(layerControlPresenter.getGeodatabaseList().get(0)!=null){
+                            layerControlPresenter.getGeodatabaseList().get(0).getPath();
+                        } */
+						//intent.putExtra("picPath", ResourcesManager.getImagePath(myLayer.getPath()));
+                        //intent.putExtra("picPath", MyApplication.resourcesManager.getSJImagePath());
+
+						intent.putExtra("auditType",false);
+						mContext.startActivity(intent);
+						break;
+				}
 
             }
         }));
@@ -202,20 +292,35 @@ public class YzlActivity extends BaseActivity  {
 
     /**
      *
-	 * @param type 审计类型 false为新增审计,true为审计历史
 	 */
-	public void auditAddOrCompare(boolean type) {
+	/*public void auditAddOrCompare(boolean type) {
 		Intent intent = new Intent(mContext, AuditActivity.class);
-		Bundle bundle=new Bundle();
 		intent.putExtra("fid", selGeoFeature.getId());
 		intent.putExtra("picPath", ResourcesManager.getImagePath(myLayer.getPath()));
 		intent.putExtra("auditType",type);
-        //intent.putExtra("graphic",selGeoFeature)
 		mContext.startActivity(intent);
-	}
+	}*/
 
 	@Override
 	public void startAddAudit() {
 		startAudit(selGeoFeature);
 	}
+
+    @Override
+    public void handleDrawEvent(DrawEvent event) throws TableException, FileNotFoundException {
+        switch (actionMode)
+        {
+            case MODE_EDIT_ADD:
+                graphicsLayer.addGraphic(event.getDrawGraphic());
+				mAddGraphic=event.getDrawGraphic();
+                Intent intent = new Intent(mContext, AuditActivity.class);
+                //intent.putExtra("graphic",event.getDrawGraphic());
+                intent.putExtra("auditType",1);
+                mContext.startActivity(intent);
+                break;
+        }
+        drawTool.deactivate();
+
+    }
+
 }

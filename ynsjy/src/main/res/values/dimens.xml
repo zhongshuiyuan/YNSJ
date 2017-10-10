@@ -14,5 +14,6 @@
     <dimen name="larger_txtsize18">18sp</dimen>
     <dimen name="larger_txtsize16">16sp</dimen>
     <dimen name="larger_txtsize14">14sp</dimen>
+    <dimen name="parent_expandable_list_height">50dp</dimen>
 
 </resources>

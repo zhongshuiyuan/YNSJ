@@ -463,10 +463,10 @@ public class PolylineAdapter extends BaseAdapter {
 
 		TextView txtlon = (TextView) dialog
 				.findViewById(R.id.edittxt_input_lon);
-		txtlon.setText(format.format(BaseActivity.currentLon) + "");
+		txtlon.setText(format.format(BaseActivity.currentPoint.getX()) + "");
 		TextView txtlat = (TextView) dialog
 				.findViewById(R.id.edittxt_input_lat);
-		txtlat.setText(format.format(BaseActivity.currentLat) + "");
+		txtlat.setText(format.format(BaseActivity.currentPoint.getY()) + "");
 		final TextView txtx = (TextView) dialog
 				.findViewById(R.id.edittxt_input_x);
 		txtx.setText(format.format(BaseActivity.currentPoint.getX()) + "");

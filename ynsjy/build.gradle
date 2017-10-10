@@ -24,7 +24,7 @@ android {
 
     buildTypes {
         release {
-            debuggable true
+            //debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -95,7 +95,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile("com.github.hotchemi:permissionsdispatcher:2.4.0") {
+    compile('com.github.hotchemi:permissionsdispatcher:2.4.0') {
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }
@@ -106,6 +106,9 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
 
+    compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+
+    compile project(':drawtoollib')
 }
 
 //tasks.withType(JavaCompile) {

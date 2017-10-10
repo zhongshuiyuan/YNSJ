@@ -18,9 +18,9 @@ public interface IBaseView {
 
     Callout getCallout();
 
-    double getCurrentLon();
+    //double getCurrentLon();
 
-    double getCurrenLat();
+   // double getCurrenLat();
 
     Point getCurrentPoint();
 

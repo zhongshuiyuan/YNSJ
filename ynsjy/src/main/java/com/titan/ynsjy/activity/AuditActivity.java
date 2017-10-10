@@ -3,6 +3,7 @@ package com.titan.ynsjy.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -11,33 +12,49 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.esri.android.map.FeatureLayer;
 import com.esri.android.map.GraphicsLayer;
+import com.esri.android.map.MapOnTouchListener;
+import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.core.geodatabase.GeodatabaseFeature;
+import com.esri.core.geodatabase.GeodatabaseFeatureTable;
+import com.esri.core.geometry.Geometry;
+import com.esri.core.geometry.GeometryEngine;
+import com.esri.core.geometry.Point;
+import com.esri.core.geometry.Polygon;
+import com.esri.core.geometry.Polyline;
 import com.esri.core.map.Feature;
 import com.esri.core.map.Graphic;
-import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
+import com.gis_luq.lib.Draw.DrawEvent;
+import com.gis_luq.lib.Draw.DrawEventListener;
+import com.gis_luq.lib.Draw.DrawTool;
+import com.gis_luq.lib.Draw.Util.CutPolygonL;
+import com.titan.baselibrary.util.ProgressDialogUtil;
+import com.titan.gis.GeometryUtil;
+import com.titan.gis.GisUtil;
 import com.titan.gis.SymbolUtil;
-import com.titan.util.Camera.CameraActivity;
+import com.titan.model.TitanField;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.databinding.ActivityAuditBinding;
 import com.titan.ynsjy.dialog.EditPhoto;
-import com.titan.ynsjy.entity.MyLayer;
-import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.entity.ActionMode;
 import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
-import com.titan.ynsjy.util.UtilTime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +66,15 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.RuntimePermissions;
 
+
 /**
  * Created by hanyw on 2017/9/2/002.
  * 新增审计
  */
 @RuntimePermissions
-public class AuditActivity extends AppCompatActivity {
+public class AuditActivity extends AppCompatActivity implements View.OnClickListener,DrawEventListener {
+    //拍照
+    private static final int TAKE_PICTURE = 1;
     /**
      * 新增审计
      */
@@ -66,7 +86,7 @@ public class AuditActivity extends AppCompatActivity {
             TextView auditSure;
     @BindView(R.id.audit_cancel)//取消
             TextView auditCancel;
-    @BindView(R.id.audit_people)
+   /* @BindView(R.id.audit_people)
     EditText auditPeople;
     @BindView(R.id.audit_reason)
     EditText auditReason;
@@ -79,24 +99,40 @@ public class AuditActivity extends AppCompatActivity {
     @BindView(R.id.audit_mark)
     EditText auditMark;
     @BindView(R.id.fragment_videotape)
-    TextView fragmentVideotape;
+    TextView fragmentVideotape;*/
 
     private Context mContext;
-    private View compareView;
+    //private View compareView;
     private Feature feature;//小班
-    private FeatureTable featureTable;
-    private MyLayer myLayer;
+    //审计图层（固定）
+    private GeodatabaseFeatureTable featureTable;
+    //private MyLayer myLayer;
+    //审计图层
+    private FeatureLayer auditLayer;
+
     private long fid;//原始数据小班id
     private String picPath;//图片文件夹地址
     private long newId;//新增小班id
     private String imagePath = "";//图片地址
-    private boolean auditType = false;
+    //审计类型 0:审计原始数据 1:新增审计
+    private int auditType =0;
     private ActivityAuditBinding binding;
     //审计的原始数据
     private GeodatabaseFeature editfeature;
+
     private GraphicsLayer editlayer;
     private Graphic editgraphic;
+    //地图监听事件
+    //private MapTouchListener mapTouchListener;
+    //地图操作模式
+    public ActionMode actionMode = ActionMode.MODE_SELECT;
+    //绘制工具
+    private  DrawTool drawTool;
+    //属性信息
+    public static List<TitanField> fieldList;
 
+    //编辑方式选择
+    private Dialog mEditChoiseDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,8 +143,7 @@ public class AuditActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         getData();
         initView();
-
-        setMyVisibility(auditType);
+        //setMyVisibility(auditType);
     }
 
     /**
@@ -140,17 +175,29 @@ public class AuditActivity extends AppCompatActivity {
         editlayer.addGraphic(editgraphic);
         binding.mapviewAudit.addLayer(editlayer);
         binding.mapviewAudit.setExtent(editgraphic.getGeometry());
+        binding.mapviewAudit.setOnTouchListener(new MapTouchListener(mContext,binding.mapviewAudit));
+        binding.tvAuditedit.setOnClickListener(this);
+        //绘制工具初始化
+        drawTool = new DrawTool(binding.mapviewAudit);
+        drawTool.addEventListener(this);
+        drawTool.setFillSymbol(SymbolUtil.fillSymbol);
+        //属性适配
 
+        fieldList=GisUtil.getFields(editgraphic.getAttributes(),featureTable.getFields());
+        binding.setListfield(fieldList);
+        AdapterListObj attrAdapter= new AdapterListObj<>(fieldList, mContext);
+        binding.rclAttr.setAdapter(attrAdapter);
+        binding.rclAttr.setLayoutManager(new LinearLayoutManager(mContext));
     }
 
-    private void setMyVisibility(boolean auditType) {
+    /*private void setMyVisibility(boolean auditType) {
         if (auditType) {
             compareView.setVisibility(View.VISIBLE);
             auditPicBrowse.setVisibility(View.GONE);
             auditTakePic.setVisibility(View.GONE);
             auditSure.setVisibility(View.GONE);
         }
-    }
+    }*/
 
     @TargetApi(23)
     @Override
@@ -163,9 +210,11 @@ public class AuditActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.audit_pic_browse:
+                //多媒体信息浏览
                 lookpictures(this);
                 break;
             case R.id.audit_take_pic:
+                //拍照
                 AuditActivityPermissionsDispatcher.photographWithCheck(this);
                 break;
             case R.id.audit_sure:
@@ -177,6 +226,7 @@ public class AuditActivity extends AppCompatActivity {
                 this.finish();
                 break;
             case R.id.fragment_videotape:
+                //录像
                 videotape();
                 break;
 
@@ -227,13 +277,13 @@ public class AuditActivity extends AppCompatActivity {
      */
     @NeedsPermission({Manifest.permission.CAMERA})
     void photograph() {
-        /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         imagePath = picPath + "/" + ResourcesManager.getPicName(String.valueOf(fid));
         Uri uri = Uri.fromFile(new File(imagePath));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent, TAKE_PICTURE);*/
-        Intent intent=new Intent(AuditActivity.this, CameraActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, TAKE_PICTURE);
+       /* Intent intent=new Intent(AuditActivity.this, CameraActivity.class);
+        startActivity(intent);*/
     }
 
     @OnPermissionDenied({Manifest.permission.CAMERA})
@@ -245,13 +295,32 @@ public class AuditActivity extends AppCompatActivity {
      * 获取修改表
      */
     private void getData() {
-        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
-        featureTable = myLayer.getTable();
+        //auditLayer
+        List<GeodatabaseFeatureTable> tables= BaseActivity.layerControlPresenter.getGeodatabaseList().get(0).getGeodatabaseTables();
+        for (GeodatabaseFeatureTable table:tables){
+            if (table.getTableName().equals("edit")){
+                featureTable=table;
+            }
+        }
         Intent intent = getIntent();
+        auditType = intent.getIntExtra("auditType", 0);
+        picPath = MyApplication.resourcesManager.getSJImagePath();
         fid = intent.getLongExtra("fid", 0);
-        picPath = intent.getStringExtra("picPath");
-        auditType = intent.getBooleanExtra("auditType", false);
-        editfeature=BaseActivity.selGeoFeature;
+        switch (auditType){
+            case 0:
+                //picPath = MyApplication.resourcesManager.getSJImagePath();
+                editfeature=BaseActivity.selGeoFeature;
+                break;
+            case 1:
+                try {
+                    editfeature=new GeodatabaseFeature(null,YzlActivity.mAddGraphic.getGeometry(),featureTable);
+                } catch (TableException e) {
+                    //e.printStackTrace();
+                    ToastUtil.showShort(mContext,"获取数据失败");
+                }
+                break;
+        }
+
 
     }
 
@@ -259,19 +328,49 @@ public class AuditActivity extends AppCompatActivity {
      * 保存数据
      */
     private void saveData() {
-        createFeature();
-        setData();
-        upEditLayerData();
+        //
+        Log.e("field",fieldList.toString());
+        if(editlayer.getNumberOfGraphics()>1){
+            //多个图形
+            int[] ids=editlayer.getGraphicIDs();
+            for (int i = 0; i <ids.length ; i++) {
+                saveFeature(editlayer.getGraphic(ids[i]).getGeometry());
+            }
+
+        }else {
+            createFeature(editgraphic.getGeometry());
+            //upEditLayerData();
+        }
+
     }
 
     /**
      * 新建数据
      */
-    private void createFeature() {
-        Graphic g = new Graphic(editgraphic.getGeometry(), null);
+    private void saveFeature(Geometry geometry) {
+        //Graphic g = new Graphic(geometry, editgraphic.getAttributes());
         try {
-            newId = featureTable.addFeature(g);
+
+            newId = featureTable.createNewFeature(setData(),geometry).getId();
             feature = featureTable.getFeature(newId);
+        } catch (TableException e) {
+            //e.printStackTrace();
+            ToastUtil.setToast(mContext,"新增审计图形数据失败"+e);
+        }
+    }
+
+    /**
+     * 新建数据
+     */
+    private void createFeature(Geometry geometry) {
+        Graphic graphic = new Graphic(geometry, null,setData());
+        try {
+            newId = featureTable.addFeature(graphic);
+            Log.e("newId",newId+"");
+            feature = featureTable.getFeature(newId);
+            Log.e("map",feature.getAttributes().toString());
+            ToastUtil.setToast(mContext, "数据保存成功");
+            this.finish();
         } catch (TableException e) {
             //e.printStackTrace();
             ToastUtil.setToast(mContext,"新增审计图形数据失败"+e);
@@ -284,14 +383,13 @@ public class AuditActivity extends AppCompatActivity {
     private Map<String, Object> setData() {
         Map<String, Object> map = new HashMap<>();
         map.put("FK_EDIT_UID", fid);
-        map.put("AUDIT_PEOPLE", auditPeople.getText().toString());
+        /*map.put("AUDIT_PEOPLE", auditPeople.getText().toString());
         map.put("MODIFYINFO", auditReason.getText().toString());
         map.put("MODIFYTIME", UtilTime.getSystemtime2());
         map.put("BEFOREINFO", auditEditBefore.getText().toString());
         map.put("AFTERINFO", auditEditAfter.getText().toString());
         map.put("REMARK", auditMark.getText().toString());
-        map.put("INFO", auditInfo.getText().toString());
-        map.put("AUDIT_COORDINATE",BaseActivity.currentPoint.getX()+","+BaseActivity.currentPoint.getY());
+        map.put("INFO", auditInfo.getText().toString());*/
         return map;
     }
 
@@ -310,4 +408,155 @@ public class AuditActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_auditedit:
+                //空间编辑
+                if(mEditChoiseDialog==null){
+                    mEditChoiseDialog= new MaterialDialog.Builder(mContext)
+                            .title(mContext.getString(R.string.editype))
+                            .items((CharSequence[]) mContext.getResources().getStringArray(R.array.edittype))
+                            .itemsCallback(new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                                    switch (position){
+                                       /* case 0:
+                                            //新增
+                                            actionMode=ActionMode.MODE_EDIT_ADD;
+                                            drawTool.activate(DrawTool.FREEHAND_POLYGON);
+                                            //ProgressDialogUtil.startProgressDialog(mContext);
+                                            break;*/
+                                        case 1:
+                                            //修班
+                                            actionMode=ActionMode.MODE_XIUBAN;
+                                            drawTool.activate(DrawTool.FREEHAND_POLYLINE);
+                                            //ProgressDialogUtil.startProgressDialog(mContext);
+
+                                            break;
+                                        case 2:
+                                            //分割
+                                            actionMode=ActionMode.MODE_QIEGE;
+                                            drawTool.activate(DrawTool.FREEHAND_POLYLINE);
+
+                                            break;
+                                    }
+                                }
+                            })
+                            .cancelable(true)
+                            .build();
+
+                }
+                mEditChoiseDialog.show();
+                break;
+        }
+
+    }
+
+    @Override
+    public void handleDrawEvent(DrawEvent event) throws TableException, FileNotFoundException {
+        // 将画好的图形（已经实例化了Graphic），添加到drawLayer中并刷新显示
+        editlayer.addGraphic(event.getDrawGraphic());
+        ProgressDialogUtil.startProgressDialog(mContext);
+        switch (actionMode){
+            case MODE_XIUBAN:
+                //修班
+                Polygon polygon= (Polygon) editgraphic.getGeometry();
+                Polyline polyline = (Polyline) event.getDrawGraphic().getGeometry();
+                Polygon subtractor=GeometryUtil.polyline2Polygon(polyline,editlayer.getSpatialReference());
+                if(subtractor!=null){
+                    Geometry result=GeometryEngine.difference(editgraphic.getGeometry(),subtractor,editlayer.getSpatialReference());
+                    editlayer.updateGraphic((int) editgraphic.getId(),result);
+                    editlayer.recycle();
+                }else {
+                    ToastUtil.setToast(mContext,"绘制线不符合修班规则");
+                }
+                /*List<Polygon> results=CutPolygonL.Cut(polygon,polyline);
+                if(results.size()>0){
+                    editlayer.updateGraphic((int) editgraphic.getId(),results.get(0));
+                    for (int i = 1; i <results.size(); i++) {
+                        editlayer.addGraphic(new Graphic(results.get(i),editgraphic.getSymbol()));
+                    }
+                }else {
+                    ToastUtil.setToast(mContext,"分割失败");
+                }*/
+                break;
+            case MODE_EDIT_ADD:
+                event.getDrawGraphic().getGeometry().copyTo(editgraphic.getGeometry());
+                //editgraphic.getGeometry().copyTo(event.getDrawGraphic().getGeometry());
+                editlayer.updateGraphic((int) editgraphic.getId(),editgraphic.getSymbol());
+                //新增小班
+                break;
+            case MODE_QIEGE:
+                //分割
+                Polygon polygon1= (Polygon) editgraphic.getGeometry();
+                Polyline polyline1 = (Polyline) event.getDrawGraphic().getGeometry();
+                List<Polygon> results=CutPolygonL.Cut(polygon1,polyline1);
+                for (int i = 0; i <results.size() ; i++) {
+                    if(i==0){
+                        editlayer.updateGraphic((int) editgraphic.getId(),results.get(i));
+                    }else {
+                        editlayer.addGraphic(new Graphic(results.get(i),editgraphic.getSymbol()));
+                    }
+
+                }
+                /*EditTools.previousSegmentation(editfeature.getGeometry(), polygon1, editlayer.getSpatialReference(), new EditTools.segmentationCallback() {
+                    @Override
+                    public void onSuccess(List<Geometry> geometryList) {
+                        //editlayer.removeAll();
+                        //editlayer.updateGraphic(ge);
+                        for (int i = 0; i <geometryList.size() ; i++) {
+                            if(i==0){
+                                editlayer.updateGraphic((int) editgraphic.getId(),geometryList.get(i));
+                            }else {
+                                editlayer.addGraphic(new Graphic(geometryList.get(i),editgraphic.getSymbol()));
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(String info) {
+                        ToastUtil.showShort(mContext,info);
+
+                    }
+                });*/
+                break;
+
+
+        }
+        //drawTool.sendDrawEndEvent();
+        //清空绘制图形
+        drawTool.deactivate();
+        ProgressDialogUtil.stopProgressDialog(mContext);
+        //binding.mapviewAudit.setOnTouchListener(new MapTouchListener(mContext,binding.mapviewAudit));
+    }
+
+    /**
+     * 地图监听事件
+     */
+    private class MapTouchListener extends MapOnTouchListener {
+        MapView mapView;
+        public MapTouchListener(Context context, MapView view) {
+            super(context, view);
+            this.mapView=view;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            Point point = mapView.toMapPoint(event.getX(), event.getY());
+            if (point == null || point.isEmpty() || !point.isValid()) {
+                return false;
+            }
+            /*switch (actionMode){
+                case MODE_XIUBAN:
+                    //修班
+                    break;
+            }*/
+            return super.onTouch(v, event);
+        }
+
+
+    }
 }

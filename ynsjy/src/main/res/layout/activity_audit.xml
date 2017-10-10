@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+       <!-- <variable
+            name="auditinfo"
+            type="com.titan.model.AuditInfo" />-->
+        <import type="java.util.List"/>
+        <import type="com.titan.model.TitanField"/>
+        <variable
+            name="listfield"
+            type="List&lt;TitanField&gt;"/>
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/blue"
+        android:orientation="vertical"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+           <!-- <TextView
+                style="@style/title_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="审计" />-->
+            <TextView
+                android:id="@+id/tv_auditedit"
+                style="@style/textview_btn_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/audit_pic_browse"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp"
+                android:text="@string/spaceedit" />
+            <TextView
+                android:id="@+id/audit_pic_browse"
+                style="@style/textview_btn_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/audit_take_pic"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp"
+                android:text="多媒体浏览" />
+
+            <TextView
+                android:id="@+id/audit_take_pic"
+                style="@style/textview_btn_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/fragment_videotape"
+                android:text="拍照" />
+
+            <TextView
+                android:id="@+id/fragment_videotape"
+                style="@style/textview_btn_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp"
+                android:text="录像" />
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+               <FrameLayout
+                   android:layout_weight="1"
+                   android:layout_width="0dp"
+                   android:layout_height="match_parent">
+                   <com.esri.android.map.MapView
+                       android:id="@+id/mapview_audit"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"/>
+               </FrameLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rcl_attr"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                </android.support.v7.widget.RecyclerView>
+                  <!-- <include
+                                      app:items="@{listfield}"
+
+                       android:layout_weight="1"
+                       android:id="@+id/audit_add"
+                       layout="@layout/audit_view"
+                       android:layout_width="0dp"
+                       android:visibility="gone"
+                       android:layout_height="match_parent"/>-->
+                <!--<android.support.v7.widget.RecyclerView
+                    android:id="@+id/rcl_attr"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/audit_sure"
+                    style="@style/textview_btn_style"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="确定"/>
+
+                <TextView
+                    android:id="@+id/audit_cancel"
+                    style="@style/textview_btn_style"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="取消"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

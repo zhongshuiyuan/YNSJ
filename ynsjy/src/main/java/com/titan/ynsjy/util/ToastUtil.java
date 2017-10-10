@@ -58,4 +58,8 @@ public class ToastUtil {
 	public static void setToatLeft(final Context context, final String text){
 		makeTextLeft(context, text,Toast.LENGTH_SHORT).show();
 	}
+
+    public static void showShort(Context context, String msg) {
+		makeText(context, msg, Toast.LENGTH_SHORT).show();
+	}
 }

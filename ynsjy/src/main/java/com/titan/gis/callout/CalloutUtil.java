@@ -3,6 +3,7 @@ package com.titan.gis.callout;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,7 +11,6 @@ import android.widget.Toast;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.map.Field;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.util.ReUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,7 @@ public class CalloutUtil {
         View view = LayoutInflater.from(context).inflate(R.layout.callout_attr, null);
         TextView tv_attr = (TextView) view.findViewById(R.id.tv_content);
         ImageView iv_close = (ImageView) view.findViewById(R.id.iv_close);
+        Button btn_audit = (Button) view.findViewById(R.id.btn_audit);
         StringBuffer calloutcontent = new StringBuffer();
         calloutcontent.append("");
         Map<String,Object> attrmap=feature.getAttributes();
@@ -42,18 +43,14 @@ public class CalloutUtil {
             for (Field field : fields) {
                 String alias = field.getAlias();
                 //获取包含中文别名的字段
-                if(!ReUtil.hasChinese(alias)){
+                /*if(!ReUtil.hasChinese(alias)){
                   continue;
-                }else{
-                    Object object = attrmap.get(field.getName());
-                    String value;
-                    if (object!=null){
-                        value = attrmap.get(field.getName()).toString();
-                    }else {
-                        value = "";
-                    }
-                    calloutcontent.append(alias + " | " + value + "\n");
-                }
+                }*/
+                if (filterAlias(alias))
+                    continue;
+                String value = attrmap.get(field.getName()).toString();
+                calloutcontent.append(alias + " | " + value + "\n");
+
             }
 
 
@@ -63,6 +60,17 @@ public class CalloutUtil {
         }
         tv_attr.setText(calloutcontent);
         iv_close.setOnClickListener(onClickListener);
+        btn_audit.setOnClickListener(onClickListener);
+
         return view;
+    }
+
+    /**
+     * 过滤字段
+     * @param alias
+     * @return
+     */
+    private static boolean filterAlias(String alias) {
+        return alias.contains("Shape")||alias.contains("OBJECTID");
     }
 }

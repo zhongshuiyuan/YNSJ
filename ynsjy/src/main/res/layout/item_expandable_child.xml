@@ -1,36 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+<RelativeLayout
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:gravity="center"
-    android:orientation="horizontal" >
-
-    <CheckBox
-        android:id="@+id/cb_child"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:focusable="false"
-        android:clickable="false"/>
-
-    <TextView
-        android:id="@+id/id_child_txt"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:gravity="left|center"
-        android:layout_weight="1"
-        android:paddingLeft="10dp"
-        android:textColor="@color/balck"
-        android:textSize="16sp" />
-
-    <ImageView
-        android:id="@+id/featurelayer_extent"
-        android:layout_width="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:id="@+id/ll_item"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center"
-        android:background="@drawable/background_view_rounded_image"
-        android:contentDescription="@null"
-        android:padding="7dp"
-        android:src="@drawable/wb_feed_icon_gps" />
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
-</LinearLayout>
+        <CheckBox
+            android:id="@+id/cb_child"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:focusable="false"
+            android:clickable="false"/>
+
+        <TextView
+            android:id="@+id/id_child_txt"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:gravity="left|center"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:textColor="@color/balck"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/featurelayer_extent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:background="@drawable/background_view_rounded_image"
+            android:contentDescription="@null"
+            android:padding="7dp"
+            android:src="@drawable/wb_feed_icon_gps" />
+
+
+    </LinearLayout>
+    <ListView
+        android:layout_below="@+id/ll_item"
+        android:id="@+id/lv_layers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+    </ListView>
+</RelativeLayout>

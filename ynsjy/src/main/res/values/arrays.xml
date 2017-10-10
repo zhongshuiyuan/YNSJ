@@ -39,6 +39,19 @@
         <item>9</item>
         <item>12</item>
     </string-array>
+    <!--空间编辑类型-->
+    <string-array name="edittype" >
+<!--
+        <item>新增</item>
+-->
+        <item>修班</item>
+        <item>分割</item>
+    </string-array>
+
+    <string-array name="auditype">
+        <item>新增审计图班</item>
+        <item>审计原始图班</item>
+    </string-array>
 
     <!-- 连续清查 样地调查记录字段 -->
     <!-- 下木调查名称 -->

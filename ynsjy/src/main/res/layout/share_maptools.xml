@@ -28,14 +28,15 @@
         android:visibility="gone"
         android:src="@drawable/share_map_tools_isearch" />
 
-    <ImageButton
-        style="@style/imgbutton_style"
-        android:background="@drawable/map_tools_bg"
-        android:contentDescription="@null"
-        android:onClick="ceju"
-        android:src="@drawable/share_map_tools_distance" />
+ <ImageButton
+     android:id="@+id/imageButton"
+     style="@style/imgbutton_style"
+     android:background="@drawable/map_tools_bg"
+     android:contentDescription="@null"
+     android:onClick="ceju"
+     android:src="@drawable/share_map_tools_distance" />
 
-    <ImageButton
+ <ImageButton
         style="@style/imgbutton_style"
         android:background="@drawable/map_tools_bg"
         android:contentDescription="@null"
