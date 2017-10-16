@@ -12,6 +12,14 @@
         -->
     </style>
 
+    <style name="DialogFragment" parent="android:style/Theme.Dialog">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <!--是否允许背景变暗-->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <!-- Application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowAnimationStyle">@style/activityAnimation</item>
@@ -20,7 +28,7 @@
     
     <style name="common_dialog_1" parent="@android:style/Theme.Dialog">
         <item name="android:windowIsFloating">true</item>
-        <!-- 设置未浮动窗口 -->
+        <!-- 设置为浮动窗口 -->
         <item name="android:windowFrame">@null</item>
         <!-- 设置无边框 -->
         <item name="android:windowNoTitle">true</item>

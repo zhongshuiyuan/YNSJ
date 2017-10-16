@@ -18,7 +18,7 @@ public class TitanFileFilter {
         @Override
         public boolean accept(File file) {
             if(file.isDirectory())
-                return true;
+                return false;
             else
             {
                 String name = file.getName();
@@ -33,16 +33,72 @@ public class TitanFileFilter {
     }
 
     /**
+     * tpk
+     */
+    public static class TpkFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File file) {
+            if(file.isDirectory())
+                return false;
+            else
+            {
+                String name = file.getName();
+                return name.endsWith(".tpk");
+            }
+
+        }
+
+    }
+
+    /**
+     * image tpk
+     */
+    public static class ImageTpkFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File file) {
+            if(file.isDirectory())
+                return false;
+            else
+            {
+                String name = file.getName();
+                return name.endsWith(".tpk")&&name.contains("image");
+            }
+
+        }
+
+    }
+
+    /**
+     * base tpk
+     */
+    public static class BaseTpkFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File file) {
+            if(file.isDirectory())
+                return false;
+            else
+            {
+                String name = file.getName();
+                return name.endsWith(".tpk")&&name.contains("title");
+            }
+
+        }
+
+    }
+
+    /**
      * 地理数据库过滤器
      */
     public static class GeodatabaseFileFilter implements FileFilter {
-
         @Override
         public boolean accept(File file) {
 
 
             if(file.isDirectory())
-                return true;
+                return false;
             else
             {
                 String name = file.getName();

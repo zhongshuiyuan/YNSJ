@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.esri.android.map.CalloutStyle;
+import com.esri.android.map.FeatureLayer;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.Point;
@@ -72,6 +73,7 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
 			}
 		}
 	};
+	private  boolean isAuditLayer=false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         //binding= DataBindingUtil.setContentView(this,R.layout.activity_yzl);
@@ -117,6 +119,7 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
 		//查看属性
 		LinearLayout auditattr= (LinearLayout) parentView.findViewById(R.id.ll_attr);
 		auditattr.setOnClickListener(this);
+
         //审计历史
         LinearLayout audithistory= (LinearLayout) parentView.findViewById(R.id.ll_audithistory);
         audithistory.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +160,7 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
                                                 return;
                                             }
                                             if (selGeoFeaturesList.size()>=1){
+                                                actionMode = ActionMode.MODE_SELECT;
                                                 getSelParams(selGeoFeaturesList,0);
                                                 Intent intent = new Intent(mContext, AuditActivity.class);
                                                 intent.putExtra("fid", selGeoFeature.getId());
@@ -259,7 +263,9 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
         //mCallout.setContent(createCallView(feature.getAttributes()));
         //List<Field> fields=myLayer.getLayer().getFeatureTable().getFields();
 		List<Field> fields=currentlayer.getFeatureTable().getFields();
-        mCallout.setContent(CalloutUtil.createCallView(mContext,fields, geodatabaseFeature, new View.OnClickListener() {
+
+        isAuditLayer=getLayerIsEdit(currentlayer);
+        mCallout.setContent(CalloutUtil.createCallView(mContext,fields, geodatabaseFeature,isAuditLayer, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
@@ -267,11 +273,12 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
 						mCallout.hide();
 						break;
 					case R.id.btn_audit:
-						//图班审计
+						//图班审计 属性编辑
 						//getSelParams(selGeoFeaturesList,0);
 						selGeoFeature=geodatabaseFeature;
 						Intent intent = new Intent(mContext, AuditActivity.class);
 						intent.putExtra("fid", selGeoFeature.getId());
+                        intent.putExtra("isauditlayer",isAuditLayer);
                         /*if(layerControlPresenter.getGeodatabaseList().get(0)!=null){
                             layerControlPresenter.getGeodatabaseList().get(0).getPath();
                         } */
@@ -290,18 +297,12 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
 
     }
 
-    /**
-     *
-	 */
-	/*public void auditAddOrCompare(boolean type) {
-		Intent intent = new Intent(mContext, AuditActivity.class);
-		intent.putExtra("fid", selGeoFeature.getId());
-		intent.putExtra("picPath", ResourcesManager.getImagePath(myLayer.getPath()));
-		intent.putExtra("auditType",type);
-		mContext.startActivity(intent);
-	}*/
+    private boolean getLayerIsEdit(FeatureLayer currentlayer) {
+        return currentlayer.getFeatureTable().getTableName().equals("edit");
+    }
 
-	@Override
+
+    @Override
 	public void startAddAudit() {
 		startAudit(selGeoFeature);
 	}
@@ -313,13 +314,14 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
             case MODE_EDIT_ADD:
                 graphicsLayer.addGraphic(event.getDrawGraphic());
 				mAddGraphic=event.getDrawGraphic();
+                drawTool.deactivate();
                 Intent intent = new Intent(mContext, AuditActivity.class);
                 //intent.putExtra("graphic",event.getDrawGraphic());
                 intent.putExtra("auditType",1);
                 mContext.startActivity(intent);
                 break;
         }
-        drawTool.deactivate();
+
 
     }
 

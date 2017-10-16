@@ -6,6 +6,7 @@
             type="com.titan.model.TitanField" />
     </data>
     <LinearLayout
+        android:layout_marginTop="8dp"
         style="@style/audit_view_linear_style">
         <TextView
             android:id="@+id/tv_alias"

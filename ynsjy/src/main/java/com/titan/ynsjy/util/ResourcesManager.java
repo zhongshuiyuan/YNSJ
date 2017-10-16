@@ -1,7 +1,6 @@
 package com.titan.ynsjy.util;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -10,7 +9,6 @@ import android.os.storage.StorageManager;
 
 import com.esri.core.geodatabase.Geodatabase;
 import com.titan.ynsjy.entity.Row;
-import com.titan.ynsjy.service.PullParseXml;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -198,6 +195,7 @@ public class ResourcesManager implements Serializable {
 				break;
 			} else {
 				file.mkdirs();
+                //break;
 				/*if (path.equals("")) {
 					file.mkdirs();
 				}*/
@@ -205,8 +203,29 @@ public class ResourcesManager implements Serializable {
 		}
 		return dataPath;
 	}
+
+    /**
+     * 获取基础地图数据路径
+     * @return
+     */
+    public String getBaseLayerPath() {
+        String dataPath = "文件夹可用地址";
+        String[] memoryPath = getMemoryPath();
+        for (int i = 0; i < memoryPath.length; i++) {
+            File file = new File(memoryPath[i] + ROOT_MAPS + otitan_map);
+            if (file.exists()) {
+                dataPath = memoryPath[i] + ROOT_MAPS + otitan_map;
+                break;
+            } else if(i==memoryPath.length-1) {
+                file.mkdirs();
+                dataPath=file.getAbsolutePath();
+                break;
+            }
+        }
+        return dataPath;
+    }
 	/**根据设备是否root获取跟目路
-	 * @throws jsqlite.Exception */
+	 * @throws Exception */
 	public String getTootPath() throws Exception {
 		String dataPath = "文件夹可用地址";
 		String[] memoryPath = getMemoryPath();
@@ -226,34 +245,6 @@ public class ResourcesManager implements Serializable {
 		return dataPath;
 	}
 
-	/** 获取文件夹可用地址若不存在则创建文件夹
-	 * @throws jsqlite.Exception */
-	public String getFolderPaths(String name) throws Exception {
-		String dataPath = "文件夹可用地址";
-		String[] memoryPath = getMemoryPath();
-		//[/storage/emulated/0, /storage/extSdCard,
-		boolean flag = Util.isRoot();
-		if(flag){
-			File file = new File(memoryPath[1] + name);
-			if (file.exists()) {
-				dataPath = file.getPath();
-			} else {
-				file.mkdirs();
-				if(file.exists()){
-					dataPath = file.getPath();
-				}else{
-					dataPath = creatExtSdCard(memoryPath[0] + name);
-				}
-			}
-		}else{
-			dataPath = creatExtSdCard(memoryPath[0] + name);
-		}
-		return dataPath;
-	}
-
-	public void creatEmulat(){
-
-	}
 
 	public static String creatExtSdCard(String path){
 		File file = new File(path);
@@ -265,36 +256,6 @@ public class ResourcesManager implements Serializable {
 		}
 	}
 
-	/** 获取attribute_ldlj.xml 中配置 */
-	public List<Row> getAttributeList(Context ctx, String name) {
-		String str = TXT + "/attribute_ldlj.xml";
-		String path = getFilePath(str);
-		List<Row> list = null;
-		try {
-			File file = new File(path);
-			FileInputStream inputStream = new FileInputStream(file);
-			PullParseXml parseXml = new PullParseXml();
-			list = parseXml.PullParseXML(inputStream, name);
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
-	/** 获取Assets中xml配置 */
-	public static List<Row> getAssetsAttributeList(Context context,String filename, String name) {
-		List<Row> list = null;
-		try {
-			AssetManager am = null;
-			am = context.getAssets();
-			InputStream is = am.open(filename);
-			PullParseXml parseXml = new PullParseXml();
-			list = parseXml.PullParseXML(is, name);
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
 
 	/** 获取贵阳市基础底图 */
 	public String getArcGISLocalTiledLayerPath() {
@@ -346,24 +307,23 @@ public class ResourcesManager implements Serializable {
 		throw new FileNotFoundException("文件不存在");
 	}
 
-	/** 获取二调数据库 */
-	public String getEDDataBase(String filename)
-			throws FileNotFoundException {
-		File db = null;
-		if (filename == null)
-			return "";
-		db = new File(getFilePath(otms + "/二调/" + filename));
-		if (db.exists()) {
-			return db.toString();
-		}
-		throw new FileNotFoundException("文件不存在");
-	}
 
 	/** 获取影像文件列表 */
 	public List<File> getImgTitlePath() {
 		return getPahts(otitan_map, "image");
 	}
 
+	/** 获取基础图文件列表*/
+	public List<File> getBaseTitleFiles() {
+		return getPahts(otitan_map, "title");
+	}
+
+	/**
+	 * 根据关键过滤
+	 * @param path
+	 * @param keyword
+	 * @return
+	 */
 	public List<File> getPahts(String path, String keyword) {
 		List<File> list = new ArrayList<File>();
 		String[] array = getMemoryPath();

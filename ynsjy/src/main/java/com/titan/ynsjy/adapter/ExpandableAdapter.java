@@ -114,6 +114,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
                     LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
                             (geodatabase.getGeodatabaseTables().size() + 1)* (int) mContext.getResources().getDimension(R.dimen.parent_expandable_list_height));
                     SecondLevelexplv.setLayoutParams(lp);
+
                 }
             });
             SecondLevelexplv.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
@@ -126,6 +127,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
                 }
             });
 			return SecondLevelexplv;
+
 		} catch (FileNotFoundException e) {
 			//e.printStackTrace();
 			return null;

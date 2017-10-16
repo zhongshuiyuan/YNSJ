@@ -29,7 +29,7 @@ public class CalloutUtil {
      * @param onClickListener
      * @return
      */
-    public static View createCallView(Context context, List<Field> fields, GeodatabaseFeature feature, View.OnClickListener onClickListener){
+    public static View createCallView(Context context, List<Field> fields, GeodatabaseFeature feature, boolean isAuditLayer,View.OnClickListener onClickListener){
 
         View view = LayoutInflater.from(context).inflate(R.layout.callout_attr, null);
         TextView tv_attr = (TextView) view.findViewById(R.id.tv_content);
@@ -46,8 +46,9 @@ public class CalloutUtil {
                 /*if(!ReUtil.hasChinese(alias)){
                   continue;
                 }*/
-                if (filterAlias(alias))
+                if (filterAlias(alias)||attrmap.get(field.getName())==null)
                     continue;
+
                 String value = attrmap.get(field.getName()).toString();
                 calloutcontent.append(alias + " | " + value + "\n");
 
@@ -60,9 +61,23 @@ public class CalloutUtil {
         }
         tv_attr.setText(calloutcontent);
         iv_close.setOnClickListener(onClickListener);
+        //审计图层可属性编辑
+        if(isAuditLayer)
+        btn_audit.setText("属性编辑");
+
         btn_audit.setOnClickListener(onClickListener);
 
+
         return view;
+    }
+
+    /**
+     * 判断是否是审计图层
+     * @param feature
+     * @return
+     */
+    private static   boolean isAuditLayer(GeodatabaseFeature feature) {
+        return feature.getTable().getTableName().equals("edit");
     }
 
     /**
@@ -73,4 +88,6 @@ public class CalloutUtil {
     private static boolean filterAlias(String alias) {
         return alias.contains("Shape")||alias.contains("OBJECTID");
     }
+
+
 }

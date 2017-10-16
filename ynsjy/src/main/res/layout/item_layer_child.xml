@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="horizontal" >
+
+    <CheckedTextView
+        android:id="@+id/ctv_layersname"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:gravity="left|center"
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/balck"
+        android:clickable="true"
+        android:background="@null"
+        android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
+        android:text="基础图层"/>
+    <ImageView
+        android:id="@+id/iv_local"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="right"
+        android:contentDescription="@null"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        app:srcCompat="@drawable/ic_local" />
+</LinearLayout>

@@ -26,6 +26,7 @@ public class MyApplication extends MultiDexApplication {
 
 	public static MyApplication mApplication;
 	public static ResourcesManager resourcesManager;
+	//用户存储
 	public static SharedPreferences sharedPreferences;
 	public static ScreenTool.Screen screen;
 	/** 移动设备唯一号 */

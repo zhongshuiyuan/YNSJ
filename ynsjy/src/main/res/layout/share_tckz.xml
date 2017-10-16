@@ -114,7 +114,7 @@
                 android:padding="7dp"
                 android:src="@drawable/wb_feed_icon_gps" />
         </LinearLayout>
-        
+        <!--
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -152,7 +152,7 @@
                 android:contentDescription="@null"
                 android:padding="7dp"
                 android:src="@drawable/wb_feed_icon_gps" />
-        </LinearLayout>
+        </LinearLayout>-->
 
         <View
             android:layout_width="match_parent"

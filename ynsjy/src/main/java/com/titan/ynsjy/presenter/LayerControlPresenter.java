@@ -308,9 +308,7 @@ public class LayerControlPresenter{
                                 layerindexmap.remove(key);
                             }
                         }
-                       /* if(layerindexmap.containsKey(featureLayer)){
 
-                        }*/
 
                     }catch (Exception e){
                         ToastUtil.showShort(mContext,"图层移除异常"+e);

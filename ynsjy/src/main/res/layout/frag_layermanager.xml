@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.titan.gis.layermanager.LayerManagerViewModel"/>
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:background="@color/blue"
+            >
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="right"
+                app:srcCompat="@drawable/ic_close"
+                android:onClick="@{()->viewmodel.closeLayerControl()}"
+                android:contentDescription=""
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+        <ExpandableListView
+            android:id="@+id/elv_baselayers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:groupIndicator="@null">
+        </ExpandableListView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_layers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            >
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+</layout>

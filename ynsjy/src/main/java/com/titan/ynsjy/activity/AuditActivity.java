@@ -133,6 +133,8 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
 
     //编辑方式选择
     private Dialog mEditChoiseDialog;
+    //是否是审计图层
+    private boolean isAuditLayer=false;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,22 +184,16 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         drawTool.addEventListener(this);
         drawTool.setFillSymbol(SymbolUtil.fillSymbol);
         //属性适配
+       /* if(!isAuditLayer)
+        fieldList=GisUtil.getFields(editgraphic.getAttributes(),featureTable.getFields());*/
 
-        fieldList=GisUtil.getFields(editgraphic.getAttributes(),featureTable.getFields());
         binding.setListfield(fieldList);
         AdapterListObj attrAdapter= new AdapterListObj<>(fieldList, mContext);
         binding.rclAttr.setAdapter(attrAdapter);
         binding.rclAttr.setLayoutManager(new LinearLayoutManager(mContext));
     }
 
-    /*private void setMyVisibility(boolean auditType) {
-        if (auditType) {
-            compareView.setVisibility(View.VISIBLE);
-            auditPicBrowse.setVisibility(View.GONE);
-            auditTakePic.setVisibility(View.GONE);
-            auditSure.setVisibility(View.GONE);
-        }
-    }*/
+
 
     @TargetApi(23)
     @Override
@@ -219,7 +215,12 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.audit_sure:
                 //确定
-                saveData();
+                if(isAuditLayer){
+
+                }else {
+                    saveData();
+                }
+
                 break;
             case R.id.audit_cancel:
                 //取消
@@ -306,12 +307,20 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         auditType = intent.getIntExtra("auditType", 0);
         picPath = MyApplication.resourcesManager.getSJImagePath();
         fid = intent.getLongExtra("fid", 0);
+        isAuditLayer=intent.getBooleanExtra("isauditlayer",false);
         switch (auditType){
             case 0:
+                //原始图班审计  新增审计、编辑属性
                 //picPath = MyApplication.resourcesManager.getSJImagePath();
                 editfeature=BaseActivity.selGeoFeature;
+                if(isAuditLayer){
+                    fieldList=GisUtil.getFields(editfeature.getAttributes(),featureTable.getFields());
+                }else {
+                    fieldList=GisUtil.getFields(null,featureTable.getFields());
+                }
                 break;
             case 1:
+                //新增
                 try {
                     editfeature=new GeodatabaseFeature(null,YzlActivity.mAddGraphic.getGeometry(),featureTable);
                 } catch (TableException e) {
@@ -330,6 +339,9 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     private void saveData() {
         //
         Log.e("field",fieldList.toString());
+        for (TitanField field:fieldList){
+            Log.e("field","name:"+field.getName()+"value:"+field.getValue());
+        }
         if(editlayer.getNumberOfGraphics()>1){
             //多个图形
             int[] ids=editlayer.getGraphicIDs();
@@ -381,8 +393,12 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
      * @return 修改的数据集
      */
     private Map<String, Object> setData() {
+
         Map<String, Object> map = new HashMap<>();
         map.put("FK_EDIT_UID", fid);
+        for (TitanField field:fieldList){
+            map.put(field.getName(),field.getValue());
+        }
         /*map.put("AUDIT_PEOPLE", auditPeople.getText().toString());
         map.put("MODIFYINFO", auditReason.getText().toString());
         map.put("MODIFYTIME", UtilTime.getSystemtime2());
@@ -396,7 +412,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     /**
      * 更新数据
      */
-    private void upEditLayerData() {
+    /*private void upEditLayerData() {
         Graphic graphic = new Graphic(null, null, setData());
         try {
             featureTable.updateFeature(newId, graphic);
@@ -406,7 +422,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
             ToastUtil.setToast(mContext, "数据保存失败");
         }
-    }
+    }*/
 
     @Override
     public void onClick(View v) {

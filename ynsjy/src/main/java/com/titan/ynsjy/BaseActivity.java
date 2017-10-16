@@ -66,6 +66,8 @@ import com.titan.baselibrary.util.DialogParamsUtil;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.gis.GeometryUtil;
 import com.titan.gis.MeasureUtil;
+import com.titan.gis.layermanager.LayerManagerFragment;
+import com.titan.gis.layermanager.LayerManagerViewModel;
 import com.titan.ynsjy.adapter.FeatureResultAdapter;
 import com.titan.ynsjy.custom.MorePopWindow;
 import com.titan.ynsjy.daoImpl.LocationDaoImpl;
@@ -120,6 +122,7 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public abstract class BaseActivity extends AppCompatActivity implements LayerSelectDialog.SetOnItemClickListener,
         View.OnClickListener, DrawEventListener, IYzlView, LayerControlView,ILayerView,IBaseView {
+    private static final String LAYERMANAGER_TAG = "LAYERMANAGER_TAG";
     /*系统投影坐标系*/
     public static SpatialReference spatialReference=null;
     //坐标
@@ -283,6 +286,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     public ImageButton location_self;
     //图层选择对话框
     private  Dialog layerSelectDialog;
+    //图层管理
+    private LayerManagerFragment mlayerManagerFragment;
+
+    private LayerManagerViewModel mLayerManagerViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -548,13 +555,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         selectfillSymbol = new SimpleFillSymbol(Color.TRANSPARENT);
         selectfillSymbol.setOutline(lineSymbol);
         selectfillSymbol.setAlpha(10);
-
-       /* LocationDisplayManager ls = mapView.getLocationDisplayManager();
-        try {
-            locationMarkerSymbol = ls.getDefaultSymbol();
-        } catch (java.lang.Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     /**实时显示坐标*/
@@ -1313,9 +1313,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 //gpsCollectPresenter.showGPSCollectType();
                 break;
             case R.id.ll_auditlayers:
-                /* 图层控制*/
+                // 图层控制
                 tckzInclude.setVisibility(View.VISIBLE);
                 layerControlPresenter.initOtmsData();
+                /*if(mlayerManagerFragment==null){
+                    mlayerManagerFragment= LayerManagerFragment.getInstance(mapView);
+                    LayerManagerViewModel viewModel=new LayerManagerViewModel(mContext,mlayerManagerFragment, Injection.provideDataRepository(mContext));
+                    mlayerManagerFragment.setViewModel(viewModel);
+                }
+                mlayerManagerFragment.show(getSupportFragmentManager(),LAYERMANAGER_TAG);*/
                 break;
 
             case R.id.share_gjcx:
