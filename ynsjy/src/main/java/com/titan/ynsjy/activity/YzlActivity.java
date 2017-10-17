@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -74,6 +75,9 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
 		}
 	};
 	private  boolean isAuditLayer=false;
+	static {
+		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         //binding= DataBindingUtil.setContentView(this,R.layout.activity_yzl);

@@ -47,6 +47,8 @@ public class MyLayer implements Serializable{
 	private String pname;
 	/**geodatabase数据名称*/
 	private String cname;
+	/**geodatabase中的表名称*/
+	private String tname;
 	/**geodatabase数据地址*/
 	private String path;
 	/**geodatabase数据是否加密*/
@@ -87,5 +89,13 @@ public class MyLayer implements Serializable{
 
 	public void setSelectColor(int selectColor) {
 		this.selectColor = selectColor;
+	}
+
+	public String getTname() {
+		return tname;
+	}
+
+	public void setTname(String tname) {
+		this.tname = tname;
 	}
 }

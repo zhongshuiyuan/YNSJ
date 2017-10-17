@@ -19,11 +19,13 @@ public class TitanLayer implements Serializable {
     private boolean visiable;
     //图层状态
     private int status;
-    //图层标识 1:基础图 2:影像图 3:专题图层
+    //图层标识 1:基础图 2:影像图 3:专题图层 4:文件目录
     private int flag;
     //图层类型
-    //1:geodatatable;2:shapefile;3:地图服务;
+    //1:geodatatable;2:shapefile;3:地图服务;4:文件夹
     private int type;
+    //是否存在子图层
+    private boolean hasSubLayer;
     //子图层
     private List<TitanLayer> sublayers;
 
@@ -97,5 +99,13 @@ public class TitanLayer implements Serializable {
 
     public void setSublayers(List<TitanLayer> sublayers) {
         this.sublayers = sublayers;
+    }
+
+    public boolean isHasSubLayer() {
+        return hasSubLayer;
+    }
+
+    public void setHasSubLayer(boolean hasSubLayer) {
+        this.hasSubLayer = hasSubLayer;
     }
 }

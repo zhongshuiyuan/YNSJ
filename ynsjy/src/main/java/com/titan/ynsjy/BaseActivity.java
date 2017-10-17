@@ -64,6 +64,7 @@ import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
 import com.titan.baselibrary.util.DialogParamsUtil;
 import com.titan.baselibrary.util.ProgressDialogUtil;
+import com.titan.data.source.Injection;
 import com.titan.gis.GeometryUtil;
 import com.titan.gis.MeasureUtil;
 import com.titan.gis.layermanager.LayerManagerFragment;
@@ -91,6 +92,7 @@ import com.titan.ynsjy.presenter.BasePresenter;
 import com.titan.ynsjy.presenter.DialogImpl;
 import com.titan.ynsjy.presenter.GpsCollectPresenter;
 import com.titan.ynsjy.presenter.LayerControlPresenter;
+import com.titan.ynsjy.presenter.LayerControlPresenter2;
 import com.titan.ynsjy.presenter.LayerLablePresenter;
 import com.titan.ynsjy.presenter.NavigationPresenter;
 import com.titan.ynsjy.presenter.RepairPresenter;
@@ -122,6 +124,7 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public abstract class BaseActivity extends AppCompatActivity implements LayerSelectDialog.SetOnItemClickListener,
         View.OnClickListener, DrawEventListener, IYzlView, LayerControlView,ILayerView,IBaseView {
+
     private static final String LAYERMANAGER_TAG = "LAYERMANAGER_TAG";
     /*系统投影坐标系*/
     public static SpatialReference spatialReference=null;
@@ -268,11 +271,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     //public XbqueryPresenter xbqueryPresenter;
     public TrajectoryPresenter trajectoryPresenter;
 
-    public LayerControlPresenter getLayerControlPresenter() {
+//    public LayerControlPresenter getLayerControlPresenter() {
+//        return layerControlPresenter;
+//    }
+    public LayerControlPresenter2 getLayerControlPresenter() {
         return layerControlPresenter;
     }
 
-    public static LayerControlPresenter layerControlPresenter;
+    //public static LayerControlPresenter layerControlPresenter;
+    public static LayerControlPresenter2 layerControlPresenter;
     public LayerLablePresenter lablePresenter;
     /*baseActivity页面include*/
     public View xbqdInclude, tckzInclude, tckzImgInclude, minegjsearchInclude, otherGjSearchInclude,layerLableInclude,
@@ -340,7 +347,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         repairPresenter = new RepairPresenter(mContext,this,basePresenter);
         lablePresenter = new LayerLablePresenter(mContext,this);
         //spacePresenter = new StatisticsSpacePresenter(mContext,this);
-        layerControlPresenter = new LayerControlPresenter(mContext, this, this);
+        layerControlPresenter = new LayerControlPresenter2(mContext, this, this);
     }
 
 
@@ -1250,7 +1257,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         }
         if(currentlayer!=null)
         currentlayer.clearSelection();//清除选择
-        
+
         layerSelectDialog = new MaterialDialog.Builder(mContext)
                 .title(mContext.getString(R.string.select_layer))
                 .items((CharSequence[]) arry)
@@ -1314,14 +1321,14 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 break;
             case R.id.ll_auditlayers:
                 // 图层控制
-                tckzInclude.setVisibility(View.VISIBLE);
-                layerControlPresenter.initOtmsData();
-                /*if(mlayerManagerFragment==null){
+//                tckzInclude.setVisibility(View.VISIBLE);
+//                layerControlPresenter.initOtmsData();
+                if(mlayerManagerFragment==null){
                     mlayerManagerFragment= LayerManagerFragment.getInstance(mapView);
                     LayerManagerViewModel viewModel=new LayerManagerViewModel(mContext,mlayerManagerFragment, Injection.provideDataRepository(mContext));
                     mlayerManagerFragment.setViewModel(viewModel);
                 }
-                mlayerManagerFragment.show(getSupportFragmentManager(),LAYERMANAGER_TAG);*/
+                mlayerManagerFragment.show(getSupportFragmentManager(),LAYERMANAGER_TAG);
                 break;
 
             case R.id.share_gjcx:
@@ -1875,7 +1882,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         String path = childs.get(gPosition).get(parentName).get(cPosition).getPath();
 
         boolean ischeck = childCheckBox.get(path);
-        layerControlPresenter.changeCBoxStatus(ischeck, path, parentName, childName);
+//        layerControlPresenter.changeCBoxStatus(ischeck, path, parentName, childName);
     }
 
     /**缩放至图元所在位置*/

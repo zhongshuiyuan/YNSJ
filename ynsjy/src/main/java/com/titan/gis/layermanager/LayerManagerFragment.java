@@ -13,15 +13,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CheckedTextView;
 import android.widget.ExpandableListView;
 
 import com.esri.android.map.MapView;
+import com.titan.gis.ListViewUtil;
 import com.titan.model.TitanLayer;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.databinding.FragLayermanagerBinding;
 
 import java.util.List;
+
+import static com.titan.gis.ListViewUtil.setListViewHeightBasedOnChildren;
 
 /**
  * Created by WHS on 2017/1/4
@@ -86,14 +90,26 @@ public class LayerManagerFragment extends DialogFragment implements LayerManager
         Log.e("layers","图层"+mLayerList.size()+"子图层"+mLayerList.get(0).getSublayers().size());
         mAadpter=new LayersAdapter(getActivity(),mLayerList);
         binding.elvBaselayers.setAdapter(mAadpter);
-        binding.elvBaselayers.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        binding.elvBaselayers.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                parent.expandGroup(groupPosition);
-                //if()parent.isGroupExpanded(groupPosition)
-                return false;
+            public void onGroupExpand(int groupPosition) {
+                setListViewHeightBasedOnChildren(binding.elvBaselayers);
             }
         });
+        binding.elvBaselayers.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                setListViewHeightBasedOnChildren(binding.elvBaselayers);
+            }
+        });
+//        binding.elvBaselayers.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//            @Override
+//            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+//                parent.expandGroup(groupPosition);
+//                //if()parent.isGroupExpanded(groupPosition)
+//                return false;
+//            }
+//        });
         binding.elvBaselayers.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -131,6 +147,9 @@ public class LayerManagerFragment extends DialogFragment implements LayerManager
             if (window != null) {
                 window.setGravity(Gravity.RIGHT|Gravity.TOP);
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));//设置dialog背景透明
+                WindowManager.LayoutParams lp = window.getAttributes();
+                lp.y=80;
+                window.setAttributes(lp);
             }
             DisplayMetrics dm = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);

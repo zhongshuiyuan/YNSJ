@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/YNSJ.iml" filepath="$PROJECT_DIR$/YNSJ.iml" />
       <module fileurl="file://$PROJECT_DIR$/YNSJY.iml" filepath="$PROJECT_DIR$/YNSJY.iml" />
       <module fileurl="file://$PROJECT_DIR$/baselibrary/baselibrary.iml" filepath="$PROJECT_DIR$/baselibrary/baselibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/drawtoollib/drawtoollib.iml" filepath="$PROJECT_DIR$/drawtoollib/drawtoollib.iml" />

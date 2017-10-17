@@ -32,6 +32,7 @@ import com.titan.ynsjy.adapter.UniqueFieldAdapter;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.mview.ILayerView;
 import com.titan.ynsjy.presenter.LayerControlPresenter;
+import com.titan.ynsjy.presenter.LayerControlPresenter2;
 import com.titan.ynsjy.util.BussUtil;
 import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.Util;
@@ -50,13 +51,13 @@ public class RenderSetDialog extends Dialog {
 
     private Context mContext;
     private ILayerView iLayerView;
-    private LayerControlPresenter layerControlPresenter;
+    private LayerControlPresenter2 layerControlPresenter;
     //简单渲染
     private static final int RENDER_TYPE_SIMPLE=0;
     //唯一值渲染
     private static final int RENDER_TYPE_UNIQUE=1;
 
-    public RenderSetDialog(@NonNull Context context, @StyleRes int themeResId,ILayerView layerView,LayerControlPresenter layerControlPresenter) {
+    public RenderSetDialog(@NonNull Context context, @StyleRes int themeResId,ILayerView layerView,LayerControlPresenter2 layerControlPresenter) {
         super(context, themeResId);
         this.mContext = context;
         this.iLayerView = layerView;
