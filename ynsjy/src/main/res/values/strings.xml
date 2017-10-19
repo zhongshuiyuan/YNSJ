@@ -198,11 +198,14 @@
     <string name="addaudit">新增审计</string>
     <string name="spaceedit">空间编辑</string>
     <string name="auditspace">空间数据</string>
+
     <string name="auditlayer">审计图层</string>
+
     <string name="audit">审计图班</string>
     <string name="audithistory">审计记录</string>
     <string name="attr">属性查看</string>
     <string name="auditype">请选择审计方式</string>
     <string name="select_layer">请选择图层</string>
     <string name="editype">请选择编辑模式</string>
+    <string name="delete">删除</string>
 </resources>

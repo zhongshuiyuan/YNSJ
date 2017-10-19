@@ -28,7 +28,6 @@ import com.esri.core.tasks.query.QueryParameters;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.activity.AuditActivity;
 import com.titan.ynsjy.activity.AuditHistoryActivity;
-import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.Row;
 import com.titan.ynsjy.listviewinedittxt.Line;
@@ -277,8 +276,8 @@ public class XbEditActivity extends BaseEditActivity{
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
-			EditPhoto dialog = new EditPhoto(mContext,imagePath,fid,null);
-			dialog.show();
+			//EditPhoto dialog = new EditPhoto(mContext,imagePath,fid,null);
+			//dialog.show();
 		}
 	}
 

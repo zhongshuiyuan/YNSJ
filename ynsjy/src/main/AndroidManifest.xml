@@ -95,12 +95,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>-->
         </activity>
-
         <activity
             android:name=".activity.AuditActivity"
-            android:configChanges="screenSize|keyboardHidden|orientation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden"/>
+        <!--android:configChanges="screenSize|keyboardHidden|orientation"-->
+
         <activity
             android:name=".activity.FunctionChoiceActivity"
             android:screenOrientation="landscape"/>

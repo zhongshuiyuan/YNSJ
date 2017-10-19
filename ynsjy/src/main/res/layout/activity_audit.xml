@@ -21,6 +21,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/blue"
             android:layout_marginBottom="5dp">
 
            <!-- <TextView
@@ -37,6 +38,7 @@
                 android:layout_toStartOf="@+id/audit_pic_browse"
                 android:paddingEnd="20dp"
                 android:paddingStart="20dp"
+                android:visibility="gone"
                 android:text="@string/spaceedit" />
             <TextView
                 android:id="@+id/audit_pic_browse"

@@ -38,6 +38,7 @@ public class LayerLablePresenter {
     public MyLayer myLayer;
     private long[] arrays;
     private HashMap<Field, Boolean> checkboxMap = new HashMap<>();
+    //字段过滤
     private String[] filterField = new String[]{"OBJECTID_1", "OBJECTID_12", "OBJECTID", "Shape_Leng", "Shape_Le_1","PK_UID","OBJECTID_2","Shape_Le_2"};
 
     public LayerLablePresenter(Context context, ILayerView layerView) {

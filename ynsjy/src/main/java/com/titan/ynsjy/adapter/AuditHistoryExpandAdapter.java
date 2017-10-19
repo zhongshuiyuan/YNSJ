@@ -1,13 +1,11 @@
 package com.titan.ynsjy.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.esri.core.map.Feature;
@@ -112,7 +110,7 @@ public class AuditHistoryExpandAdapter extends BaseExpandableListAdapter {
     }
 
     private String getAttrValue(String attr,int groupPosition,int childPosition){
-        return childList.get(groupPosition).get(childPosition).getAttributeValue(attr).toString();
+        return String.valueOf(childList.get(groupPosition).get(childPosition).getAttributeValue(attr));
     }
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {

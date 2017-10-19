@@ -35,6 +35,8 @@ public class CalloutUtil {
         TextView tv_attr = (TextView) view.findViewById(R.id.tv_content);
         ImageView iv_close = (ImageView) view.findViewById(R.id.iv_close);
         Button btn_audit = (Button) view.findViewById(R.id.btn_audit);
+        Button btn_delete = (Button) view.findViewById(R.id.btn_delete);
+
         StringBuffer calloutcontent = new StringBuffer();
         calloutcontent.append("");
         Map<String,Object> attrmap=feature.getAttributes();
@@ -49,7 +51,11 @@ public class CalloutUtil {
                 if (filterAlias(alias)||attrmap.get(field.getName())==null)
                     continue;
 
-                String value = attrmap.get(field.getName()).toString();
+                String value="";
+                if(attrmap.get(field.getName())!=null){
+                     value = String.valueOf(attrmap.get(field.getName()));
+
+                }
                 calloutcontent.append(alias + " | " + value + "\n");
 
             }
@@ -62,11 +68,13 @@ public class CalloutUtil {
         tv_attr.setText(calloutcontent);
         iv_close.setOnClickListener(onClickListener);
         //审计图层可属性编辑
-        if(isAuditLayer)
-        btn_audit.setText("属性编辑");
+        if(isAuditLayer){
+            btn_audit.setText("属性编辑");
+            btn_delete.setVisibility(View.VISIBLE);
+        }
 
         btn_audit.setOnClickListener(onClickListener);
-
+        btn_delete.setOnClickListener(onClickListener);
 
         return view;
     }

@@ -1,10 +1,10 @@
 package com.titan.ynsjy.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
@@ -14,17 +14,18 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.esri.android.map.FeatureLayer;
 import com.esri.core.geodatabase.Geodatabase;
 import com.esri.core.geodatabase.GeodatabaseFeatureTable;
 import com.esri.core.geometry.Geometry;
 import com.titan.model.TitanLayer;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
+import com.titan.ynsjy.mview.LayerControlView;
 import com.titan.ynsjy.util.ViewHolderUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,23 +38,25 @@ import java.util.Map;
 public class TckzListViewAdapter extends BaseExpandableListAdapter {
     private List<File> pList;//一级内容
     private addLayerInMapview listener;
-    private BaseActivity activity;
+    //private BaseActivity activity;
     private List<TitanLayer> list;//图层数据
     private Map<String,Boolean> cCheckBoxMap = new HashMap<>();//二级菜单checkbox状态集合
     private Map<String, MyBaseAdapter> adapterMap = new HashMap<>();//第三级listView适配器集合
     private Map<String, Boolean> hideMap = new HashMap<>();//第三级listView展开状态集合
-    private List<Map<String, List<File>>> childs;//一二级所有内容
+    //private List<Map<String, List<File>>> childs;//一二级所有内容
     private Map<String,ListView> lvMap = new HashMap<>();//第三级listview集合
-
-    public TckzListViewAdapter(BaseActivity activity, List<File> pList, List<Map<String, List<File>>> childs, addLayerInMapview listener) {
+    private LayerControlView mLayerControlView;
+    private Context mContext;
+   /* public TckzListViewAdapter(BaseActivity activity, List<File> pList, List<Map<String, List<File>>> childs, addLayerInMapview listener) {
         this.activity = activity;
         this.pList = pList;
-        this.childs = childs;
+        //this.childs = childs;
         this.listener = listener;
-    }
+    }*/
 
-    public TckzListViewAdapter(BaseActivity activity, List<TitanLayer> list, addLayerInMapview listener) {
-        this.activity = activity;
+    public TckzListViewAdapter(Context context,LayerControlView layerControlView, List<TitanLayer> list, addLayerInMapview listener) {
+        mContext=context;
+        this.mLayerControlView = layerControlView;
         this.list = list;
         this.listener = listener;
     }
@@ -176,7 +179,7 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
             public void onClick(View v) {
                 ListView listView;
                 if (lvMap.get(gname+cname)==null){
-                    listView = new ListView(activity);
+                    listView = new ListView(mContext);
                     listView.setLayoutParams(new ListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
                     listView.setVisibility(View.GONE);
                     lvMap.put(gname+cname,listView);
@@ -293,7 +296,7 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
             }
             TextView textView = ViewHolderUtil.get(convertView, R.id.id_child_txt);
             final CheckBox checkBox = ViewHolderUtil.get(convertView, R.id.cb_child);
-            ImageView img = ViewHolderUtil.get(convertView, R.id.featurelayer_extent);
+            ImageView iv_extent = ViewHolderUtil.get(convertView, R.id.featurelayer_extent);
 //            final String tableName = tableList.get(position).getTableName();
 //            final String path = file.getAbsolutePath();
             final String tableName = titanLayerList.get(position).getName();
@@ -332,10 +335,15 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
             });
 
             //图层定位
-            img.setOnClickListener(new View.OnClickListener() {
+            iv_extent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    locationLayer(gname,cname,tableName);
+                    if(finalGeodatabaseTables.get(position)!=null){
+                        FeatureLayer layer=new FeatureLayer(finalGeodatabaseTables.get(position));
+                        Log.e("图层范围:", String.valueOf(layer.getFullExtent()));
+                        mLayerControlView.getMapView().setExtent(layer.getFullExtent());
+                    }
+                    //locationLayer(gname,cname,tableName);
                 }
             });
             return convertView;
@@ -355,7 +363,7 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
             String name2 = BaseActivity.layerNameList.get(i).getTname();
             if (name.equals(gname) && cname.contains(name1) && name2.equals(tableName)) {
                 final Geometry geometry = BaseActivity.layerNameList.get(i).getLayer().getFullExtent();
-                activity.ZoomToGeom(geometry);
+                //activity.ZoomToGeom(geometry);
                 break;
             }
         }

@@ -165,6 +165,7 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
                                             }
                                             if (selGeoFeaturesList.size()>=1){
                                                 actionMode = ActionMode.MODE_SELECT;
+                                                mapView.setOnTouchListener(myTouchListener);
                                                 getSelParams(selGeoFeaturesList,0);
                                                 Intent intent = new Intent(mContext, AuditActivity.class);
                                                 intent.putExtra("fid", selGeoFeature.getId());
@@ -267,29 +268,37 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
         //mCallout.setContent(createCallView(feature.getAttributes()));
         //List<Field> fields=myLayer.getLayer().getFeatureTable().getFields();
 		List<Field> fields=currentlayer.getFeatureTable().getFields();
-
+        Log.e("属性查看",geodatabaseFeature.getAttributes().toString());
         isAuditLayer=getLayerIsEdit(currentlayer);
         mCallout.setContent(CalloutUtil.createCallView(mContext,fields, geodatabaseFeature,isAuditLayer, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
+                    case R.id.btn_delete:
+                        //删除图班
+                        mCallout.hide();
+                        try {
+                            currentlayer.getFeatureTable().deleteFeature(geodatabaseFeature.getId());
+                            ToastUtil.showShort(mContext,"删除成功");
+                        } catch (TableException e) {
+                            //e.printStackTrace();
+                            ToastUtil.showLong(mContext,"删除异常"+e);
+                        }
+                        break;
 					case R.id.iv_close:
 						mCallout.hide();
 						break;
 					case R.id.btn_audit:
 						//图班审计 属性编辑
 						//getSelParams(selGeoFeaturesList,0);
-						selGeoFeature=geodatabaseFeature;
+                        actionMode= ActionMode.MODE_SELECT;
+                        mapView.setOnTouchListener(myTouchListener);
+                        selGeoFeature=geodatabaseFeature;
 						Intent intent = new Intent(mContext, AuditActivity.class);
 						intent.putExtra("fid", selGeoFeature.getId());
                         intent.putExtra("isauditlayer",isAuditLayer);
-                        /*if(layerControlPresenter.getGeodatabaseList().get(0)!=null){
-                            layerControlPresenter.getGeodatabaseList().get(0).getPath();
-                        } */
-						//intent.putExtra("picPath", ResourcesManager.getImagePath(myLayer.getPath()));
-                        //intent.putExtra("picPath", MyApplication.resourcesManager.getSJImagePath());
-
 						intent.putExtra("auditType",false);
+
 						mContext.startActivity(intent);
 						break;
 				}
@@ -301,6 +310,11 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
 
     }
 
+    /**
+     * 判断图层是审计图层
+     * @param currentlayer
+     * @return
+     */
     private boolean getLayerIsEdit(FeatureLayer currentlayer) {
         return currentlayer.getFeatureTable().getTableName().equals("edit");
     }
@@ -316,17 +330,21 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
         switch (actionMode)
         {
             case MODE_EDIT_ADD:
+                //新增审计
                 graphicsLayer.addGraphic(event.getDrawGraphic());
 				mAddGraphic=event.getDrawGraphic();
-                drawTool.deactivate();
+
+				tdrawTool.deactivate();
+				actionMode=ActionMode.MODE_SELECT;
+                //重置地图监听事件
+                mapView.setOnTouchListener(myTouchListener);
+                //mapView.setOnTouchListener(myTouchListener);
                 Intent intent = new Intent(mContext, AuditActivity.class);
                 //intent.putExtra("graphic",event.getDrawGraphic());
                 intent.putExtra("auditType",1);
                 mContext.startActivity(intent);
                 break;
         }
-
-
     }
 
 }

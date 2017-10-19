@@ -1,3 +1,4 @@
+/*
 package com.titan.ynsjy.dialog;
 
 import android.app.Activity;
@@ -41,10 +42,12 @@ import butterknife.Unbinder;
 
 import static com.titan.ynsjy.edite.activity.BaseEditActivity.TAKE_PICTURE;
 
+*/
 /**
  * Created by hanyw on 2017/9/1/001.
  * 新增审计页面
- */
+ *//*
+
 
 public class AuditDialog extends DialogFragment{
     @BindView(R.id.audit_reason)
@@ -116,9 +119,11 @@ public class AuditDialog extends DialogFragment{
         }
     }
 
-    /**
+    */
+/**
      * 拍照
-     */
+     *//*
+
     private void photograph() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         imagePath = picPath+"/"+ ResourcesManager.getPicName(String.valueOf(id));
@@ -127,7 +132,9 @@ public class AuditDialog extends DialogFragment{
         startActivityForResult(intent, TAKE_PICTURE);
     }
 
-    /** 图片浏览*/
+    */
+/** 图片浏览*//*
+
     public void lookpictures(Activity activity){
         List<File> lst = MyApplication.resourcesManager.getImages(picPath);
         if(lst.size() == 0){
@@ -142,9 +149,11 @@ public class AuditDialog extends DialogFragment{
         startActivity(intent);
     }
 
-    /**
+    */
+/**
      * 删除修改记录
-     */
+     *//*
+
     private void delAuditData() {
         try {
             featureTable.deleteFeature(newId);
@@ -154,9 +163,11 @@ public class AuditDialog extends DialogFragment{
     }
 
 
-    /**
+    */
+/**
      * 获取修改表
-     */
+     *//*
+
     private void getData() {
         myLayer = BaseUtil.getIntance(getActivity()).getFeatureInLayer("edit", BaseActivity.layerNameList);
         featureTable = myLayer.getTable();
@@ -168,18 +179,22 @@ public class AuditDialog extends DialogFragment{
         }
     }
 
-    /**
+    */
+/**
      * 保存数据
-     */
+     *//*
+
     private void saveData() {
         createFeature();
         setData();
         upEditLayerData();
     }
 
-    /**
+    */
+/**
      * 新建数据
-     */
+     *//*
+
     private void createFeature() {
         Graphic g = new Graphic(null, null);
         try {
@@ -190,9 +205,11 @@ public class AuditDialog extends DialogFragment{
         }
     }
 
-    /**
+    */
+/**
      * @return 修改的数据集
-     */
+     *//*
+
     private Map<String, Object> setData() {
         Map<String, Object> map = new HashMap<>();
         map.put("FK_EDIT_UID", id);
@@ -205,9 +222,11 @@ public class AuditDialog extends DialogFragment{
         return map;
     }
 
-    /**
+    */
+/**
      * 更新数据
-     */
+     *//*
+
     private void upEditLayerData() {
         Graphic graphic = new Graphic(null, null, setData());
         try {
@@ -225,3 +244,4 @@ public class AuditDialog extends DialogFragment{
     }
 
 }
+*/

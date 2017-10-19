@@ -41,6 +41,7 @@ import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.event.OnZoomListener;
 import com.esri.core.geodatabase.Geodatabase;
 import com.esri.core.geodatabase.GeodatabaseFeature;
+import com.esri.core.geodatabase.GeodatabaseFeatureTable;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
@@ -64,7 +65,6 @@ import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
 import com.titan.baselibrary.util.DialogParamsUtil;
 import com.titan.baselibrary.util.ProgressDialogUtil;
-import com.titan.data.source.Injection;
 import com.titan.gis.GeometryUtil;
 import com.titan.gis.MeasureUtil;
 import com.titan.gis.layermanager.LayerManagerFragment;
@@ -91,7 +91,6 @@ import com.titan.ynsjy.mview.LayerControlView;
 import com.titan.ynsjy.presenter.BasePresenter;
 import com.titan.ynsjy.presenter.DialogImpl;
 import com.titan.ynsjy.presenter.GpsCollectPresenter;
-import com.titan.ynsjy.presenter.LayerControlPresenter;
 import com.titan.ynsjy.presenter.LayerControlPresenter2;
 import com.titan.ynsjy.presenter.LayerLablePresenter;
 import com.titan.ynsjy.presenter.NavigationPresenter;
@@ -136,9 +135,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     public static MapView mapView;
     /* 地图服务及地址 */
     //基础图
-    public ArcGISLocalTiledLayer tiledLayer;
+    public ArcGISLocalTiledLayer tiledLayer=null;
     //影像图
-    public ArcGISLocalTiledLayer imgTiledLayer;
+    public ArcGISLocalTiledLayer imgTiledLayer=null;
     /* GPS采集工具拦*/
     private Button gpstart, gpspend, gpsstop;
     private boolean gpsstart = false;//是否是首次点击开始按钮
@@ -152,7 +151,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /*轨迹时间选择 */
     //private TimePopupWindow pwTime;
     /* MyTouchListener */
-    private MyTouchListener myTouchListener;
+    public MyTouchListener myTouchListener;
     /* 地图绘制层 */
     public GraphicsLayer graphicsLayer;
     /* 是否首次定位 */
@@ -282,7 +281,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     public static LayerControlPresenter2 layerControlPresenter;
     public LayerLablePresenter lablePresenter;
     /*baseActivity页面include*/
-    public View xbqdInclude, tckzInclude, tckzImgInclude, minegjsearchInclude, otherGjSearchInclude,layerLableInclude,
+    public View xbqdInclude, tckzInclude, tckzImgInclude, minegjsearchInclude,layerLableInclude,
             xbbjInclude, xbSearchZdyInclude, xbSearchJdInclude, gpsCaijiInclude, xdmSearchInclude,share_maptools;
     /*在include内的view但是需要做全局变量的*/
     public ImageView sjtbImgview, gjsearchImgview, dmMangerImgview, personCenter, xbbjImgview, tcxrImgview, xbsearchImgview;
@@ -303,12 +302,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         mContext=this;
-        //setContentView(R.layout.activity_base);
         //去除arcgis文字
         ///ArcGISRuntimeEnvironment.setLicense("runtimelite,1000,rud8065403504,none,RP5X0H4AH7CLJ9HSX018");
         //ArcGISRuntime.setClientId("qwvvlkN4jCDmbEAO");//去除水印的
-        /*初始化数据*/
-        //initData();
+
         BaseActivityPermissionsDispatcher.initWithCheck(this);
 
     }
@@ -319,7 +316,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     })
     void init(){
         /*初始化数据*/
-       //BaseActivityPermissionsDispatcher.initDataWithCheck(this);
         /* 定位设置 */
         BaseActivityPermissionsDispatcher.initLocationWithCheck(this);
         /* 地图控件初始化 */
@@ -411,8 +407,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         /*xbbjImgview = (ImageView) childview.findViewById(R.id.share_xbbj);
         xbbjImgview.setOnClickListener(this);*/
         /*小班查询 */
-        xbsearchImgview = (ImageView) childview.findViewById(R.id.share_xbcx);
-        xbsearchImgview.setOnClickListener(this);
+        /*xbsearchImgview = (ImageView) childview.findViewById(R.id.share_xbcx);
+        xbsearchImgview.setOnClickListener(this);*/
         ImageView statisticsView =(ImageView) childview.findViewById(R.id.top_kongjiantongji);
         statisticsView.setOnClickListener(this);
         ImageView addnewlayerView =(ImageView) childview.findViewById(R.id.top_addnewlayer);
@@ -451,7 +447,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         /*图层渲染*/
         tcxrImgview = (ImageView) childview.findViewById(R.id.share_tcxr);
         tcxrImgview.setOnClickListener(this);
-        //属性标注
+        //图层标注
         ImageView shuxingLable = (ImageView) childview.findViewById(R.id.shuxing_lable);
         shuxingLable.setOnClickListener(this);
         /*gps采集工具栏*/
@@ -494,8 +490,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         }
         /* 基础底图 */
         String imagePath = MyApplication.resourcesManager.getImagePath();
-        tiledLayer = basePresenter.addTitleLayer(imagePath);
-        if(tiledLayer==null){
+        imgTiledLayer = basePresenter.addTitleLayer(imagePath);
+        if(imgTiledLayer==null){
             ToastUtil.setToast(mContext,"影像图文件不存在");
         }
         //spatialReference=mapView.getSpatialReference();
@@ -508,7 +504,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         graphicsLayer = basePresenter.addGraphicLayer();
         /*地图缩放*/
         mapView.setOnZoomListener(new OnZoomListener() {
-            private static final long serialVersionUID = 6225276681409635976L;
 
             @Override
             public void preAction(float arg0, float arg1, double arg2) {
@@ -533,14 +528,14 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             @Override
             public void onStatusChanged(Object source, STATUS status) {
                 if (source instanceof FeatureLayer) {
-                    if (STATUS.LAYER_LOADED == status) {
+                    if (STATUS.LAYER_LOADING_FAILED == status) {
+                        ProgressDialogUtil.stopProgressDialog(mContext);
+                        ToastUtil.setToast(mContext, "图层加载异常");
+                    } else {
                         ProgressDialogUtil.stopProgressDialog(mContext);
 
                         spatialReference=mapView.getSpatialReference();
-                        ToastUtil.setToast(mContext, "数据加载成功");
-                    } else {
-                        ProgressDialogUtil.stopProgressDialog(mContext);
-                        ToastUtil.setToast(mContext, "数据加载错误");
+                        ToastUtil.setToast(mContext, "图层加载成功");
                     }
                 }
             }
@@ -610,10 +605,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         if(mCallout.isShowing()){
             mCallout.hide();
         }
-       /* for (int i = 0; i < mCalloutPopupWindows.size(); i++) {
-            mCalloutPopupWindows.get(i).hide();
-        }*/
-        //mStops.clearFeatures();
     }
 
     /**
@@ -817,47 +808,59 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
         @Override
         public void onReceiveLocation(BDLocation location) {
+            try {
+                if (location == null|| location.getLocType() == BDLocation.TypeServerError){
+                    //ToastUtil.showShort(mContext,"获取位置异常");
+                    Log.e("百度定位异常:", String.valueOf(location.getLocType()));
+                    //return;
 
-            if (location == null)
-                return;
-            if (location.getLongitude() == 4.9E-324 && location.getLatitude() == 4.9E-324)
-                return;
-            if (location.getLongitude() == 1.0 && location.getLatitude() == 1.0)
-                return;
-            double lon = location.getLongitude();
-            double lat = location.getLatitude();
+                }
+
+                //经度
+                double lon = mLoctionDisplayManager.getLocation().getLongitude();
+                //纬度
+                double lat = mLoctionDisplayManager.getLocation().getLatitude();
+                //海拔
+                double aut = mLoctionDisplayManager.getLocation().getAltitude();
 
            /* if (graphicsLayer == null) {
                 graphicsLayer = new GraphicsLayer();
                 mapView.addLayer(graphicsLayer);
             }*/
-            currentPoint=new Point(lon,lat,location.getAltitude());
-            if (gps_start_flag && currentPoint.isValid()) {
-                //
-                if (gpsCollectPresenter.collection_type == 0) {
+                currentPoint=new Point(lon,lat,aut);
+                if (gps_start_flag && currentPoint.isValid()) {
+                    //
+                    if (gpsCollectPresenter.collection_type == 0) {
 
-                    if (gps_stop_flag||gps_spend_flag) {
-                        return;
+                        if (gps_stop_flag||gps_spend_flag) {
+                            return;
+                        }
+                        gpsCollectPresenter.addGjdateTodb(currentPoint);
                     }
-                    gpsCollectPresenter.addGjdateTodb(currentPoint);
+                    if (gpsCollectPresenter.collection_type == 1) {
+                        addPointToLine(currentPoint);
+                    }
                 }
-                if (gpsCollectPresenter.collection_type == 1) {
-                    addPointToLine(currentPoint);
-                }
-            }
-            //展示当前位置信息
-            setLocationView();
-            if (bfPointLon != currentPoint.getX() || bfPointLat != currentPoint.getY()) {
-                double distance = BussUtil.distance(bfPointLat, bfPointLon, currentPoint.getY(), currentPoint.getX());
-                if (distance > 10) {
+                //展示当前位置信息
+                setLocationView();
+                //保存位置信息
+                if (bfPointLon != currentPoint.getX() || bfPointLat != currentPoint.getY()) {
+                    double distance = BussUtil.distance(bfPointLat, bfPointLon, currentPoint.getY(), currentPoint.getX());
+                    if (distance > 10) {
 					/* 上传坐标到后台 */
-                    new MyAsyncTask().execute("uplonlat");
+                        new MyAsyncTask().execute("uplonlat");
 
+                    }
+
+                    bfPointLat = currentPoint.getY();
+                    bfPointLon = currentPoint.getX();
                 }
-
-                bfPointLat = currentPoint.getY();
-                bfPointLon = currentPoint.getX();
+            } catch (Exception e){
+                Log.e("定位异常",e.toString());
             }
+
+
+
 
         }
     }
@@ -1320,15 +1323,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 //gpsCollectPresenter.showGPSCollectType();
                 break;
             case R.id.ll_auditlayers:
-                // 图层控制
-//                tckzInclude.setVisibility(View.VISIBLE);
-//                layerControlPresenter.initOtmsData();
-                if(mlayerManagerFragment==null){
+                //图层控制
+                tckzInclude.setVisibility(View.VISIBLE);
+                layerControlPresenter.initOtmsData();
+                /*if(mlayerManagerFragment==null){
                     mlayerManagerFragment= LayerManagerFragment.getInstance(mapView);
                     LayerManagerViewModel viewModel=new LayerManagerViewModel(mContext,mlayerManagerFragment, Injection.provideDataRepository(mContext));
                     mlayerManagerFragment.setViewModel(viewModel);
                 }
-                mlayerManagerFragment.show(getSupportFragmentManager(),LAYERMANAGER_TAG);
+                mlayerManagerFragment.show(getSupportFragmentManager(),LAYERMANAGER_TAG);*/
                 break;
 
             case R.id.share_gjcx:
@@ -1360,8 +1363,18 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                 showZbdwDialog();
                 break;
             case R.id.shuxing_lable:
+                //图层标注
+                layerNameList.clear();
+                for(FeatureLayer featurelayer:layerControlPresenter.getLayerindexmap().keySet()){
+                    MyLayer layer=new MyLayer();
+                    layer.setLayer(featurelayer);
+                    layer.setLname(featurelayer.getName());
+                    layer.setTable((GeodatabaseFeatureTable) featurelayer.getFeatureTable());
+                    layerNameList.add(layer);
+                }
                 /*属性标注*/
                 showFeatureLayer(ActionMode.MODE_ADD_LABLE,layerNameList);
+
                 break;
 
             case R.id.ll_attr:
@@ -2434,6 +2447,14 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      * 显示图层渲染设置页面
      */
     public void showLayerRenderSystem() {
+        layerNameList.clear();
+        for(FeatureLayer featurelayer:layerControlPresenter.getLayerindexmap().keySet()){
+            MyLayer layer=new MyLayer();
+            layer.setLayer(featurelayer);
+            layer.setLname(featurelayer.getName());
+            layer.setTable((GeodatabaseFeatureTable) featurelayer.getFeatureTable());
+            layerNameList.add(layer);
+        }
         RenderSetDialog setDialog = new RenderSetDialog(mContext,R.style.Dialog,this,layerControlPresenter);
         BussUtil.setDialogParams(mContext, setDialog, 0.55, 0.55);
     }
@@ -2573,9 +2594,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
     @Override
     public Envelope getCurrentEnvelope() {
-        Polygon polygon = tiledLayer.getExtent();
+        //Polygon polygon = tiledLayer.getExtent();
+
         Envelope envelope = new Envelope();
-        polygon.queryEnvelope(envelope);
+        mapView.getExtent().queryEnvelope(envelope);
         return envelope;
     }
 

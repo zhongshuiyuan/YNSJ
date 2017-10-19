@@ -11,30 +11,31 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.esri.core.geodatabase.Geodatabase;
+import com.esri.core.geodatabase.GeodatabaseFeatureTable;
+import com.esri.core.geometry.GeometryEngine;
+import com.esri.core.geometry.Point;
+import com.esri.core.geometry.SpatialReference;
 import com.esri.core.map.Graphic;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
-import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
-import com.titan.ynsjy.entity.MyLayer;
 import com.titan.ynsjy.entity.ScreenTool;
-import com.titan.ynsjy.util.BaseUtil;
+import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.UtilTime;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,34 +54,41 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
     private EditText ed_infor;//信息
     private EditText ed_mark;//备注
     private int labelTextSize;//标注文字大小
-    private Long fk_Fxh_Uid;//对应数据ID
+    //private Long fk_Fxh_Uid;//对应数据ID
     private Long fk_Edit_Uid;//对应数据修改id
-
-    public EditPhoto(Context context, String path, Long fk_Fxh_Uid,Long fk_Edit_Uid) {
+    private Geodatabase curretGdb;//当前数据库
+    private Point currentPt;
+    private SpatialReference mSp;
+    public EditPhoto(Context context, String path, Long fk_Edit_Uid, Geodatabase geodatabase, Point pt, SpatialReference sp) {
         super(context);
         this.mContext = context;
         this.photoPath = path;
-        this.fk_Fxh_Uid = fk_Fxh_Uid;
+        //this.fk_Fxh_Uid = fk_Fxh_Uid;
+        currentPt=pt;
+        curretGdb=geodatabase;
+        mSp=sp;
         this.fk_Edit_Uid = fk_Edit_Uid;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         view = LayoutInflater.from(mContext).inflate(R.layout.photo_edit, null);
         setContentView(view);
+
+        //设置window背景，默认的背景会有Padding值，不能全屏。当然不一定要是透明，你可以设置其他背景，替换默认的背景即可。
+        //getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        //一定要在setContentView之后调用，否则无效
+        //getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        setCanceledOnTouchOutside(false);
         initView();
         //setPhoto(photoPath);
         labelTextSize = convertDpToPixel(20, mContext);
         setTimeLabel(labelTextSize);
     }
 
-    /*设置图片*/
-    private void setPhoto(String photoPath) {
-        photo = BitmapFactory.decodeFile(photoPath);
-        img_photo.setImageBitmap(photo);
-    }
+
 
     /*布局初始化*/
     private void initView() {
@@ -118,22 +126,35 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
         }
     }
 
+    /**
+     * 照片数据到数据库
+     */
     private void savePhotoInfo() {
-        createFeature();
-    }
-
-    private void createFeature() {
-        MyLayer myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("photo", BaseActivity.layerNameList);
-        FeatureTable featureTable = myLayer.getTable();
-        Graphic g = new Graphic(null, null,setPhotoInfo());
-        try {
-            long newId = featureTable.addFeature(g);
-            featureTable.updateFeature(newId,g);
-        } catch (TableException e) {
-            e.printStackTrace();
+        FeatureTable featureTable=null;
+        //MyLayer myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("photo", BaseActivity.layerNameList);
+        for (GeodatabaseFeatureTable gdbtable:curretGdb.getGeodatabaseTables()) {
+            if(gdbtable.getTableName().contains("photo")||gdbtable.getTableName().contains("照片")){
+                featureTable=gdbtable;
+            }
         }
 
+        try {
+            Point pt= (Point) GeometryEngine.project(new Point(currentPt.getX(),currentPt.getY()),SpatialReference.create(4326),mSp);
+            Graphic g = new Graphic(pt, null,setPhotoInfo());
+            long newId = featureTable.addFeature(g);
+            Log.e("照片属性:",featureTable.getFeature(newId).getAttributes().toString());
+            //featureTable.updateFeature(newId,g);
+            ToastUtil.showLong(mContext,"照片保存成功");
+            this.dismiss();
+        } catch (TableException e) {
+            ToastUtil.showLong(mContext,"照片保存异常"+e);
+            this.dismiss();
+        }
+
+        //createFeature();
     }
+
+
 
     @Override
     public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
@@ -153,12 +174,12 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
     private Map<String, Object> setPhotoInfo() {
         Map<String, Object> map = new HashMap<>();
         //map.put("PK_UID", fk_Fxh_Uid);
-        map.put("FK_FXH_UID", fk_Fxh_Uid);
+        //map.put("FK_FXH_UID", fk_Fxh_Uid);
         map.put("TIME", UtilTime.getSystemtime2());
         map.put("INFO", ed_infor.getText().toString());
         map.put("REMARK", ed_mark.getText().toString());
         map.put("ADDEESS", ed_address.getText().toString());
-        map.put("URI", "123");//photoPath
+        map.put("URI", photoPath);//photoPath
         map.put("FK_EDITID",fk_Edit_Uid);
         map.put("ZPBH",getPicName(photoPath));
         return map;
@@ -175,7 +196,9 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
         img_photo.setImageBitmap(photo);
     }
 
-    /*删除图片*/
+    /**
+     * 删除原始图片
+     */
     private void deletFile(String filePath, Context context) {
         if (filePath == null) {
             return;
@@ -192,8 +215,10 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
         );
     }
 
-    /*保存图片*/
-    public void saveBitmap(String path, Bitmap bm) {
+    /**
+     * 保存添加水印之后图片
+     */
+    private void saveBitmap(String path, Bitmap bm) {
         File f = new File(path);
         if (f.exists()) {
             f.delete();
@@ -203,10 +228,9 @@ public class EditPhoto extends Dialog implements View.OnClickListener {
             bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            ToastUtil.showShort(mContext,"图片保存异常"+e);
         }
     }
 

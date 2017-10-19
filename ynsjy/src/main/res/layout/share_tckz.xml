@@ -164,7 +164,7 @@
         <ExpandableListView
             android:id="@+id/tc_expandlistview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:cacheColorHint="@color/white" >
         </ExpandableListView>
     </LinearLayout>

@@ -15,7 +15,6 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
@@ -40,18 +39,31 @@
 
 
         <LinearLayout
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <Button
                 android:id="@+id/btn_audit"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="@string/audit"
+                android:gravity="center"
                 style="@style/textview_btn_style"
                 android:textColor="@color/white"
       />
+
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/delete"
+                style="@style/textview_btn_style"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                />
         </LinearLayout>
     </LinearLayout>
 </layout>

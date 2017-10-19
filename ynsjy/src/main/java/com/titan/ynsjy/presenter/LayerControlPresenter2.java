@@ -80,8 +80,10 @@ public class LayerControlPresenter2 implements TckzListViewAdapter.addLayerInMap
         return geodatabaseList;
     }
 
-    //数据库
+    //获取所有数据库
     private List<Geodatabase> geodatabaseList;
+    //当前
+    private Geodatabase currentGeodatabase;
 
     public LayerControlPresenter2(Context ctx, LayerControlView view, View.OnClickListener onClickListener){
         this.mContext = ctx;
@@ -295,9 +297,12 @@ public class LayerControlPresenter2 implements TckzListViewAdapter.addLayerInMap
             return;
         }
         final List<Map<String, List<File>>> childs = MyApplication.resourcesManager.getChildeData(mContext,groups);
+        geodatabaseList=MyApplication.resourcesManager.getChildGdb(mContext,groups);
+
 //        ExpandableListView tc_exp = (ExpandableListView) childView.findViewById(R.id.tc_expandlistview);
         List<TitanLayer> titanLayer = initLayerData(groups,childs);
-        final TckzListViewAdapter expandableAdapter = new TckzListViewAdapter((BaseActivity)mContext,titanLayer,this);
+
+        final TckzListViewAdapter expandableAdapter = new TckzListViewAdapter(mContext,controlView,titanLayer,this);
 //        final TckzListViewAdapter expandableAdapter = new TckzListViewAdapter((BaseActivity)mContext, groups,childs,this);
 //        tc_exp.setAdapter(expandableAdapter);
 
@@ -666,23 +671,16 @@ public class LayerControlPresenter2 implements TckzListViewAdapter.addLayerInMap
 
         if (controlView.getImgLayer() == null) {
             ToastUtil.setToast(mContext, "影像数据未加载,请在图层控制中加载数据");
-            return;
-        }
-        if (controlView.getTitleLayer().isVisible()) {
-            controlView.getMapView().setExtent(controlView.getTitleLayer().getFullExtent());
+        }else {
+            controlView.getMapView().setExtent(controlView.getImgLayer().getFullExtent());
             controlView.getMapView().invalidate();
-        } else {
-            ToastUtil.setToast(mContext, "影像图未加载,请在图层控制中加载数据");
         }
+        /*if (controlView.getTitleLayer()== null) {
+            ToastUtil.setToast(mContext, "影像图未加载,请在图层控制中加载数据");
+
+        } else {
+
+        }*/
     }
 
-
-//    @Override
-//    public void upLayerData() {
-//        boolean flag = SytemUtil.checkGeodatabase(path);
-//        if (flag) {
-//            SytemUtil.decript(path);
-//        }
-//        loadGeodatabase(path,true,gname,cname);
-//    }
 }

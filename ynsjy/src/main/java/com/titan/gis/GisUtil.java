@@ -39,8 +39,10 @@ public class GisUtil {
                 titanField.setHasalias(true);
             }
             String value="";
-            if(attmap==null&&attmap.get(field.getName())!=null){
+            if(attmap!=null&&attmap.get(field.getName())!=null){
                 value = attmap.get(field.getName()).toString();
+            }else {
+                value="";
             }
             titanField.setName(field.getName());
             titanField.setAlias(alias);

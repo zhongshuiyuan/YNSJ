@@ -25,6 +25,7 @@ import com.esri.android.map.MapOnTouchListener;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
+import com.esri.core.geodatabase.Geodatabase;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geodatabase.GeodatabaseFeatureTable;
 import com.esri.core.geometry.Geometry;
@@ -86,20 +87,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
             TextView auditSure;
     @BindView(R.id.audit_cancel)//取消
             TextView auditCancel;
-   /* @BindView(R.id.audit_people)
-    EditText auditPeople;
-    @BindView(R.id.audit_reason)
-    EditText auditReason;
-    @BindView(R.id.audit_info)
-    EditText auditInfo;
-    @BindView(R.id.audit_edit_before)
-    EditText auditEditBefore;
-    @BindView(R.id.audit_edit_after)
-    EditText auditEditAfter;
-    @BindView(R.id.audit_mark)
-    EditText auditMark;
-    @BindView(R.id.fragment_videotape)
-    TextView fragmentVideotape;*/
+
 
     private Context mContext;
     //private View compareView;
@@ -114,7 +102,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     private String picPath;//图片文件夹地址
     private long newId;//新增小班id
     private String imagePath = "";//图片地址
-    //审计类型 0:审计原始数据 1:新增审计
+    //审计类型 0:审计原始数据 1:新增审计 2:编辑审计
     private int auditType =0;
     private ActivityAuditBinding binding;
     //审计的原始数据
@@ -135,17 +123,19 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     private Dialog mEditChoiseDialog;
     //是否是审计图层
     private boolean isAuditLayer=false;
+    //基础图
+    private ArcGISLocalTiledLayer titlelayer;
+    //影像图
+    private ArcGISLocalTiledLayer imagelayer;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         binding= DataBindingUtil.setContentView(this,R.layout.activity_audit);
-        //setContentView(R.layout.activity_audit);
 
         ButterKnife.bind(this);
         getData();
         initView();
-        //setMyVisibility(auditType);
     }
 
     /**
@@ -154,28 +144,28 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     private void initView() {
         binding.mapviewAudit.setOnStatusChangedListener(new OnStatusChangedListener() {
             @Override
-            public void onStatusChanged(Object o, STATUS status) {
-                if (STATUS.LAYER_LOADED == status) {
-                    //spatialReference=mapView.getSpatialReference();
-                    ToastUtil.setToast(mContext, "添加图层成功");
-                } else {
+            public void onStatusChanged(Object source, STATUS status) {
+
+                if(STATUS.LAYER_LOADING_FAILED==status&&source instanceof ArcGISLocalTiledLayer){
                     //ProgressDialogUtil.stopProgressDialog(mContext);
-                    ToastUtil.setToast(mContext, "添加图层失败");
+                    ToastUtil.setToast(mContext, "添加底图失败:"+String.valueOf(source));
                 }
+
             }
         });
         /* 基础底图 */
         String titlePath = MyApplication.resourcesManager.getTitlePath();
-        ArcGISLocalTiledLayer titlelayer=new ArcGISLocalTiledLayer(titlePath);
+        titlelayer=new ArcGISLocalTiledLayer(titlePath);
          /* 影像底图 */
         String imagePath = MyApplication.resourcesManager.getImagePath();
-        ArcGISLocalTiledLayer imagelayer=new ArcGISLocalTiledLayer(imagePath);
+        imagelayer=new ArcGISLocalTiledLayer(imagePath);
         binding.mapviewAudit.addLayer(titlelayer);
         binding.mapviewAudit.addLayer(imagelayer);
         editlayer=new GraphicsLayer();
         editgraphic=new Graphic(editfeature.getGeometry(), SymbolUtil.fillSymbol);
         editlayer.addGraphic(editgraphic);
         binding.mapviewAudit.addLayer(editlayer);
+
         binding.mapviewAudit.setExtent(editgraphic.getGeometry());
         binding.mapviewAudit.setOnTouchListener(new MapTouchListener(mContext,binding.mapviewAudit));
         binding.tvAuditedit.setOnClickListener(this);
@@ -215,12 +205,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.audit_sure:
                 //确定
-                if(isAuditLayer){
-
-                }else {
-                    saveData();
-                }
-
+                saveData();
                 break;
             case R.id.audit_cancel:
                 //取消
@@ -238,7 +223,19 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            EditPhoto dialog = new EditPhoto(mContext, imagePath, null, fid);
+            //获取操作的数据库
+            Geodatabase currentGaodatabase=null;
+            for (Geodatabase gdb:BaseActivity.layerControlPresenter.getGeodatabaseList()) {
+                for(GeodatabaseFeatureTable tb:gdb.getGeodatabaseTables()){
+                    if(tb.getTableName().equals(BaseActivity.currentlayer.getName())){
+                        currentGaodatabase=gdb;
+                        break;
+                    }
+
+                }
+            }
+
+            EditPhoto dialog = new EditPhoto(mContext, imagePath, fid,currentGaodatabase, BaseActivity.currentPoint,BaseActivity.spatialReference);
             dialog.show();
         }
     }
@@ -258,7 +255,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * 图片浏览
+     * 多媒体浏览
      */
     public void lookpictures(Activity activity) {
         List<String> lst = ResourcesManager.getImagesFiles(picPath, String.valueOf(fid)); //getImages(picPath);
@@ -299,7 +296,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         //auditLayer
         List<GeodatabaseFeatureTable> tables= BaseActivity.layerControlPresenter.getGeodatabaseList().get(0).getGeodatabaseTables();
         for (GeodatabaseFeatureTable table:tables){
-            if (table.getTableName().equals("edit")){
+            if (table.getTableName().equals("edit")||table.getTableName().contains(mContext.getResources().getString(R.string.auditlayer))){
                 featureTable=table;
             }
         }
@@ -310,7 +307,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         isAuditLayer=intent.getBooleanExtra("isauditlayer",false);
         switch (auditType){
             case 0:
-                //原始图班审计  新增审计、编辑属性
+                //原始图班审计、编辑属性
                 //picPath = MyApplication.resourcesManager.getSJImagePath();
                 editfeature=BaseActivity.selGeoFeature;
                 if(isAuditLayer){
@@ -323,6 +320,8 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
                 //新增
                 try {
                     editfeature=new GeodatabaseFeature(null,YzlActivity.mAddGraphic.getGeometry(),featureTable);
+                    fieldList=GisUtil.getFields(null,featureTable.getFields());
+
                 } catch (TableException e) {
                     //e.printStackTrace();
                     ToastUtil.showShort(mContext,"获取数据失败");
@@ -350,10 +349,28 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
             }
 
         }else {
-            createFeature(editgraphic.getGeometry());
+            if(isAuditLayer){
+                updateFeature();
+            }else {
+                createFeature(editgraphic.getGeometry());
+
+            }
             //upEditLayerData();
         }
 
+    }
+
+    /**
+     * 更新审计数据
+     */
+    private void updateFeature() {
+        try {
+            featureTable.updateFeature(editfeature.getId(),setData());
+            ToastUtil.setToast(mContext, "数据保存成功");
+            this.finish();
+        } catch (TableException e) {
+            ToastUtil.setToast(mContext,"更新审计数据"+e);
+        }
     }
 
     /**
@@ -399,13 +416,6 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         for (TitanField field:fieldList){
             map.put(field.getName(),field.getValue());
         }
-        /*map.put("AUDIT_PEOPLE", auditPeople.getText().toString());
-        map.put("MODIFYINFO", auditReason.getText().toString());
-        map.put("MODIFYTIME", UtilTime.getSystemtime2());
-        map.put("BEFOREINFO", auditEditBefore.getText().toString());
-        map.put("AFTERINFO", auditEditAfter.getText().toString());
-        map.put("REMARK", auditMark.getText().toString());
-        map.put("INFO", auditInfo.getText().toString());*/
         return map;
     }
 
@@ -565,11 +575,6 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
             if (point == null || point.isEmpty() || !point.isValid()) {
                 return false;
             }
-            /*switch (actionMode){
-                case MODE_XIUBAN:
-                    //修班
-                    break;
-            }*/
             return super.onTouch(v, event);
         }
 

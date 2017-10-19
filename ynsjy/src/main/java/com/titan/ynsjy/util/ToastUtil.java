@@ -62,4 +62,7 @@ public class ToastUtil {
     public static void showShort(Context context, String msg) {
 		makeText(context, msg, Toast.LENGTH_SHORT).show();
 	}
+	public static void showLong(Context context, String msg) {
+		makeText(context, msg, Toast.LENGTH_LONG).show();
+	}
 }
