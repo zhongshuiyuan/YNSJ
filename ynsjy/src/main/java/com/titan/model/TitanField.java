@@ -14,7 +14,7 @@ public class TitanField {
     private  String value;
     //是否有中文别名
     private  boolean hasalias;
-    //字段类型
+    //字段类型 1:时间类型
     private  int fieldtype;
 
     public TitanField() {

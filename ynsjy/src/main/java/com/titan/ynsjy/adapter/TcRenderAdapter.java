@@ -9,41 +9,24 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.esri.android.map.FeatureLayer;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.dialog.RenderSetDialog;
 import com.titan.ynsjy.entity.MyLayer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class TcRenderAdapter extends BaseAdapter {
-//	private List<MyLayer> list = new ArrayList<>();
-	private List<FeatureLayer> list = new ArrayList<>();
-	private Map<FeatureLayer, Integer> map;
+	private List<MyLayer> list = new ArrayList<>();
 	private LayoutInflater inflater = null;
 	private RenderSetDialog renderSetDialog;
 	
 	public TcRenderAdapter(Context context,List<MyLayer> list,RenderSetDialog dialog) {
 		inflater = LayoutInflater.from(context);
-//		this.list = list;
+		this.list = list;
 		this.renderSetDialog = dialog;
 	}
 
-	public TcRenderAdapter(Context context,Map<FeatureLayer, Integer> map,RenderSetDialog dialog) {
-		inflater = LayoutInflater.from(context);
-		this.map = map;
-		this.renderSetDialog = dialog;
-        getData();
-	}
-
-	private void getData(){
-		for (FeatureLayer layer :
-				map.keySet()) {
-			list.add(layer);
-		}
-	}
 	@Override
 	public int getCount() {
 		return list.size();
@@ -73,7 +56,7 @@ public class TcRenderAdapter extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		holder.tv_layerName.setText(list.get(position).getName());
+		holder.tv_layerName.setText(list.get(position).getLname());
 		holder.btn_simple.setOnClickListener(new View.OnClickListener() {
 			
 			@Override

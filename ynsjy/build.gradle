@@ -108,21 +108,7 @@ dependencies {
 
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
 
+    compile 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
+
     compile project(':drawtoollib')
 }
-
-//tasks.withType(JavaCompile) {
-//    options.encoding = "UTF-8"
-//}
-//
-//
-//
-//subprojects {
-//    afterEvaluate { project ->
-//        if (project.hasProperty("dependencies")) {
-//            dependencies {
-//                //compile 'com.esri.arcgisruntime:arcgis-android:10.2.4'
-//            }
-//        }
-//    }
-//}

@@ -78,7 +78,7 @@ public class LayerControlPresenter{
     }
 
     //数据库
-    private List<Geodatabase> geodatabaseList;
+    public static List<Geodatabase> geodatabaseList;
 
     public LayerControlPresenter(Context ctx, LayerControlView view, View.OnClickListener onClickListener){
         this.mContext = ctx;
@@ -582,7 +582,7 @@ public class LayerControlPresenter{
             ToastUtil.setToast(mContext, "影像数据未加载,请在图层控制中加载数据");
             return;
         }
-        if (controlView.getImgLayer().isVisible()) {
+        if (controlView.getTitleLayer().isVisible()) {
             controlView.getMapView().setExtent(controlView.getTitleLayer().getFullExtent());
             controlView.getMapView().invalidate();
         } else {

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.esri.android.map.FeatureLayer;
 import com.titan.baselibrary.listener.CancleListener;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
@@ -31,7 +30,7 @@ public class ColorDialog extends Dialog {
     private int type;
     private TextView view;
     private SeekBar seekBar;
-    private FeatureLayer myLayer;
+    private MyLayer myLayer;
     private String field;//字段名
 
     public ColorDialog(@NonNull Context context) {
@@ -40,7 +39,7 @@ public class ColorDialog extends Dialog {
     }
 
     public ColorDialog(@NonNull Context context, @StyleRes int themeResId, final int type, final TextView view,
-                       final SeekBar seekBar, final FeatureLayer myLayer, String field) {
+                       final SeekBar seekBar, final MyLayer myLayer,String field) {
         super(context, themeResId);
         this.mContext = context;
         this.type = type;
@@ -70,15 +69,15 @@ public class ColorDialog extends Dialog {
             public void onClick(View arg0) {
                 int color = mContext.getResources().getColor(R.color.transparent);
                 if (type == 0) {
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "tianchongse", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tianchongse", color).apply();
                 } else if (type == 1) {
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "bianjiese", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "bianjiese", color).apply();
                 }else if (type==2){
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName()+ field + "tianchongse", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName()+ field + "tianchongse", color).apply();
                 }
                 view.setBackground(mContext.getResources().getDrawable(R.drawable.touming));
                 seekBar.setProgress(100);
-                MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "tmd", 100).apply();
+                MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tmd", 100).apply();
                 dismiss();
             }
         });
@@ -88,11 +87,11 @@ public class ColorDialog extends Dialog {
             @Override
             public void onColorChange(int color) {
                 if (type == 0) {
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "tianchongse", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tianchongse", color).apply();
                 } else if (type == 1) {
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "bianjiese", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "bianjiese", color).apply();
                 }else if (type==2){
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName()+ field + "tianchongse", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName()+ field + "tianchongse", color).apply();
                 }
                 view.setBackgroundColor(color);
             }
@@ -104,11 +103,11 @@ public class ColorDialog extends Dialog {
             @Override
             public void onColorSeleter(int color) {
                 if (type == 0) {
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "tianchongse", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tianchongse", color).apply();
                 } else if (type == 1) {
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "bianjiese", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "bianjiese", color).apply();
                 }else if (type==2){
-                    MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName()+ field + "tianchongse", color).apply();
+                    MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName()+ field + "tianchongse", color).apply();
                 }
                 view.setBackgroundColor(color);
                 dismiss();

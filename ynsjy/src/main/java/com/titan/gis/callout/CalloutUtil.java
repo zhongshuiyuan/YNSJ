@@ -79,14 +79,14 @@ public class CalloutUtil {
         return view;
     }
 
-    /**
+   /* *//**
      * 判断是否是审计图层
      * @param feature
      * @return
-     */
+     *//*
     private static   boolean isAuditLayer(GeodatabaseFeature feature) {
-        return feature.getTable().getTableName().equals("edit");
-    }
+        return feature.getTable().getTableName().equals("edit")||feature.getTable().getTableName().contains("审计图层");
+    }*/
 
     /**
      * 过滤字段

@@ -95,7 +95,7 @@ public class MergeFeatureDialog extends Dialog{
 //                });
                 mergedex = position;
                 mergeFeature = list.get(position);
-                myLayer = BaseUtil.getInstance(mContext).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
+                myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
                 iBaseView.getGraphicLayer().removeAll();
                 Graphic graphic = new Graphic(mergeFeature.getGeometry(), new SimpleFillSymbol(Color.BLUE));
                 iBaseView.getGraphicLayer().addGraphic(graphic);

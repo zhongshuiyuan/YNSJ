@@ -74,7 +74,7 @@ public class DrawTool extends Subject {
     public DrawTool(MapView mapView) {
         this.mapView = mapView;
         this.mapView.setShowMagnifierOnLongPress(true);//允许使用放大镜
-        this.mapView.setShowMagnifierOnLongPress(true);
+        //this.mapView.setShowMagnifierOnLongPress(true);
         this.mGraphicsLayerEditing = new GraphicsLayer();
         this.mapView.addLayer(this.mGraphicsLayerEditing);
         this.tempLayer = new GraphicsLayer();
@@ -140,6 +140,7 @@ public class DrawTool extends Subject {
         this.polyline = null;
         this.drawGraphic = null;
         this.startPoint=null;
+        this.mapView.setShowMagnifierOnLongPress(false);
     }
 
     public boolean isActive(){

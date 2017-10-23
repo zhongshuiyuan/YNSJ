@@ -316,7 +316,7 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
      * @return
      */
     private boolean getLayerIsEdit(FeatureLayer currentlayer) {
-        return currentlayer.getFeatureTable().getTableName().equals("edit");
+        return currentlayer.getFeatureTable().getTableName().equals("edit")||currentlayer.getFeatureTable().getTableName().equals(mContext.getString(R.string.auditlayer));
     }
 
 
@@ -331,9 +331,8 @@ public class YzlActivity extends BaseActivity implements View.OnClickListener ,D
         {
             case MODE_EDIT_ADD:
                 //新增审计
-                graphicsLayer.addGraphic(event.getDrawGraphic());
+                //graphicsLayer.addGraphic(event.getDrawGraphic());
 				mAddGraphic=event.getDrawGraphic();
-
 				tdrawTool.deactivate();
 				actionMode=ActionMode.MODE_SELECT;
                 //重置地图监听事件

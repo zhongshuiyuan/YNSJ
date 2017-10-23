@@ -14,15 +14,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.esri.android.map.FeatureLayer;
 import com.esri.android.map.GraphicsLayer;
-import com.esri.android.map.MapOnTouchListener;
-import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.core.geodatabase.Geodatabase;
@@ -30,7 +28,6 @@ import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geodatabase.GeodatabaseFeatureTable;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
-import com.esri.core.geometry.Point;
 import com.esri.core.geometry.Polygon;
 import com.esri.core.geometry.Polyline;
 import com.esri.core.map.Feature;
@@ -40,17 +37,22 @@ import com.gis_luq.lib.Draw.DrawEvent;
 import com.gis_luq.lib.Draw.DrawEventListener;
 import com.gis_luq.lib.Draw.DrawTool;
 import com.gis_luq.lib.Draw.Util.CutPolygonL;
+import com.jzxiang.pickerview.TimePickerDialog;
+import com.jzxiang.pickerview.data.Type;
+import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.titan.baselibrary.util.ProgressDialogUtil;
 import com.titan.gis.GeometryUtil;
 import com.titan.gis.GisUtil;
 import com.titan.gis.SymbolUtil;
 import com.titan.model.TitanField;
+import com.titan.util.FormatUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.databinding.ActivityAuditBinding;
 import com.titan.ynsjy.dialog.EditPhoto;
 import com.titan.ynsjy.entity.ActionMode;
+import com.titan.ynsjy.presenter.LayerControlPresenter;
 import com.titan.ynsjy.util.ResourcesManager;
 import com.titan.ynsjy.util.ToastUtil;
 
@@ -73,7 +75,7 @@ import permissions.dispatcher.RuntimePermissions;
  * 新增审计
  */
 @RuntimePermissions
-public class AuditActivity extends AppCompatActivity implements View.OnClickListener,DrawEventListener {
+public class AuditActivity extends AppCompatActivity implements View.OnClickListener,DrawEventListener ,OnDateSetListener {
     //拍照
     private static final int TAKE_PICTURE = 1;
     /**
@@ -127,6 +129,11 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     private ArcGISLocalTiledLayer titlelayer;
     //影像图
     private ArcGISLocalTiledLayer imagelayer;
+
+    //时间选择
+    private TimePickerDialog mTimePickerDialog;
+    //时间显示控件
+    private EditText et_date;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +141,13 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         binding= DataBindingUtil.setContentView(this,R.layout.activity_audit);
 
         ButterKnife.bind(this);
-        getData();
+        try {
+            getData();
+        }catch (Exception e){
+            ToastUtil.showShort(mContext,"获取图层信息异常");
+            this.finish();
+        }
+        //getData();
         initView();
     }
 
@@ -159,15 +172,17 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
          /* 影像底图 */
         String imagePath = MyApplication.resourcesManager.getImagePath();
         imagelayer=new ArcGISLocalTiledLayer(imagePath);
-        binding.mapviewAudit.addLayer(titlelayer);
-        binding.mapviewAudit.addLayer(imagelayer);
+
         editlayer=new GraphicsLayer();
         editgraphic=new Graphic(editfeature.getGeometry(), SymbolUtil.fillSymbol);
         editlayer.addGraphic(editgraphic);
-        binding.mapviewAudit.addLayer(editlayer);
 
         binding.mapviewAudit.setExtent(editgraphic.getGeometry());
-        binding.mapviewAudit.setOnTouchListener(new MapTouchListener(mContext,binding.mapviewAudit));
+        binding.mapviewAudit.addLayer(titlelayer);
+        binding.mapviewAudit.addLayer(imagelayer);
+        binding.mapviewAudit.addLayer(editlayer);
+
+        //binding.mapviewAudit.setOnTouchListener(new MapTouchListener(mContext,binding.mapviewAudit));
         binding.tvAuditedit.setOnClickListener(this);
         //绘制工具初始化
         drawTool = new DrawTool(binding.mapviewAudit);
@@ -179,9 +194,51 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
 
         binding.setListfield(fieldList);
         AdapterListObj attrAdapter= new AdapterListObj<>(fieldList, mContext);
+        attrAdapter.setmListener(new AdapterListObj.ItemClickListener() {
+            @Override
+            public void onItemClick(View v) {
+                showDateDialog(v);
+            }
+        });
         binding.rclAttr.setAdapter(attrAdapter);
         binding.rclAttr.setLayoutManager(new LinearLayoutManager(mContext));
     }
+
+    /**
+     * 显示时间选择窗口
+     * @param v
+     */
+    public void showDateDialog(View v) {
+        et_date= (EditText) v;
+        if (mTimePickerDialog == null) {
+            long fiveYears = 5L * 365 * 1000 * 60 * 60 * 24L;
+            long tenYears = 10L * 365 * 1000 * 60 * 60 * 24L;
+            mTimePickerDialog = new TimePickerDialog.Builder()
+                    .setCallBack(this)
+                    .setCancelStringId("取消")
+                    .setSureStringId("确定")
+                    .setTitleStringId("时间选择")
+                    .setYearText("年")
+                    .setMonthText("月")
+                    .setDayText("日")
+                    .setHourText("时")
+                    .setMinuteText("分")
+                    .setThemeColor(getResources().getColor(R.color.colorPrimary))
+                    .setCyclic(false)
+                    .setMinMillseconds(System.currentTimeMillis()-fiveYears)
+                    .setMaxMillseconds(System.currentTimeMillis()+tenYears)
+                    .setCurrentMillseconds(System.currentTimeMillis())
+                    .setType(Type.ALL)
+                    .setWheelItemTextNormalColor(getResources().getColor(R.color.gray))
+                    .setWheelItemTextSelectorColor(getResources().getColor(R.color.colorAccent))
+                    .setWheelItemTextSize(12)
+                    .build();
+
+        }
+        mTimePickerDialog.show(getSupportFragmentManager(),"timepicker");
+
+    }
+
 
 
 
@@ -293,8 +350,15 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
      * 获取修改表
      */
     private void getData() {
+        if(LayerControlPresenter.geodatabaseList==null||LayerControlPresenter.geodatabaseList.isEmpty())
+        {
+            ToastUtil.showShort(mContext,"未获取图层数据");
+            this.finish();
+
+        }
         //auditLayer
-        List<GeodatabaseFeatureTable> tables= BaseActivity.layerControlPresenter.getGeodatabaseList().get(0).getGeodatabaseTables();
+        List<Geodatabase>  listgdb= LayerControlPresenter.geodatabaseList;
+        List<GeodatabaseFeatureTable> tables= LayerControlPresenter.geodatabaseList.get(0).getGeodatabaseTables();
         for (GeodatabaseFeatureTable table:tables){
             if (table.getTableName().equals("edit")||table.getTableName().contains(mContext.getResources().getString(R.string.auditlayer))){
                 featureTable=table;
@@ -324,7 +388,7 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
 
                 } catch (TableException e) {
                     //e.printStackTrace();
-                    ToastUtil.showShort(mContext,"获取数据失败");
+                    ToastUtil.showShort(mContext,"获取数据异常"+e);
                 }
                 break;
         }
@@ -344,8 +408,8 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         if(editlayer.getNumberOfGraphics()>1){
             //多个图形
             int[] ids=editlayer.getGraphicIDs();
-            for (int id : ids) {
-                saveFeature(editlayer.getGraphic(id).getGeometry());
+            for (int i = 0; i <ids.length ; i++) {
+                saveFeature(editlayer.getGraphic(ids[i]).getGeometry());
             }
 
         }else {
@@ -560,9 +624,23 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
+     * 时间选择结果
+     * @param timePickerView
+     * @param millseconds
+     */
+    @Override
+    public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
+        String time = FormatUtil.getDate(millseconds);
+        if(et_date!=null){
+            et_date.setText(time);
+        }
+    }
+
+
+    /**
      * 地图监听事件
      */
-    private class MapTouchListener extends MapOnTouchListener {
+    /*private class MapTouchListener extends MapOnTouchListener {
         MapView mapView;
         public MapTouchListener(Context context, MapView view) {
             super(context, view);
@@ -579,5 +657,5 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         }
 
 
-    }
+    }*/
 }

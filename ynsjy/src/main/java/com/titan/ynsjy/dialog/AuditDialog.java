@@ -169,7 +169,7 @@ public class AuditDialog extends DialogFragment{
      *//*
 
     private void getData() {
-        myLayer = BaseUtil.getInstance(getActivity()).getFeatureInLayer("edit", BaseActivity.layerNameList);
+        myLayer = BaseUtil.getIntance(getActivity()).getFeatureInLayer("edit", BaseActivity.layerNameList);
         featureTable = myLayer.getTable();
         Bundle bundle = getArguments();
         if (bundle != null) {

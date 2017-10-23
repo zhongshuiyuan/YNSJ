@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.esri.android.map.FeatureLayer;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.dialog.ColorDialog;
@@ -31,8 +30,8 @@ public class UniqueFieldAdapter extends BaseAdapter {
     private List<String> keyList;
     private LayoutInflater inflater = null;
     private SeekBar seekBar;
-    private FeatureLayer myLayer;
-    public UniqueFieldAdapter(Context context, Map<String,String> fieldMap,SeekBar seekBar, FeatureLayer myLayer){
+    private MyLayer myLayer;
+    public UniqueFieldAdapter(Context context, Map<String,String> fieldMap,SeekBar seekBar, MyLayer myLayer){
         inflater = LayoutInflater.from(context);
         this.mContext = context;
         this.fieldMap = fieldMap;
@@ -114,7 +113,7 @@ public class UniqueFieldAdapter extends BaseAdapter {
                 color=mContext.getResources().getColor(R.color.color_12);
                 break;
         }
-        MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + field + "tianchongse", color).apply();
+        MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + field + "tianchongse", color).apply();
         return color;
     }
 }

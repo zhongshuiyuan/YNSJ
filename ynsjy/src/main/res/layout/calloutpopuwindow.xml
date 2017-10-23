@@ -23,7 +23,7 @@
             android:textSize="@dimen/larger_txtsize20" />
 
         <ImageView
-            android:id="@+id/calloutpopuwindow_close"
+            android:id="@+id/iv_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -39,12 +39,14 @@
         android:background="@color/base_end_color_pressed" />
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/calloutpopuwindow_xian80"
         android:layout_width="220dp"
         android:layout_height="80dp"
         android:orientation="vertical" >
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="left|center"
@@ -111,6 +113,7 @@
         android:layout_width="220dp"
         android:layout_height="80dp"
         android:orientation="vertical"
+        android:background="@color/white"
         android:visibility="visible" >
 
         <LinearLayout
@@ -178,6 +181,7 @@
         android:background="@drawable/background_view_rounded_blue"
         android:padding="5dp"
         android:text="添加收藏点"
+        android:visibility="gone"
         android:textColor="@color/white" />
 
 </LinearLayout>

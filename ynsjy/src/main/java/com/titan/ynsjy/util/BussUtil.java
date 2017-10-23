@@ -121,7 +121,7 @@ public class BussUtil {
 	}
 
 	/** 关闭calloutpopuwind */
-	public static void closeCalloutPopu(final View view,
+	/*public static void closeCalloutPopu(final View view,
 			final CalloutPopupWindow popupWindow) {
 		new Thread(new Runnable() {
 
@@ -137,7 +137,7 @@ public class BussUtil {
 				});
 			}
 		}).start();
-	}
+	}*/
 
 	/** 获取软件版本号 */
 	public static double getVersionCode(Context context) {

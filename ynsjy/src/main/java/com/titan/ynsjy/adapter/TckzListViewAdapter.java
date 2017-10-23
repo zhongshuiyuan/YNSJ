@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
@@ -23,12 +22,10 @@ import com.titan.model.TitanLayer;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.mview.LayerControlView;
-import com.titan.ynsjy.util.ToastUtil;
 import com.titan.ynsjy.util.ViewHolderUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -315,8 +312,8 @@ public class TckzListViewAdapter extends BaseExpandableListAdapter {
             try {
                 Geodatabase geodatabase = new Geodatabase(path);
                 geodatabaseTables = geodatabase.getGeodatabaseTables();
-            } catch (Exception e) {
-                ToastUtil.setToast(mContext,"图层加载异常"+e);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
             //图层加载
             final List<GeodatabaseFeatureTable> finalGeodatabaseTables = geodatabaseTables;

@@ -17,9 +17,9 @@
     <color name="black">#000000</color>
 
     <color name="text_color_pressed">#ffffff</color>
-    
-    <color name="colorPrimary">@color/colorPageDark</color>
-    <color name="colorPrimaryDark">@color/colorPageDark</color>
+
+    <color name="colorPrimary">#03A9F4</color>
+    <color name="colorPrimaryDark">#0288D1</color>
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorText">#303030</color>

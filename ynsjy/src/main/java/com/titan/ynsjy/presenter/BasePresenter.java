@@ -32,6 +32,7 @@ import com.esri.core.geometry.MultiPath;
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.Polygon;
 import com.esri.core.geometry.Polyline;
+import com.esri.core.geometry.SpatialReference;
 import com.esri.core.map.CodedValueDomain;
 import com.esri.core.map.Feature;
 import com.esri.core.map.Field;
@@ -40,6 +41,7 @@ import com.esri.core.symbol.PictureMarkerSymbol;
 import com.esri.core.symbol.Symbol;
 import com.esri.core.table.FeatureTable;
 import com.esri.core.table.TableException;
+import com.titan.util.FormatUtil;
 import com.titan.ynsjy.BaseActivity;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
@@ -190,25 +192,31 @@ public class BasePresenter {
     }*/
 
     /** 长点击事件展示位置信息的popuwindow */
-    /*public View loadCalloutPopuwindow(final Point mappoint){
+    public View loadCalloutPopuwindow(final Point mappoint, View.OnClickListener onClickListener){
         DecimalFormat decimalFormat = new DecimalFormat(".000000");
         View view = LayoutInflater.from(baseActivity).inflate(R.layout.calloutpopuwindow, null);
-        final View wgsView = view.findViewById(R.id.calloutpopuwindow_xian80);
+        //final View wgsView = view.findViewById(R.id.calloutpopuwindow_xian80);
 
         //wgs84坐标
+        Point pt = (Point) GeometryEngine.project(mappoint,iBaseView.getMapView().getSpatialReference(), SpatialReference.create(3857));
         TextView wgslon1 = (TextView) view.findViewById(R.id.calloutpopuwindow_wgs_lon);
-        wgslon1.setText(BaseUtil.decimalTodu(iBaseView.getCurrentLon()));
+        wgslon1.setText(FormatUtil.formatLoc(pt.getX()/100000));
         TextView wgslat1 = (TextView) view.findViewById(R.id.calloutpopuwindow_wgs_lat);
-        wgslat1.setText(BaseUtil.decimalTodu(iBaseView.getCurrenLat()));
+        wgslat1.setText(FormatUtil.formatLoc(pt.getY()/100000));
+
+        ImageView iv_close = (ImageView) view.findViewById(R.id.iv_close);
+        iv_close.setOnClickListener(onClickListener);
+
+
         //西安80坐标系
-        TextView xianlon = (TextView) view.findViewById(R.id.calloutpopuwindow_80_x);
+       /* TextView xianlon = (TextView) view.findViewById(R.id.calloutpopuwindow_80_x);
         String x80 = decimalFormat.format(mappoint.getX()) + "";
         xianlon.setText(x80);
         TextView xianlat = (TextView) view.findViewById(R.id.calloutpopuwindow_80_y);
         String y80 = decimalFormat.format(mappoint.getY()) + "";
-        xianlat.setText(y80);
-
-        Button addscpoint = (Button) view.findViewById(R.id.addscpoint);
+        xianlat.setText(y80);*/
+        //收藏点
+        /*Button addscpoint = (Button) view.findViewById(R.id.addscpoint);
         addscpoint.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -216,9 +224,9 @@ public class BasePresenter {
                 ShouCangDialog dialog=new ShouCangDialog(baseActivity,mappoint,ShouCangDialog.SqlType.ADD);
                 BussUtil.setDialogParams(baseActivity, dialog, 0.7, 0.8);
             }
-        });
+        });*/
         return view;
-    }*/
+    }
 
     /**
      * 添加轨迹坐标点
@@ -431,7 +439,7 @@ public class BasePresenter {
         FeatureResultAdapter adapter = new FeatureResultAdapter(baseActivity, list, baseActivity.selMap);
         listView.setAdapter(adapter);
 
-        BaseUtil.getInstance(baseActivity).setHeight(adapter, listView);
+        BaseUtil.getIntance(baseActivity).setHeight(adapter, listView);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -820,7 +828,7 @@ public class BasePresenter {
      * id  feature的id
      */
     public void delFeature(GeodatabaseFeature feature) {
-        MyLayer myLayer = BaseUtil.getInstance(baseActivity).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
+        MyLayer myLayer = BaseUtil.getIntance(baseActivity).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
         FeatureTable featureTable = myLayer.getTable();
         try {
             featureTable.deleteFeature(feature.getId());

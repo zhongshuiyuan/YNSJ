@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/transparent">
+    android:background="@android:color/transparent">
 
     <ImageView
         android:layout_width="match_parent"
@@ -228,7 +228,7 @@
             android:layout_gravity="bottom"
             android:background="@drawable/background_view_image"
             android:contentDescription="@null"
-            android:src="@drawable/share_sys_settings"/>
+            android:src="@drawable/share_sys_settings" />
 
         <ImageView
             android:id="@+id/shuju_sjtb"
