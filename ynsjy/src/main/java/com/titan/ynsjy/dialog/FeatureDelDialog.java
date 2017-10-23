@@ -68,7 +68,7 @@ public class FeatureDelDialog extends Dialog {
         final FeatureResultAdapter adapter = new FeatureResultAdapter(mContext, list, selMap);
         listView.setAdapter(adapter);
 
-        BaseUtil.getIntance(mContext).setHeight(adapter, listView);
+        BaseUtil.getInstance(mContext).setHeight(adapter, listView);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

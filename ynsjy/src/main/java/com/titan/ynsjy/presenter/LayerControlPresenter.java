@@ -582,7 +582,7 @@ public class LayerControlPresenter{
             ToastUtil.setToast(mContext, "影像数据未加载,请在图层控制中加载数据");
             return;
         }
-        if (controlView.getTitleLayer().isVisible()) {
+        if (controlView.getImgLayer().isVisible()) {
             controlView.getMapView().setExtent(controlView.getTitleLayer().getFullExtent());
             controlView.getMapView().invalidate();
         } else {

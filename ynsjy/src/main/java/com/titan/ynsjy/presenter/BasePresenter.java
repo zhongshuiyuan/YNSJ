@@ -431,7 +431,7 @@ public class BasePresenter {
         FeatureResultAdapter adapter = new FeatureResultAdapter(baseActivity, list, baseActivity.selMap);
         listView.setAdapter(adapter);
 
-        BaseUtil.getIntance(baseActivity).setHeight(adapter, listView);
+        BaseUtil.getInstance(baseActivity).setHeight(adapter, listView);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -820,7 +820,7 @@ public class BasePresenter {
      * id  feature的id
      */
     public void delFeature(GeodatabaseFeature feature) {
-        MyLayer myLayer = BaseUtil.getIntance(baseActivity).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
+        MyLayer myLayer = BaseUtil.getInstance(baseActivity).getFeatureInLayer(seflayerName, BaseActivity.layerNameList);
         FeatureTable featureTable = myLayer.getTable();
         try {
             featureTable.deleteFeature(feature.getId());

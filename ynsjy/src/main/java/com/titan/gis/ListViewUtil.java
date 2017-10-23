@@ -7,9 +7,14 @@ import android.widget.ListView;
 
 /**
  * Created by hanyw on 2017/10/17/017.
+ * listview工具类
  */
 
 public class ListViewUtil {
+    /**
+     * 计算listview高度
+     * @param listView
+     */
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {

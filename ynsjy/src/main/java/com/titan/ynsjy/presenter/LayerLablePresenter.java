@@ -7,12 +7,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.esri.android.map.FeatureLayer;
 import com.esri.core.geodatabase.GeodatabaseFeature;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.Field;
 import com.esri.core.map.Graphic;
 import com.esri.core.symbol.PictureMarkerSymbol;
+import com.esri.core.table.FeatureTable;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.LayerLableAdapter;
 import com.titan.ynsjy.entity.MyLayer;
@@ -35,7 +37,7 @@ public class LayerLablePresenter {
 
     private Context mContext;
     public ILayerView iLayerView;
-    public MyLayer myLayer;
+    public FeatureLayer myLayer;
     private long[] arrays;
     private HashMap<Field, Boolean> checkboxMap = new HashMap<>();
     //字段过滤
@@ -49,18 +51,19 @@ public class LayerLablePresenter {
     /**
      * 显示选择图层的对应字段
      */
-    public void showLayerAials(final View lableView, MyLayer myLayer) {
+    public void showLayerAials(final View lableView, FeatureLayer myLayer) {
         this.myLayer = myLayer;
         ImageView imageView = (ImageView) lableView.findViewById(R.id.attr_field_exit);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lableView.setVisibility(View.GONE);
+                iLayerView.getGraphicLayer().removeAll();
             }
         });
         ListView listView = (ListView) lableView.findViewById(R.id.field_list);
-        List<Field> fields = myLayer.getLayer().getFeatureTable().getFields();
-        boolean flag = false;
+        List<Field> fields = myLayer.getFeatureTable().getFields();
+        boolean flag;
         checkboxMap.clear();
         for (Field f : fields) {
             flag = false;
@@ -82,10 +85,10 @@ public class LayerLablePresenter {
     }
 
     /**
-     * 查询当前区域内的对应图层的小班数据
+     * 查询当前屏幕区域内的对应图层的小班数据
      */
-    public void queryFeatures(final MyLayer myLayer, final boolean isChecked, final List<Field> fields, final int position) {
-        ArcGISQueryUtils.getQueryIds(iLayerView.getCurrentEnvelope(),iLayerView.getSpatialReference(),myLayer.getTable(),new CallbackListener<long[]>() {
+    public void queryFeatures(final FeatureLayer myLayer, final boolean isChecked, final List<Field> fields, final int position) {
+        ArcGISQueryUtils.getQueryIds(iLayerView.getCurrentEnvelope(),iLayerView.getSpatialReference(),myLayer.getFeatureTable(),new CallbackListener<long[]>() {
             @Override
             public void onCallback(long[] longs) {
                 if (longs.length > 0) {
@@ -114,7 +117,7 @@ public class LayerLablePresenter {
         }
         iLayerView.getGraphicLayer().removeAll();
         for (long id : arrays) {
-            GeodatabaseFeature feature = (GeodatabaseFeature) myLayer.getLayer().getFeature(id);
+            GeodatabaseFeature feature = (GeodatabaseFeature) myLayer.getFeature(id);
             Object obj = feature.getAttributeValue(fields.get(position));
             String text;
             if (obj != null&&!obj.equals("")) {

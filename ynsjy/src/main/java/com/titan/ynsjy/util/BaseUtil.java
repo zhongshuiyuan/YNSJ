@@ -40,7 +40,7 @@ public class BaseUtil {
     public BaseUtil(Context context){
         this.mContext = context;
     }
-    public static synchronized BaseUtil getIntance(Context context){
+    public static synchronized BaseUtil getInstance(Context context){
         if(instance == null){
             instance = new BaseUtil(context);
         }

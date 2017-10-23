@@ -139,7 +139,7 @@ public class PicSampActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void getData() {
-        myLayer = BaseUtil.getIntance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
+        myLayer = BaseUtil.getInstance(mContext).getFeatureInLayer("edit", BaseActivity.layerNameList);
         Intent intent = getIntent();
         if (intent != null) {
             fid = intent.getLongExtra("fid", 0);

@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.esri.android.map.FeatureLayer;
+import com.esri.android.map.GraphicsLayer;
+import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.core.geodatabase.Geodatabase;
 import com.esri.core.geodatabase.GeodatabaseFeatureTable;
@@ -46,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by li on 2017/5/5.
@@ -74,7 +77,7 @@ public class LayerControlPresenter2 implements TckzListViewAdapter.addLayerInMap
     }
 
     //图层索引存储
-    private Map<FeatureLayer,Integer> layerindexmap=new HashMap<>();
+    private Map<FeatureLayer,Integer> layerindexmap=new ConcurrentHashMap<>();
 
     public List<Geodatabase> getGeodatabaseList() {
         return geodatabaseList;
@@ -402,16 +405,19 @@ public class LayerControlPresenter2 implements TckzListViewAdapter.addLayerInMap
             Renderer renderer = getHisSymbol(featureLayer);
             featureLayer.setRenderer(renderer);
             int layerindex=controlView.getMapView().addLayer(featureLayer);
+            GraphicsLayer graphicsLayer = controlView.getGraphicLayer();
+            MapView mapView = controlView.getMapView();
+            mapView.removeLayer(graphicsLayer);
+            mapView.addLayer(graphicsLayer);
+            mapView.setExtent(featureLayer.getFullExtent());
             layerindexmap.put(featureLayer,layerindex);
-            controlView.getMapView().setExtent(featureLayer.getExtent());
         }else {
             //移除
             //controlView.getMapView().getLayerByID(featureLayer.getID()).
             try {
                 for (FeatureLayer key :layerindexmap.keySet()){
-                    if(key.getName()==featureLayer.getName()){
-                        int layerindex=layerindexmap.get(key);
-                        controlView.getMapView().removeLayer(layerindex);
+                    if(key.getName().equals(featureLayer.getName())){
+                        controlView.getMapView().removeLayer(key);
                         layerindexmap.remove(key);
                     }
                 }

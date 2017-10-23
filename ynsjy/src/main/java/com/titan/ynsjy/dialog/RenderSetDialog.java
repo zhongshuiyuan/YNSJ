@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.esri.android.map.FeatureLayer;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.renderer.Renderer;
@@ -25,6 +26,7 @@ import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.titan.baselibrary.listener.CancleListener;
+import com.titan.data.source.local.LocalDataSource;
 import com.titan.ynsjy.MyApplication;
 import com.titan.ynsjy.R;
 import com.titan.ynsjy.adapter.TcRenderAdapter;
@@ -51,7 +53,9 @@ public class RenderSetDialog extends Dialog {
 
     private Context mContext;
     private ILayerView iLayerView;
-    private LayerControlPresenter2 layerControlPresenter;
+//    private LayerControlPresenter2 layerControlPresenter;
+    private LocalDataSource layerControlPresenter;
+
     //简单渲染
     private static final int RENDER_TYPE_SIMPLE=0;
     //唯一值渲染
@@ -61,8 +65,16 @@ public class RenderSetDialog extends Dialog {
         super(context, themeResId);
         this.mContext = context;
         this.iLayerView = layerView;
+//        this.layerControlPresenter = layerControlPresenter;
+    }
+
+    public RenderSetDialog(@NonNull Context context, @StyleRes int themeResId,ILayerView layerView,LocalDataSource layerControlPresenter) {
+        super(context, themeResId);
+        this.mContext = context;
+        this.iLayerView = layerView;
         this.layerControlPresenter = layerControlPresenter;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,21 +104,38 @@ public class RenderSetDialog extends Dialog {
                 if(layerControlPresenter == null){
                     return;
                 }
-                if(layerControlPresenter.imgCheckMap == null){
-                    if (iLayerView.getImgTitleLayer() != null && iLayerView.getImgTitleLayer().isInitialized()) {
-                        layerTmdSystem(iLayerView.getImgTitleLayer());
-                    } else {
-                        ToastUtil.setToast(mContext, "图层未加载,请在图层控制中加载数据");
-                        return;
-                    }
-                }else {
-                    if(layerControlPresenter.imgTileLayerMap.size() > 0){
-                        layerTmdSystemImge(fileList, layerControlPresenter.imgTileLayerMap);
+                //layerControlPresenter==LayerControlPresenter2
+//                if(layerControlPresenter.imgCheckMap == null){
+//                    if (iLayerView.getImgTitleLayer() != null && iLayerView.getImgTitleLayer().isInitialized()) {
+//                        layerTmdSystem(iLayerView.getImgTitleLayer());
+//                    } else {
+//                        ToastUtil.setToast(mContext, "图层未加载,请在图层控制中加载数据");
+//                        return;
+//                    }
+//                }else {
+//                    if(layerControlPresenter.imgTileLayerMap.size() > 0){
+//                        layerTmdSystemImge(fileList, layerControlPresenter.imgTileLayerMap);
+//                    }else{
+//                        ToastUtil.setToast(mContext, "图层未加载,请在图层控制中加载数据");
+//                        return;
+//                    }
+//                }
+                //LayerControlPresenter==LocalDataSource
+//                if(layerControlPresenter.imgCheckMap == null){
+//                    if (iLayerView.getImgTitleLayer() != null && iLayerView.getImgTitleLayer().isInitialized()) {
+//                        layerTmdSystem(iLayerView.getImgTitleLayer());
+//                    } else {
+//                        ToastUtil.setToast(mContext, "图层未加载,请在图层控制中加载数据");
+//                        return;
+//                    }
+//                }else {
+                    if(layerControlPresenter.getImageLayerIntegerMap().size() > 0){
+                        layerTmdSystemImge(fileList, layerControlPresenter.getImageLayerIntegerMap());
                     }else{
                         ToastUtil.setToast(mContext, "图层未加载,请在图层控制中加载数据");
                         return;
                     }
-                }
+//                }
             }
         });
 
@@ -124,7 +153,8 @@ public class RenderSetDialog extends Dialog {
         });*/
 
         ListView listView = (ListView) findViewById(R.id.layer_render_system);
-        TcRenderAdapter adapter = new TcRenderAdapter(mContext, iLayerView.getLayerList(),this);
+//        TcRenderAdapter adapter = new TcRenderAdapter(mContext, iLayerView.getLayerList(),this);
+        TcRenderAdapter adapter = new TcRenderAdapter(mContext, layerControlPresenter.getLayerindexmap(),this);
         listView.setAdapter(adapter);
 
         ImageView image = (ImageView) findViewById(R.id.close_render);
@@ -191,7 +221,8 @@ public class RenderSetDialog extends Dialog {
     /**
      * 影像图、地形图图层透明度设置
      */
-    public void layerTmdSystemImge(final List<File> fileList, final Map<String, ArcGISLocalTiledLayer> imgTileLayerMap) {
+    public void layerTmdSystemImge(final List<File> fileList, final Map<String,
+            ArcGISLocalTiledLayer> imgTileLayerMap) {
         final Dialog dialog = new Dialog(mContext, R.style.Dialog);
         // 展示图层透明度和图层颜色设置的dialog
         dialog.setContentView(R.layout.title_layer_tmdsystem);
@@ -201,10 +232,10 @@ public class RenderSetDialog extends Dialog {
         final TextView tmd = (TextView) dialog.findViewById(R.id.title_toumingdu);
 
         for (File f : fileList) {
-            ArcGISLocalTiledLayer layer = imgTileLayerMap.get(f.getName());
+            ArcGISLocalTiledLayer layer = imgTileLayerMap.get(f.getAbsolutePath());
             if (layer != null) {
-                final String name = new File(layer.getUrl()).getName();
-                int tmdtxt = MyApplication.sharedPreferences.getInt(name, 100);
+//                final String name = new File(layer.getUrl()).getName();
+                int tmdtxt = MyApplication.sharedPreferences.getInt(layer.getUrl(), 100);
                 seekBar.setProgress(tmdtxt);
                 tmd.setText(((float) tmdtxt / 100) + "");
             }
@@ -226,10 +257,10 @@ public class RenderSetDialog extends Dialog {
             @Override
             public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
                 for (File f : fileList) {
-                    ArcGISLocalTiledLayer layer = imgTileLayerMap.get(f.getName());
+                    ArcGISLocalTiledLayer layer = imgTileLayerMap.get(f.getAbsolutePath());
                     if (layer != null) {
-                        String name = new File(layer.getUrl()).getName();
-                        MyApplication.sharedPreferences.edit().putInt(name, arg1).apply();
+//                        String name = new File(layer.getUrl()).getName();
+                        MyApplication.sharedPreferences.edit().putInt(layer.getUrl(), arg1).apply();
                         float tt = (float) arg1 / 100;
                         tmd.setText(tt + "");
                         layer.setOpacity(tt);
@@ -245,7 +276,7 @@ public class RenderSetDialog extends Dialog {
             public void onClick(View arg0) {
                 seekBar.setProgress(100);
                 for (File f : fileList) {
-                    ArcGISLocalTiledLayer layer = imgTileLayerMap.get(f.getName());
+                    ArcGISLocalTiledLayer layer = imgTileLayerMap.get(f.getAbsolutePath());
                     if (layer != null) {
                         layer.setOpacity((float) 1.0);
                     }
@@ -286,7 +317,7 @@ public class RenderSetDialog extends Dialog {
      * @param seekValue 透明度
      * @return 唯一值渲染器
      */
-    private UniqueValueRenderer initUniqueValue(MyLayer myLayer,Map<String,String> fieldMap,int seekValue){
+    private UniqueValueRenderer initUniqueValue(FeatureLayer myLayer,Map<String,String> fieldMap,int seekValue){
         //初始化参数
         UniqueValueRenderer uvrenderer = new UniqueValueRenderer();
         uvrenderer.setField1("LUCODE");
@@ -308,7 +339,7 @@ public class RenderSetDialog extends Dialog {
             uvs[i].setDescription(fieldMap.get(field));
             uvs[i].setValue(uniqueAttributes[i]);
 
-            int tcs = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + field + "tianchongse", R.color.nocolor);
+            int tcs = MyApplication.sharedPreferences.getInt(myLayer.getUrl()+myLayer.getName() + field + "tianchongse", R.color.nocolor);
             int tcolor = Util.getColor(tcs, seekValue);
             symbols[i] = new SimpleFillSymbol(tcolor);
 
@@ -323,7 +354,7 @@ public class RenderSetDialog extends Dialog {
     /**
      * 展示图层渲染设置
      */
-    public void showLayerRender(final MyLayer myLayer, final int renderType) {
+    public void showLayerRender(final FeatureLayer myLayer, final int renderType) {
         EditText outlinewidth = null;
         Map<String,String> fieldMap = null;
         final Dialog dialog = new Dialog(mContext, R.style.Dialog);
@@ -332,10 +363,10 @@ public class RenderSetDialog extends Dialog {
         dialog.setCanceledOnTouchOutside(true);
 
         final SeekBar seekBar = (SeekBar) dialog.findViewById(R.id.symbol_seekbar);
-        seekBar.setProgress(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tmd", 50));
+        seekBar.setProgress(MyApplication.sharedPreferences.getInt(myLayer.getUrl()+myLayer.getName() + "tmd", 50));
 
         final TextView textView = (TextView) dialog.findViewById(R.id.toumingdu);
-        int sektxt = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tmd", 50);
+        int sektxt = MyApplication.sharedPreferences.getInt(myLayer.getUrl()+myLayer.getName() + "tmd", 50);
         textView.setText(sektxt + "");
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -352,7 +383,7 @@ public class RenderSetDialog extends Dialog {
 
             @Override
             public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-                MyApplication.sharedPreferences.edit().putInt(myLayer.getLayer().getName() + "tmd", arg1).apply();
+                MyApplication.sharedPreferences.edit().putInt(myLayer.getUrl()+myLayer.getName() + "tmd", arg1).apply();
                 textView.setText(arg0.getProgress() + "");
             }
         });
@@ -361,7 +392,7 @@ public class RenderSetDialog extends Dialog {
             simpleView.setVisibility(View.VISIBLE);
             //填充色设置
             final TextView tianchongse = (TextView) simpleView.findViewById(R.id.tianchongse);
-            tianchongse.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tianchongse", R.color.nocolor));
+            tianchongse.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getUrl()+myLayer.getName() + "tianchongse", R.color.nocolor));
             tianchongse.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -372,9 +403,9 @@ public class RenderSetDialog extends Dialog {
             });
             //边界的设置
             outlinewidth = (EditText) simpleView.findViewById(R.id.outlinewidth);
-            outlinewidth.setText(MyApplication.sharedPreferences.getFloat(myLayer.getLayer().getName() + "owidth", 0) + "");
+            outlinewidth.setText(MyApplication.sharedPreferences.getFloat(myLayer.getUrl()+myLayer.getName() + "owidth", 0) + "");
             final TextView bianjiese = (TextView) simpleView.findViewById(R.id.bianjiese);
-            bianjiese.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "bianjiese", R.color.nocolor));
+            bianjiese.setBackgroundColor(MyApplication.sharedPreferences.getInt(myLayer.getUrl()+myLayer.getName() + "bianjiese", R.color.nocolor));
             bianjiese.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -406,7 +437,7 @@ public class RenderSetDialog extends Dialog {
             public void onClick(View arg0) {
                 seekBar.setProgress(0);
                 Renderer renderer = myLayer.getRenderer();
-                myLayer.getLayer().setRenderer(renderer);
+                myLayer.setRenderer(renderer);
                 iLayerView.getMapView().invalidate();
                 dialog.dismiss();
             }
@@ -419,7 +450,7 @@ public class RenderSetDialog extends Dialog {
             public void onClick(View arg0) {
                 float txt = seekBar.getProgress();
                 float opacity = txt / 100;
-                myLayer.getLayer().setOpacity(1 - opacity);
+                myLayer.setOpacity(1 - opacity);
                 iLayerView.getMapView().invalidate();
                 dialog.dismiss();
             }
@@ -449,13 +480,13 @@ public class RenderSetDialog extends Dialog {
     }
 
     //图层唯一值渲染
-    private void setLayerUniqueRender(MyLayer myLayer,Map<String,String> fieldMap,int seekValue){
-        myLayer.getLayer().setRenderer(initUniqueValue(myLayer,fieldMap,seekValue));
+    private void setLayerUniqueRender(FeatureLayer myLayer,Map<String,String> fieldMap,int seekValue){
+        myLayer.setRenderer(initUniqueValue(myLayer,fieldMap,seekValue));
     }
     //图层简单渲染
-    private void setLayerSimpleRenderer(int seekValue, EditText outlinewidth, MyLayer myLayer) {
+    private void setLayerSimpleRenderer(int seekValue, EditText outlinewidth, FeatureLayer myLayer) {
         //SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(sharedPreferences.getInt("color", Color.GREEN));
-        int tcs = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "tianchongse", R.color.nocolor);
+        int tcs = MyApplication.sharedPreferences.getInt(myLayer.getUrl()+myLayer.getName() + "tianchongse", R.color.nocolor);
         int tcolor = Util.getColor(tcs, seekValue);//3158064  959459376
         SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(tcolor);
         Object obj = outlinewidth.getText();
@@ -467,7 +498,7 @@ public class RenderSetDialog extends Dialog {
                 owidth = Float.parseFloat(str);
             }
         }
-        int bjs = MyApplication.sharedPreferences.getInt(myLayer.getLayer().getName() + "bianjiese", R.color.nocolor);
+        int bjs = MyApplication.sharedPreferences.getInt(myLayer.getUrl()+myLayer.getName() + "bianjiese", R.color.nocolor);
         simpleFillSymbol.setOutline(new SimpleLineSymbol(bjs, owidth));
 
         SimpleMarkerSymbol markerSymbol = new SimpleMarkerSymbol(tcolor, (int) owidth, SimpleMarkerSymbol.STYLE.CIRCLE);
@@ -477,20 +508,20 @@ public class RenderSetDialog extends Dialog {
         SimpleLineSymbol lineSymbol = new SimpleLineSymbol(tcolor, (int) owidth, com.esri.core.symbol.SimpleLineSymbol.STYLE.SOLID);
         lineSymbol.setWidth(owidth);
 
-        MyApplication.sharedPreferences.edit().putFloat(myLayer.getLayer().getName() + "owidth", owidth).apply();
+        MyApplication.sharedPreferences.edit().putFloat(myLayer.getUrl()+myLayer.getName() + "owidth", owidth).apply();
 
-        Renderer renderer = null;
-        if (myLayer.getLayer().getGeometryType().equals(Geometry.Type.POLYGON)) {
+        Renderer renderer;
+        if (myLayer.getGeometryType().equals(Geometry.Type.POLYGON)) {
             renderer = new SimpleRenderer(simpleFillSymbol);
-        } else if (myLayer.getLayer().getGeometryType().equals(Geometry.Type.POLYLINE)) {
+        } else if (myLayer.getGeometryType().equals(Geometry.Type.POLYLINE)) {
             renderer = new SimpleRenderer(lineSymbol);
         } else {
             renderer = new SimpleRenderer(markerSymbol);
         }
 
-        myLayer.getLayer().setRenderer(renderer);
+        myLayer.setRenderer(renderer);
 
-        MyApplication.sharedPreferences.edit().putString(myLayer.getLayer().getName(), "").apply();
+        MyApplication.sharedPreferences.edit().putString(myLayer.getUrl()+myLayer.getName(), "").apply();
     }
 
 //    /**

@@ -2,13 +2,25 @@
   <dictionary name="hanyw">
     <words>
       <w>caiji</w>
+      <w>childview</w>
+      <w>diming</w>
       <w>expandablelistview</w>
+      <w>geotable</w>
       <w>gjserchother</w>
       <w>gpscaiji</w>
+      <w>gpspend</w>
+      <w>gpsstart</w>
+      <w>gpsstop</w>
+      <w>gpstart</w>
       <w>guiji</w>
       <w>guijiother</w>
       <w>guijisearch</w>
       <w>imgtuceng</w>
+      <w>lable</w>
+      <w>layerindex</w>
+      <w>layerindexmap</w>
+      <w>layermanager</w>
+      <w>loction</w>
       <w>maptools</w>
       <w>multiselect</w>
       <w>mylocation</w>

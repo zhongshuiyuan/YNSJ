@@ -344,8 +344,8 @@ public class AuditActivity extends AppCompatActivity implements View.OnClickList
         if(editlayer.getNumberOfGraphics()>1){
             //多个图形
             int[] ids=editlayer.getGraphicIDs();
-            for (int i = 0; i <ids.length ; i++) {
-                saveFeature(editlayer.getGraphic(ids[i]).getGeometry());
+            for (int id : ids) {
+                saveFeature(editlayer.getGraphic(id).getGeometry());
             }
 
         }else {

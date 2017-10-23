@@ -30,7 +30,4 @@ public interface LayerManager {
      */
     //void onCheckLayer(int index, boolean isvisable);
 
-
-
-
 }
